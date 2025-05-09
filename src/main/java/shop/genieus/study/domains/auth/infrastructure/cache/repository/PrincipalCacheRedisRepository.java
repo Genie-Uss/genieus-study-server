@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import shop.genieus.study.domains.auth.domain.vo.TokenType;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Repository
 @RequiredArgsConstructor

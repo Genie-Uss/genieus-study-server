@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.auth.presentation.dto;
+package shop.genieus.study.domains.auth.presentation.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

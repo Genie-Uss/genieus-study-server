@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import shop.genieus.study.domains.auth.application.AuthorizationService;
 import shop.genieus.study.domains.auth.application.dto.result.TokenValidationResult;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.auth.presentation.utils.AuthResponseSender;
 
 @Slf4j

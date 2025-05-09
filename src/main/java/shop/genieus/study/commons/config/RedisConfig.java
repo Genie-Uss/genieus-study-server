@@ -7,7 +7,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Configuration
 public class RedisConfig {
