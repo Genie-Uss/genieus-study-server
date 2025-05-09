@@ -1,0 +1,19 @@
+package shop.genieus.study.domains.stamp.presentation.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.stamp.application.dto.info.CreateJobActivityStampInfo;
+import shop.genieus.study.domains.stamp.domain.vo.CareerType;
+import shop.genieus.study.domains.stamp.domain.vo.ActivityType;
+
+public record CreateJobActivityStampRequest(
+    @NotBlank(message = "회사명을 입력해주세요.") String companyName,
+    @NotBlank(message = "경력 유형을 입력해주세요.") CareerType careerType,
+    @NotBlank(message = "활동 유형을 입력해주세요.") ActivityType activityType,
+    @NotBlank(message = "상세 내용을 입력해주세요.") String description,
+    String relatedUrl) {
+  public CreateJobActivityStampInfo toInfo(CustomPrincipal principal) {
+    return new CreateJobActivityStampInfo(
+        principal.id(), companyName, careerType, activityType, description, relatedUrl);
+  }
+}
