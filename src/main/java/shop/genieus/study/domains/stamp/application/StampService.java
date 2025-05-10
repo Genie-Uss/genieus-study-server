@@ -1,6 +1,8 @@
 package shop.genieus.study.domains.stamp.application;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,14 +13,17 @@ import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.domains.stamp.application.dto.info.CreateCodingTestStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.CreateJobActivityStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.CreateTilStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.info.FindTodayStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateCodingTestStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateJobActivityStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
 import shop.genieus.study.domains.stamp.application.repository.StampRepository;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
 import shop.genieus.study.domains.stamp.domain.entity.JobActivityStamp;
+import shop.genieus.study.domains.stamp.domain.entity.Stamp;
 import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
+import shop.genieus.study.domains.stamp.presentation.dto.response.ListStampResponse;
 
 @Slf4j
 @Service
@@ -82,6 +87,14 @@ public class StampService {
     return CreateJobActivityStampResult.of(jobActivityStamp);
   }
 
+  @Transactional(readOnly = true)
+  public ListStampResponse findTodayStamps(FindTodayStampInfo info) {
+    Long userId = info.userId();
+    LocalDate today = getCurrentDateTime().toLocalDate();
+    List<Stamp> stamps = stampRepository.findAllByUserIdAndVerifiedAt(userId, today);
+    return ListStampResponse.of(stamps);
+  }
+
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {
     if (attendanceProvider.existsByUserIdAndDate(userId, currentTime.toLocalDate())) {
       return;
@@ -92,4 +105,5 @@ public class StampService {
   private LocalDateTime getCurrentDateTime() {
     return LocalDateTime.now();
   }
+
 }
