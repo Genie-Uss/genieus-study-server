@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.commons.jpa.BaseEntity;
+import shop.genieus.study.domains.attendance.domain.exception.AttendanceValidationException;
 import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
 import shop.genieus.study.domains.attendance.domain.vo.StudyResult;
 
@@ -57,5 +58,26 @@ public class Attendance extends BaseEntity {
         .attendanceTime(attendanceTime)
         .studyResult(studyResult)
         .build();
+  }
+
+  public void checkOut(
+      LocalDateTime checkOutTime, LocalDate currentDate, LocalDateTime currentDateTime) {
+    if (this.attendanceTime.isCheckedOut()) {
+      throw AttendanceValidationException.alreadyCheckedOut();
+    }
+
+    AttendanceTime updatedAttendanceTime =
+        this.attendanceTime.updateCheckOutTime(checkOutTime, currentDate, currentDateTime);
+
+    int actualStudyMinutes = updatedAttendanceTime.calculateStudyMinutes();
+    StudyResult updatedStudyResult =
+        StudyResult.calculate(actualStudyMinutes, this.desiredCoreTime);
+
+    this.attendanceTime = updatedAttendanceTime;
+    this.studyResult = updatedStudyResult;
+  }
+
+  public boolean isCheckedOut() {
+    return this.attendanceTime.isCheckedOut();
   }
 }

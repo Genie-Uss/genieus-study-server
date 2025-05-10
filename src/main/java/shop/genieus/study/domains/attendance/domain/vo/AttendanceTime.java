@@ -80,6 +80,45 @@ public class AttendanceTime {
     }
   }
 
+  public AttendanceTime updateCheckOutTime(
+      LocalDateTime checkOutTime, LocalDate currentDate, LocalDateTime currentDateTime) {
+    validateCheckOutTime(checkOutTime, currentDate, currentDateTime);
+
+    return new AttendanceTime(
+        this.date, this.checkInTime, checkOutTime, this.desiredCheckInTime, this.isLate);
+  }
+
+  private void validateCheckOutTime(
+      LocalDateTime checkOutTime, LocalDate currentDate, LocalDateTime currentDateTime) {
+    if (checkOutTime == null) {
+      throw AttendanceValidationException.requiredCheckOutTime();
+    }
+
+    if (checkOutTime.isBefore(this.checkInTime)) {
+      throw AttendanceValidationException.checkOutBeforeCheckIn();
+    }
+
+    if (!checkOutTime.toLocalDate().equals(currentDate)) {
+      throw AttendanceValidationException.notTodayCheckOut();
+    }
+
+    if (checkOutTime.isAfter(currentDateTime)) {
+      throw AttendanceValidationException.futureTimeCheckOut();
+    }
+  }
+
+  public int calculateStudyMinutes() {
+    if (!isCheckedOut()) {
+      return 0;
+    }
+
+    return (int) java.time.temporal.ChronoUnit.MINUTES.between(checkInTime, checkOutTime);
+  }
+
+  public boolean isCheckedOut() {
+    return checkOutTime != null;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

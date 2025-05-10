@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
+import shop.genieus.study.domains.attendance.application.dto.info.CheckOutInfo;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceBusinessException;
+import shop.genieus.study.domains.attendance.application.exception.AttendanceNotFoundException;
 import shop.genieus.study.domains.attendance.application.repository.AttendanceRepository;
 import shop.genieus.study.domains.attendance.application.time.DateTimePort;
 import shop.genieus.study.domains.attendance.domain.entity.Attendance;
@@ -43,6 +45,28 @@ public class AttendanceService {
             currentDateTime.toLocalDate(),
             currentDateTime,
             userInfo.desiredCoreTime());
+
+    return repository.save(attendance);
+  }
+
+  public Attendance checkOut(CheckOutInfo info) {
+    LocalDateTime currentDateTime = dateTimePort.getCurrentDateTime();
+    LocalDate currentDate = currentDateTime.toLocalDate();
+
+    Attendance attendance;
+    try {
+      attendance = repository.findByUserIdAndAttendanceTimeDate(info.userId(), currentDate);
+    } catch (AttendanceNotFoundException e) {
+      log.info("퇴실 실패: {}", e.getMessage());
+      throw AttendanceBusinessException.notExistAttendance();
+    }
+
+    if (attendance.isCheckedOut()) {
+      log.info("이미 퇴실 처리되었습니다.");
+      throw AttendanceBusinessException.alreadyCheckedOut();
+    }
+
+    attendance.checkOut(info.checkOutDateTime(), currentDate, currentDateTime);
 
     return repository.save(attendance);
   }

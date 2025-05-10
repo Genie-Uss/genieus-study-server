@@ -48,6 +48,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return buildResponse(exception, response);
   }
 
+  @ExceptionHandler(BusinessException.class)
+  public final ResponseEntity<ApiErrorResponse> handleBusinessException(
+      BusinessException exception, WebRequest request) {
+    GlobalErrorSpec spec = GlobalErrorSpec.INVALID_REQUEST;
+    ApiErrorResponse response =
+        ApiErrorResponse.create(
+            exception.getDomain(), exception.getMessage(), spec.getStatusCode(), request);
+    return buildResponse(exception, response);
+  }
+
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
       MethodArgumentNotValidException exception,

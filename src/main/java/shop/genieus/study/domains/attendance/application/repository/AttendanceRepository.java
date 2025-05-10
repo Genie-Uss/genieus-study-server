@@ -7,4 +7,6 @@ public interface AttendanceRepository {
   boolean existsByUserIdAndAttendanceTimeDate(Long userId, LocalDate checkInDate);
 
   Attendance save(Attendance attendance);
+
+  Attendance findByUserIdAndAttendanceTimeDate(Long aLong, LocalDate today);
 }

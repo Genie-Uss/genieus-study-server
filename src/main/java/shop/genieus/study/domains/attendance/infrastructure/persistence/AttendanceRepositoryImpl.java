@@ -22,4 +22,11 @@ public class AttendanceRepositoryImpl implements AttendanceRepository {
   public Attendance save(Attendance attendance) {
     return jpaRepository.save(attendance);
   }
+
+  @Override
+  public Attendance findByUserIdAndAttendanceTimeDate(Long userId, LocalDate today) {
+    return jpaRepository
+        .findByUserIdAndAttendanceTimeDate(userId, today)
+        .orElseThrow(() -> AttendanceNotFoundException.create());
+  }
 }

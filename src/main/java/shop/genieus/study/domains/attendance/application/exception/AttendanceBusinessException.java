@@ -13,4 +13,12 @@ public class AttendanceBusinessException extends BusinessException {
   public static AttendanceBusinessException alreadyCheckedIn() {
     return new AttendanceBusinessException("이미 오늘 출석 처리되었습니다.");
   }
+
+  public static AttendanceBusinessException alreadyCheckedOut() {
+    return new AttendanceBusinessException("이미 퇴실 처리되었습니다.");
+  }
+
+  public static AttendanceBusinessException notExistAttendance() {
+    return new AttendanceBusinessException("오늘 출석 기록이 없습니다.");
+  }
 }

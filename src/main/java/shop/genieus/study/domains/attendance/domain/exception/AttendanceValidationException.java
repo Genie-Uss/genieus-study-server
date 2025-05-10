@@ -30,4 +30,24 @@ public class AttendanceValidationException extends ValidationException {
   public static AttendanceValidationException futureTimeCheckIn() {
     return new AttendanceValidationException("미래 시간으로 출석할 수 없습니다.");
   }
+
+  public static AttendanceValidationException alreadyCheckedOut() {
+    return new AttendanceValidationException("이미 퇴실 처리되었습니다.");
+  }
+
+  public static AttendanceValidationException requiredCheckOutTime() {
+    return new AttendanceValidationException("퇴실 시간은 필수입니다.");
+  }
+
+  public static AttendanceValidationException checkOutBeforeCheckIn() {
+    return new AttendanceValidationException("퇴실 시간은 출석 시간 이후여야 합니다.");
+  }
+
+  public static AttendanceValidationException notTodayCheckOut() {
+    return new AttendanceValidationException("오늘 날짜에만 퇴실이 가능합니다.");
+  }
+
+  public static AttendanceValidationException futureTimeCheckOut() {
+    return new AttendanceValidationException("미래 시간으로 퇴실할 수 없습니다.");
+  }
 }

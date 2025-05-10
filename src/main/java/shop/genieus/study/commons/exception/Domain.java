@@ -4,5 +4,6 @@ public enum Domain {
   AUTH,
   USER,
   STAMP,
+  ATTENDANCE,
   GLOBAL
 }
