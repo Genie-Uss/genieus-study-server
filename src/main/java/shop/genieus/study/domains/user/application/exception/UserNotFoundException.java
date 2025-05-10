@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.user.domain.exception;
+package shop.genieus.study.domains.user.application.exception;
 
 import lombok.Getter;
 import shop.genieus.study.commons.exception.Domain;

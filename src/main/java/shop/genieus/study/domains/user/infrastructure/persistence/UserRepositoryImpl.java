@@ -2,9 +2,9 @@ package shop.genieus.study.domains.user.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
-import shop.genieus.study.domains.user.domain.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.Email;
 import shop.genieus.study.domains.user.infrastructure.persistence.repository.UserJpaRepository;
