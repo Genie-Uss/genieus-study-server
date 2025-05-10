@@ -3,6 +3,7 @@ package shop.genieus.study.domains.stamp.presentation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.AuthPrincipal;
 import shop.genieus.study.domains.stamp.application.StampService;
+import shop.genieus.study.domains.stamp.application.dto.info.FindTodayStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateCodingTestStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateJobActivityStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
+import shop.genieus.study.domains.stamp.presentation.dto.response.ListStampResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCodingTestStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateJobActivityStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateTilStampRequest;
@@ -51,6 +54,14 @@ public class StampController {
     CreateJobActivityStampResult result =
         stampService.createJobActivityStamp(request.toInfo(principal));
     CreateJobActivityStampResponse response = CreateJobActivityStampResponse.of(result);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/today")
+  public ResponseEntity<ListStampResponse> findTodayStamps(
+      @AuthPrincipal CustomPrincipal principal){
+    ListStampResponse response = stampService.findTodayStamps(
+        new FindTodayStampInfo(principal.id()));
     return ResponseEntity.ok(response);
   }
 }
