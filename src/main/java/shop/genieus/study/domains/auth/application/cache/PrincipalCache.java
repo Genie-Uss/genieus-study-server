@@ -1,6 +1,6 @@
 package shop.genieus.study.domains.auth.application.cache;
 
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 public interface PrincipalCache {
   CustomPrincipal findById(Long userId);

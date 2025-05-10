@@ -10,8 +10,6 @@ import lombok.NonNull;
 import org.springframework.stereotype.Component;
 import shop.genieus.study.domains.auth.domain.vo.TokenType;
 import shop.genieus.study.domains.auth.infrastructure.jwt.config.JwtConfig;
-import shop.genieus.study.domains.user.domain.entity.Nickname;
-import shop.genieus.study.domains.user.domain.entity.UserRole;
 
 @Component
 public class JwtProvider extends AbstractJwtSupport {

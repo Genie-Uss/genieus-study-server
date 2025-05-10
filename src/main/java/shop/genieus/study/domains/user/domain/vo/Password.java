@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.user.domain.entity;
+package shop.genieus.study.domains.user.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

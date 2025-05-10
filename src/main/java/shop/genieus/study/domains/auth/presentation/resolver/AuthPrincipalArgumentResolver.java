@@ -9,8 +9,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
-import shop.genieus.study.domains.auth.presentation.dto.AuthPrincipal;
+import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Component
 public class AuthPrincipalArgumentResolver implements HandlerMethodArgumentResolver {

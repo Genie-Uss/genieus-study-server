@@ -3,13 +3,13 @@ package shop.genieus.study.domains.auth.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.auth.application.cache.PrincipalCache;
 import shop.genieus.study.domains.auth.application.dto.result.TokenValidationResult;
 import shop.genieus.study.domains.auth.application.repository.TokenRepository;
 import shop.genieus.study.domains.auth.application.util.TokenUtils;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.user.application.UserService;
-import shop.genieus.study.domains.user.domain.entity.User;
 
 @Slf4j
 @Service
@@ -27,9 +27,8 @@ public class AuthorizationService {
   public CustomPrincipal getPrincipal(Long userId) {
     CustomPrincipal principal = principalCache.findById(userId);
     if (principal == null) {
-      User user = userService.findById(userId);
-      principal =
-          new CustomPrincipal(user.getId(), user.getRole().name(), user.getNickname().getValue());
+      UserInfo user = userService.findByUserId(userId);
+      principal = new CustomPrincipal(user.id(), user.roleName(), user.nickname());
       principalCache.save(userId, principal);
     }
     return principal;

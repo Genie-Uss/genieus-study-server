@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import shop.genieus.study.domains.auth.application.cache.PrincipalCache;
 import shop.genieus.study.domains.auth.infrastructure.cache.repository.PrincipalCacheRedisRepository;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Component
 @RequiredArgsConstructor

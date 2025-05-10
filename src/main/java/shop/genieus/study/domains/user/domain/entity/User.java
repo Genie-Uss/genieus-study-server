@@ -2,11 +2,15 @@ package shop.genieus.study.domains.user.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.time.LocalTime;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.commons.jpa.BaseEntity;
 import shop.genieus.study.domains.user.application.PasswordEncryptionService;
 import shop.genieus.study.domains.user.domain.vo.Email;
+import shop.genieus.study.domains.user.domain.vo.Nickname;
+import shop.genieus.study.domains.user.domain.vo.Password;
+import shop.genieus.study.domains.user.domain.vo.UserRole;
 
 @Entity
 @Getter
@@ -30,19 +34,31 @@ public class User extends BaseEntity {
   @JsonIgnore
   private Password password;
 
-  @Column(nullable = false)
+  @Comment("닉네임")
+  @Column(nullable = false, unique = true)
   private Nickname nickname;
 
+  @Comment("프로필 이미지 url")
   private String profileImage;
 
+  @Builder.Default
+  @Comment("권한 정보")
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private UserRole role;
-
-  @Column(nullable = false)
-  private Integer requiredVerifications;
+  private UserRole role = UserRole.ROLE_USER;
 
   @Builder.Default
+  @Comment("희망 출석 시각")
+  @Column(nullable = false)
+  private LocalTime desiredCheckInTime = LocalTime.of(9, 0);
+
+  @Builder.Default
+  @Comment("희망 코어 시간 (분)")
+  @Column(nullable = false)
+  private int desiredCoreTime = 240;
+
+  @Builder.Default
+  @Comment("활성화 시간")
   @Column(nullable = false)
   private Boolean isActive = true;
 
@@ -55,13 +71,19 @@ public class User extends BaseEntity {
         .email(Email.of(email))
         .password(Password.of(password, passwordEncryptionService))
         .nickname(Nickname.of(nickname))
-        .role(UserRole.ROLE_USER)
-        .requiredVerifications(3)
         .build();
   }
 
   public boolean matchPassword(
       String plainPassword, PasswordEncryptionService passwordEncryptionService) {
     return this.password.matches(plainPassword, passwordEncryptionService);
+  }
+
+  public boolean isRoleUser() {
+    return this.role.isRoleUser();
+  }
+
+  public boolean isRoleAdmin() {
+    return this.role.isRoleAdmin();
   }
 }

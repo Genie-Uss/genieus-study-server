@@ -4,6 +4,8 @@ import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import shop.genieus.study.commons.provider.UserProvider;
+import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.auth.application.cache.PrincipalCache;
 import shop.genieus.study.domains.auth.application.dto.info.CredentialInfo;
 import shop.genieus.study.domains.auth.application.dto.result.ReIssueTokenResult;
@@ -15,9 +17,7 @@ import shop.genieus.study.domains.auth.domain.exception.CustomAuthenticationExce
 import shop.genieus.study.domains.auth.domain.vo.TokenCredential;
 import shop.genieus.study.domains.auth.domain.vo.TokenId;
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
-import shop.genieus.study.domains.user.application.UserService;
-import shop.genieus.study.domains.user.domain.entity.User;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Slf4j
 @Service
@@ -27,14 +27,13 @@ public class AuthenticationService {
   private final PrincipalCache principalCache;
   private final TokenUtils tokenUtils;
   private final IdGenerator idGenerator;
-  private final UserService userService;
+  private final UserProvider userProvider;
 
   public CustomPrincipal getUserByCredentialInfo(CredentialInfo info) {
     try {
-      User user = userService.validateUserCredentials(info.email(), info.password());
-      CustomPrincipal principal =
-          new CustomPrincipal(user.getId(), user.getRole().name(), user.getNickname().getValue());
-      principalCache.save(user.getId(), principal);
+      UserInfo user = userProvider.validateUserCredentials(info.email(), info.password());
+      CustomPrincipal principal = new CustomPrincipal(user.id(), user.roleName(), user.nickname());
+      principalCache.save(user.id(), principal);
 
       return principal;
     } catch (Exception e) {

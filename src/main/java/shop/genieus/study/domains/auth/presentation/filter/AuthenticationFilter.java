@@ -16,7 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import shop.genieus.study.domains.auth.application.AuthenticationService;
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.request.LoginRequest;
 import shop.genieus.study.domains.auth.presentation.dto.response.TokenResponse;
 import shop.genieus.study.domains.auth.presentation.utils.AuthResponseSender;
