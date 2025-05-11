@@ -1,7 +1,7 @@
 package shop.genieus.study.domains.stamp.presentation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.application.dto.info.CreateCodingTestStampInfo;
 import shop.genieus.study.domains.stamp.domain.vo.AlgorithmType;
 import shop.genieus.study.domains.stamp.domain.vo.PlatformType;

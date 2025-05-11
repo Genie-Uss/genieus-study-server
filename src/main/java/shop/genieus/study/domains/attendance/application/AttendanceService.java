@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
@@ -20,7 +21,7 @@ import shop.genieus.study.domains.attendance.domain.entity.Attendance;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AttendanceService {
+public class AttendanceService implements AttendanceProvider {
   private final AttendanceRepository repository;
   private final UserProvider userProvider;
   private final DateTimePort dateTimePort;
@@ -69,5 +70,10 @@ public class AttendanceService {
     attendance.checkOut(info.checkOutDateTime(), currentDate, currentDateTime);
 
     return repository.save(attendance);
+  }
+
+  @Override
+  public boolean existsByUserIdAndDate(Long userId, LocalDate date) {
+    return false;
   }
 }
