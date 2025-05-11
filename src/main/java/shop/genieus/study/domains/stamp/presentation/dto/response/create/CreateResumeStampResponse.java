@@ -1,25 +1,23 @@
-package shop.genieus.study.domains.stamp.presentation.dto.response;
+package shop.genieus.study.domains.stamp.presentation.dto.response.create;
 
 import java.time.LocalDateTime;
-import shop.genieus.study.domains.stamp.application.dto.result.CreateJobActivityStampResult;
+import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStampResult;
 import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 import shop.genieus.study.domains.stamp.domain.vo.ActivityType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
-public record CreateJobActivityStampResponse(
+public record CreateResumeStampResponse(
     Long id,
     StampType type,
-    boolean isVerified,
     LocalDateTime verifiedAt,
     String companyName,
     CareerType careerType,
     ActivityType activityType,
     String relatedUrl) {
-  public static CreateJobActivityStampResponse of(CreateJobActivityStampResult result) {
-    return new CreateJobActivityStampResponse(
+  public static CreateResumeStampResponse of(CreateResumeStampResult result) {
+    return new CreateResumeStampResponse(
         result.id(),
         result.type(),
-        result.isVerified(),
         result.verifiedAt(),
         result.companyName(),
         result.careerType(),

@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.stamp.application.dto.info;
+package shop.genieus.study.domains.stamp.application.dto.info.create;
 
 import shop.genieus.study.domains.stamp.domain.vo.CategoryType;
 

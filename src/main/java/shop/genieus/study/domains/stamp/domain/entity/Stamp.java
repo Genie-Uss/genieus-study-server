@@ -12,11 +12,11 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
+import shop.genieus.study.domains.stamp.domain.exception.StampBusinessException;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 @Entity
@@ -41,15 +41,16 @@ public class Stamp {
   @Comment("스탬프 유형")
   protected StampType type;
 
-  @Builder.Default
-  @Column(nullable = false)
-  @Comment("인증 여부")
-  protected Boolean isVerified = false;
-
   @Comment("인증 시간")
   protected LocalDateTime verifiedAt;
 
   public static Stamp create(Long userId, StampType type, LocalDateTime verifiedAt) {
     return Stamp.builder().userId(userId).type(type).verifiedAt(verifiedAt).build();
+  }
+
+  public void validate(Long userId) {
+    if (this.userId != null && !this.userId.equals(userId)) {
+      throw StampBusinessException.noPermissionForStamp();
+    }
   }
 }

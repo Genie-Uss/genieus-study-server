@@ -1,25 +1,23 @@
-package shop.genieus.study.domains.stamp.presentation.dto.response;
+package shop.genieus.study.domains.stamp.presentation.dto.response.create;
 
 import java.time.LocalDateTime;
-import shop.genieus.study.domains.stamp.application.dto.result.CreateCodingTestStampResult;
+import shop.genieus.study.domains.stamp.application.dto.result.CreateCtStampResult;
 import shop.genieus.study.domains.stamp.domain.vo.AlgorithmType;
 import shop.genieus.study.domains.stamp.domain.vo.PlatformType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
-public record CreateCodingTestStampResponse(
+public record CreateCtStampResponse(
     Long id,
     StampType type,
-    boolean isVerified,
     LocalDateTime verifiedAt,
     AlgorithmType algorithmType,
     PlatformType platformType,
     String description,
     String problemUrl) {
-  public static CreateCodingTestStampResponse of(CreateCodingTestStampResult result) {
-    return new CreateCodingTestStampResponse(
+  public static CreateCtStampResponse of(CreateCtStampResult result) {
+    return new CreateCtStampResponse(
         result.id(),
         result.type(),
-        result.isVerified(),
         result.verifiedAt(),
         result.algorithmType(),
         result.platformType(),

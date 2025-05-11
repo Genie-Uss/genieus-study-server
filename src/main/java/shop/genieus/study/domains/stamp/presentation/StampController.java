@@ -1,34 +1,54 @@
 package shop.genieus.study.domains.stamp.presentation;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
+import shop.genieus.study.domains.stamp.application.StampCategoryService;
 import shop.genieus.study.domains.stamp.application.StampService;
-import shop.genieus.study.domains.stamp.application.dto.info.FindTodayStampInfo;
-import shop.genieus.study.domains.stamp.application.dto.result.CreateCodingTestStampResult;
-import shop.genieus.study.domains.stamp.application.dto.result.CreateJobActivityStampResult;
+import shop.genieus.study.domains.stamp.application.dto.info.DeleteStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.info.get.GetCtStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.info.get.GetResumeStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.info.get.GetStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.info.get.GetTilStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.result.CreateCtStampResult;
+import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
-import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCodingTestStampRequest;
-import shop.genieus.study.domains.stamp.presentation.dto.request.CreateJobActivityStampRequest;
+import shop.genieus.study.domains.stamp.application.dto.result.VerifiedStampResult;
+import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
+import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
+import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
+import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCtStampRequest;
+import shop.genieus.study.domains.stamp.presentation.dto.request.CreateResumeStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateTilStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.response.*;
+import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateCtStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateResumeStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateTilStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.CtStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.ResumeStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.StampCategoryResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.TilStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.VerifiedStampResponse;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stamps")
 public class StampController {
   private final StampService stampService;
+  private final StampCategoryService stampCategoryService;
 
-  @PostMapping("/coding-test")
-  public ResponseEntity<CreateCodingTestStampResponse> createCodingTestStamp(
+  @PostMapping("/ct")
+  public ResponseEntity<CreateCtStampResponse> createCtStamp(
       @AuthPrincipal CustomPrincipal principal,
-      @RequestBody @Valid CreateCodingTestStampRequest request) {
-    CreateCodingTestStampResult result =
+      @RequestBody @Valid CreateCtStampRequest request) {
+    CreateCtStampResult result =
         stampService.createCodingTestStamp(request.toInfo(principal));
-    CreateCodingTestStampResponse response = CreateCodingTestStampResponse.of(result);
+    CreateCtStampResponse response = CreateCtStampResponse.of(result);
     return ResponseEntity.ok(response);
   }
 
@@ -40,51 +60,65 @@ public class StampController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/job-activity")
-  public ResponseEntity<CreateJobActivityStampResponse> createJobActivityStamp(
+  @PostMapping("/resume")
+  public ResponseEntity<CreateResumeStampResponse> createResumeStamp(
       @AuthPrincipal CustomPrincipal principal,
-      @RequestBody @Valid CreateJobActivityStampRequest request) {
-    CreateJobActivityStampResult result =
+      @RequestBody @Valid CreateResumeStampRequest request) {
+    CreateResumeStampResult result =
         stampService.createJobActivityStamp(request.toInfo(principal));
-    CreateJobActivityStampResponse response = CreateJobActivityStampResponse.of(result);
+    CreateResumeStampResponse response = CreateResumeStampResponse.of(result);
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/today")
-  public ResponseEntity<ListStampResponse> findTodayStamps(
-      @AuthPrincipal CustomPrincipal principal) {
-    ListStampResponse response =
-        stampService.findTodayStamps(new FindTodayStampInfo(principal.id()));
-    return ResponseEntity.ok(response);
+  @GetMapping("/user/{userId}")
+  public ResponseEntity<VerifiedStampResponse> getStampByDate(
+      @PathVariable Long userId,
+      @RequestParam(required = false) LocalDate date) {
+    List<VerifiedStampResult> result = stampService.getVerifiedStampByDate(
+        new GetStampInfo(userId, date));
+    return ResponseEntity.ok(VerifiedStampResponse.of(result));
   }
 
-  // ================================== mock
-
-  @GetMapping
-  public ResponseEntity<StampResponse> getStampByDate(@RequestParam(required = false) String date) {
-    return ResponseEntity.ok().body(StampResponse.mock());
-  }
-
-  @GetMapping("/ct")
+  @GetMapping("/ct/user/{userId}")
   public ResponseEntity<CtStampResponse> getCtStampByDate(
-      @RequestParam(required = false) String date) {
-    return ResponseEntity.ok().body(CtStampResponse.mock());
+      @PathVariable Long userId,
+      @RequestParam(required = false) LocalDate date) {
+    List<CodingTestStamp> result = stampService.getCtStampByDate(
+        new GetCtStampInfo(userId, date));
+    return ResponseEntity.ok(CtStampResponse.of(result));
   }
 
-  @GetMapping("/til")
+  @GetMapping("/til/user/{userId}")
   public ResponseEntity<TilStampResponse> getTilStampByDate(
-      @RequestParam(required = false) String date) {
-    return ResponseEntity.ok().body(TilStampResponse.mock());
+      @PathVariable Long userId,
+      @RequestParam(required = false) LocalDate date) {
+    List<TilStamp> result = stampService.getTilStampByDate(
+        new GetTilStampInfo(userId, date));
+    return ResponseEntity.ok(TilStampResponse.of(result));
   }
 
-  @GetMapping("/resume")
+  @GetMapping("/resume/user{userId}")
   public ResponseEntity<ResumeStampResponse> getResumeStampByDate(
-      @RequestParam(required = false) String date) {
-    return ResponseEntity.ok().body(ResumeStampResponse.mock());
+      @PathVariable Long userId,
+      @RequestParam(required = false) LocalDate date) {
+    List<ResumeStamp> result = stampService.getResumeStampByDate(
+        new GetResumeStampInfo(userId, date));
+    return ResponseEntity.ok(ResumeStampResponse.of(result));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<DeleteStampResponse> deleteStamp() {
-    return ResponseEntity.ok().body(DeleteStampResponse.mock());
+  public ResponseEntity<DeleteStampResponse> deleteStamp(
+      @AuthPrincipal CustomPrincipal principal,
+      @PathVariable(name = "id") Long stampId
+  ) {
+    stampService.deleteStamp(new DeleteStampInfo(principal.id(),stampId));
+    return ResponseEntity.ok(DeleteStampResponse.of());
+  }
+
+  @GetMapping("/categories")
+  public ResponseEntity<StampCategoryResponse> getCategories(
+      @RequestParam String type){
+    StampCategoryResponse categories = stampCategoryService.getCategories(type);
+    return ResponseEntity.ok(categories);
   }
 }
