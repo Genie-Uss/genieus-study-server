@@ -1,10 +1,10 @@
 package shop.genieus.study.domains.stamp.presentation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.application.dto.info.CreateJobActivityStampInfo;
-import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 import shop.genieus.study.domains.stamp.domain.vo.ActivityType;
+import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 
 public record CreateJobActivityStampRequest(
     @NotBlank(message = "회사명을 입력해주세요.") String companyName,

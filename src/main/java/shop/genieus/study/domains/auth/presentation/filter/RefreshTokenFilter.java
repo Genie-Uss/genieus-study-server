@@ -17,7 +17,7 @@ import shop.genieus.study.domains.auth.application.dto.result.ReIssueTokenResult
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.request.ReIssueTokenRequest;
-import shop.genieus.study.domains.auth.presentation.dto.response.TokenResponse;
+import shop.genieus.study.domains.auth.presentation.dto.response.RefreshTokenResponse;
 import shop.genieus.study.domains.auth.presentation.utils.AuthResponseSender;
 
 @Slf4j
@@ -60,7 +60,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
 
       CustomPrincipal principal = authorizationService.getPrincipal(result.userId());
 
-      TokenResponse response = createResponse(result.tokenPair(), principal);
+      RefreshTokenResponse response = createResponse(result.tokenPair(), principal);
       authResponseSender.sendSuccessResponse(httpResponse, response);
 
       log.info("리프레쉬 토큰 발급 성공 user: id-{}", result.userId());
@@ -80,12 +80,10 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
         request, response, HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
   }
 
-  private TokenResponse createResponse(TokenPair tokenPair, CustomPrincipal principal) {
-    return new TokenResponse(
+  private RefreshTokenResponse createResponse(TokenPair tokenPair, CustomPrincipal principal) {
+    return new RefreshTokenResponse(
+        true,
         tokenPair.getAccessTokenCredential().tokenValue(),
-        tokenPair.getRefreshTokenCredential().tokenValue(),
-        principal.id(),
-        principal.role(),
-        principal.nickname());
+        tokenPair.getRefreshTokenCredential().tokenValue());
   }
 }

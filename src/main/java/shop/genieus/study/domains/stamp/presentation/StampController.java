@@ -3,25 +3,18 @@ package shop.genieus.study.domains.stamp.presentation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import shop.genieus.study.domains.auth.presentation.annotation.CustomPrincipal;
-import shop.genieus.study.domains.auth.presentation.dto.AuthPrincipal;
+import org.springframework.web.bind.annotation.*;
+import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.application.StampService;
 import shop.genieus.study.domains.stamp.application.dto.info.FindTodayStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateCodingTestStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateJobActivityStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
-import shop.genieus.study.domains.stamp.presentation.dto.response.ListStampResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCodingTestStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateJobActivityStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateTilStampRequest;
-import shop.genieus.study.domains.stamp.presentation.dto.response.CreateCodingTestStampResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.CreateJobActivityStampResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.CreateTilStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,9 +52,39 @@ public class StampController {
 
   @GetMapping("/today")
   public ResponseEntity<ListStampResponse> findTodayStamps(
-      @AuthPrincipal CustomPrincipal principal){
-    ListStampResponse response = stampService.findTodayStamps(
-        new FindTodayStampInfo(principal.id()));
+      @AuthPrincipal CustomPrincipal principal) {
+    ListStampResponse response =
+        stampService.findTodayStamps(new FindTodayStampInfo(principal.id()));
     return ResponseEntity.ok(response);
+  }
+
+  // ================================== mock
+
+  @GetMapping
+  public ResponseEntity<StampResponse> getStampByDate(@RequestParam(required = false) String date) {
+    return ResponseEntity.ok().body(StampResponse.mock());
+  }
+
+  @GetMapping("/ct")
+  public ResponseEntity<CtStampResponse> getCtStampByDate(
+      @RequestParam(required = false) String date) {
+    return ResponseEntity.ok().body(CtStampResponse.mock());
+  }
+
+  @GetMapping("/til")
+  public ResponseEntity<TilStampResponse> getTilStampByDate(
+      @RequestParam(required = false) String date) {
+    return ResponseEntity.ok().body(TilStampResponse.mock());
+  }
+
+  @GetMapping("/resume")
+  public ResponseEntity<ResumeStampResponse> getResumeStampByDate(
+      @RequestParam(required = false) String date) {
+    return ResponseEntity.ok().body(ResumeStampResponse.mock());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<DeleteStampResponse> deleteStamp() {
+    return ResponseEntity.ok().body(DeleteStampResponse.mock());
   }
 }

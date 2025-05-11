@@ -39,7 +39,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-    log.info("AuthorizationFilter");
     try {
       String token = extractTokenFromHeader(request);
 

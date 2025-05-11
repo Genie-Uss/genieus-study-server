@@ -18,7 +18,7 @@ import shop.genieus.study.domains.auth.application.AuthenticationService;
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.request.LoginRequest;
-import shop.genieus.study.domains.auth.presentation.dto.response.TokenResponse;
+import shop.genieus.study.domains.auth.presentation.dto.response.LoginResponse;
 import shop.genieus.study.domains.auth.presentation.utils.AuthResponseSender;
 
 @Slf4j
@@ -64,7 +64,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       authenticationService.saveRefreshToken(
           tokenPair.getTokenId(), userId, tokenPair.getRefreshTokenCredential());
 
-      TokenResponse response = createResponse(tokenPair, principal);
+      LoginResponse response = createResponse(tokenPair, principal);
       authResponseSender.sendSuccessResponse(httpResponse, response);
 
       log.info("로그인 성공 user: id-{}", userId);
@@ -82,13 +82,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         request, response, HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
   }
 
-  private TokenResponse createResponse(TokenPair tokenPair, CustomPrincipal principal) {
-    return new TokenResponse(
+  private LoginResponse createResponse(TokenPair tokenPair, CustomPrincipal principal) {
+    return LoginResponse.create(
+        true,
         tokenPair.getAccessTokenCredential().tokenValue(),
         tokenPair.getRefreshTokenCredential().tokenValue(),
         principal.id(),
-        principal.role(),
-        principal.nickname());
+        principal.nickname(),
+        principal.role());
   }
 
   private List<GrantedAuthority> extractAuthorities(String role) {
