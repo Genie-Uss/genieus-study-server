@@ -58,7 +58,9 @@ public class UserService implements UserProvider {
   public UserInfo validateUserCredentials(String email, String password) {
     try {
       User user = repository.findByEmail(email);
-      user.matchPassword(password, encryptionService);
+      if (!user.matchPassword(password, encryptionService)) {
+        throw UserValidationException.noEmailOrPassword();
+      }
       return from(user);
     } catch (Exception exception) {
       throw new IllegalArgumentException(exception.getMessage());
