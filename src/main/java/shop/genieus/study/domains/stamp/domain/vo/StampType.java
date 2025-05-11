@@ -1,7 +1,7 @@
 package shop.genieus.study.domains.stamp.domain.vo;
 
 public enum StampType {
-  CODING_TEST,
+  CT,
   TIL,
-  JOB_ACTIVITY
+  RESUME
 }
