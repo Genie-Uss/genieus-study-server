@@ -19,9 +19,9 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 @Getter
 @SuperBuilder
 @Comment("구직활동 도장 테이블")
-@Table(name = "g_job_activity_stamps")
+@Table(name = "g_resume_stamps")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class JobActivityStamp extends Stamp {
+public class ResumeStamp extends Stamp {
 
   @Comment("회사/기관명")
   @Column(nullable = false)
@@ -44,7 +44,7 @@ public class JobActivityStamp extends Stamp {
   @Comment("관련 URL")
   private String relatedUrl;
 
-  public static JobActivityStamp create(
+  public static ResumeStamp create(
       Long userId,
       StampType type,
       LocalDateTime verifiedAt,
@@ -53,7 +53,7 @@ public class JobActivityStamp extends Stamp {
       ActivityType activityType,
       String description,
       String relatedUrl) {
-    return JobActivityStamp.builder()
+    return ResumeStamp.builder()
         .userId(userId)
         .type(type)
         .verifiedAt(verifiedAt)

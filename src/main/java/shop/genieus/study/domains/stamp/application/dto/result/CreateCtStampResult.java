@@ -6,21 +6,19 @@ import shop.genieus.study.domains.stamp.domain.vo.AlgorithmType;
 import shop.genieus.study.domains.stamp.domain.vo.PlatformType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
-public record CreateCodingTestStampResult(
+public record CreateCtStampResult(
     Long id,
     StampType type,
-    boolean isVerified,
     LocalDateTime verifiedAt,
     AlgorithmType algorithmType,
     PlatformType platformType,
     String description,
     String problemUrl
 ) {
-    public static CreateCodingTestStampResult of(CodingTestStamp stamp) {
-        return new CreateCodingTestStampResult(
+    public static CreateCtStampResult of(CodingTestStamp stamp) {
+        return new CreateCtStampResult(
             stamp.getId(),
             stamp.getType(),
-            stamp.getIsVerified(),
             stamp.getVerifiedAt(),
             stamp.getAlgorithmType(),
             stamp.getPlatformType(),

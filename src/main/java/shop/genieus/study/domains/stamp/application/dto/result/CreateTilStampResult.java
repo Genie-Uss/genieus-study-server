@@ -8,7 +8,6 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 public record CreateTilStampResult(
     Long id,
     StampType type,
-    boolean isVerified,
     LocalDateTime verifiedAt,
     String title,
     CategoryType categoryType,
@@ -18,7 +17,6 @@ public record CreateTilStampResult(
     return new CreateTilStampResult(
         stamp.getId(),
         stamp.getType(),
-        stamp.getIsVerified(),
         stamp.getVerifiedAt(),
         stamp.getTitle(),
         stamp.getCategoryType(),

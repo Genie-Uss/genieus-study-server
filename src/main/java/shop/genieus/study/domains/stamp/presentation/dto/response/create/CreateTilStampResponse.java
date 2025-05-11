@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.stamp.presentation.dto.response;
+package shop.genieus.study.domains.stamp.presentation.dto.response.create;
 
 import java.time.LocalDateTime;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
@@ -8,7 +8,6 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 public record CreateTilStampResponse(
     Long id,
     StampType type,
-    boolean isVerified,
     LocalDateTime verifiedAt,
     String title,
     CategoryType categoryType,
@@ -18,7 +17,6 @@ public record CreateTilStampResponse(
     return new CreateTilStampResponse(
         result.id(),
         result.type(),
-        result.isVerified(),
         result.verifiedAt(),
         result.title(),
         result.categoryType(),
