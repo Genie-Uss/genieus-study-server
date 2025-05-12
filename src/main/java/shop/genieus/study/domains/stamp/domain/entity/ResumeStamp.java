@@ -9,15 +9,13 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
-import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 import shop.genieus.study.domains.stamp.domain.vo.ActivityType;
+import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 @Entity
 @Getter
-@SuperBuilder
 @Comment("구직활동 도장 테이블")
 @Table(name = "g_resume_stamps")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,6 +42,24 @@ public class ResumeStamp extends Stamp {
   @Comment("관련 URL")
   private String relatedUrl;
 
+  private ResumeStamp(
+      Long userId,
+      StampType type,
+      LocalDateTime verifiedAt,
+      String companyName,
+      CareerType careerType,
+      ActivityType activityType,
+      String description,
+      String relatedUrl
+  ) {
+    super(userId, type, verifiedAt);
+    this.companyName = companyName;
+    this.careerType = careerType;
+    this.activityType = activityType;
+    this.description = description;
+    this.relatedUrl = relatedUrl;
+  }
+
   public static ResumeStamp create(
       Long userId,
       StampType type,
@@ -52,16 +68,8 @@ public class ResumeStamp extends Stamp {
       CareerType careerType,
       ActivityType activityType,
       String description,
-      String relatedUrl) {
-    return ResumeStamp.builder()
-        .userId(userId)
-        .type(type)
-        .verifiedAt(verifiedAt)
-        .companyName(companyName)
-        .careerType(careerType)
-        .activityType(activityType)
-        .description(description)
-        .relatedUrl(relatedUrl)
-        .build();
+      String relatedUrl
+  ) {
+    return new ResumeStamp(userId, type, verifiedAt, companyName, careerType, activityType, description, relatedUrl);
   }
 }
