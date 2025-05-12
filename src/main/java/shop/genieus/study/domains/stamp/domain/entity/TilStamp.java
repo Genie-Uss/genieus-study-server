@@ -7,14 +7,12 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.domains.stamp.domain.vo.CategoryType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 @Entity
 @Getter
-@SuperBuilder
 @Comment("TIL 도장 테이블")
 @Table(name = "g_til_stamps")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,6 +33,22 @@ public class TilStamp extends Stamp {
   @Comment("관련 URL")
   private String relatedUrl;
 
+  private TilStamp(
+      Long userId,
+      StampType type,
+      LocalDateTime verifiedAt,
+      String title,
+      CategoryType categoryType,
+      String content,
+      String relatedUrl
+  ) {
+    super(userId, type, verifiedAt);
+    this.title = title;
+    this.categoryType = categoryType;
+    this.content = content;
+    this.relatedUrl = relatedUrl;
+  }
+
   public static TilStamp create(
       Long userId,
       StampType type,
@@ -42,15 +56,8 @@ public class TilStamp extends Stamp {
       String title,
       CategoryType categoryType,
       String content,
-      String relatedUrl) {
-    return TilStamp.builder()
-        .userId(userId)
-        .type(type)
-        .verifiedAt(verifiedAt)
-        .title(title)
-        .categoryType(categoryType)
-        .content(content)
-        .relatedUrl(relatedUrl)
-        .build();
+      String relatedUrl
+  ) {
+    return new TilStamp(userId, type, verifiedAt, title, categoryType, content, relatedUrl);
   }
 }

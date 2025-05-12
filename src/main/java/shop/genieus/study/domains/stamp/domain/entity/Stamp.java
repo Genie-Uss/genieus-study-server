@@ -14,19 +14,20 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import shop.genieus.study.domains.stamp.domain.event.StampCreatedEvent;
+import shop.genieus.study.domains.stamp.domain.event.StampDeletedEvent;
 import shop.genieus.study.domains.stamp.domain.exception.StampBusinessException;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 @Entity
 @Getter
-@SuperBuilder
 @Comment("인증 도장 테이블")
 @Table(name = "g_stamps")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Stamp {
+public class Stamp extends AbstractAggregateRoot<Stamp> {
   @Id
   @Comment("인증 도장 아이디")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,11 +45,19 @@ public class Stamp {
   @Comment("인증 시간")
   protected LocalDateTime verifiedAt;
 
-  public static Stamp create(Long userId, StampType type, LocalDateTime verifiedAt) {
-    return Stamp.builder().userId(userId).type(type).verifiedAt(verifiedAt).build();
+  protected Stamp(Long userId, StampType type, LocalDateTime verifiedAt) {
+    this.userId = userId;
+    this.type = type;
+    this.verifiedAt = verifiedAt;
+    this.registerEvent(StampCreatedEvent.of(this));
   }
 
-  public void validate(Long userId) {
+  public void delete(Long userId) {
+   validate(userId);
+   this.registerEvent(StampDeletedEvent.of(this));
+  }
+
+  private void validate(Long userId) {
     if (this.userId != null && !this.userId.equals(userId)) {
       throw StampBusinessException.noPermissionForStamp();
     }

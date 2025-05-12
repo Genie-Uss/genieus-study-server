@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.domains.stamp.domain.vo.AlgorithmType;
 import shop.genieus.study.domains.stamp.domain.vo.PlatformType;
@@ -17,7 +16,6 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 @Entity
 @Getter
-@SuperBuilder
 @Comment("코딩테스트 도장 테이블")
 @Table(name = "g_coding_test_stamps")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,6 +38,21 @@ public class CodingTestStamp extends Stamp {
   @Comment("문제 URL")
   private String problemUrl;
 
+  private CodingTestStamp(
+      Long userId,
+      StampType type,
+      LocalDateTime verifiedAt,
+      AlgorithmType algorithmType,
+      PlatformType platformType,
+      String description,
+      String problemUrl) {
+    super(userId, type, verifiedAt);
+    this.algorithmType = algorithmType;
+    this.platformType = platformType;
+    this.description = description;
+    this.problemUrl = problemUrl;
+  }
+
   public static CodingTestStamp create(
       Long userId,
       StampType type,
@@ -48,14 +61,8 @@ public class CodingTestStamp extends Stamp {
       PlatformType platformType,
       String description,
       String problemUrl) {
-    return CodingTestStamp.builder()
-        .userId(userId)
-        .type(type)
-        .verifiedAt(verifiedAt)
-        .algorithmType(algorithmType)
-        .platformType(platformType)
-        .description(description)
-        .problemUrl(problemUrl)
-        .build();
+    return new CodingTestStamp(
+        userId, type, verifiedAt, algorithmType, platformType, description, problemUrl
+    );
   }
 }

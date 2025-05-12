@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.application.StampCategoryService;
+import shop.genieus.study.domains.stamp.application.StampHistoryService;
 import shop.genieus.study.domains.stamp.application.StampService;
 import shop.genieus.study.domains.stamp.application.dto.info.DeleteStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.get.GetCtStampInfo;
@@ -18,9 +19,9 @@ import shop.genieus.study.domains.stamp.application.dto.info.get.GetTilStampInfo
 import shop.genieus.study.domains.stamp.application.dto.result.CreateCtStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
-import shop.genieus.study.domains.stamp.application.dto.result.VerifiedStampResult;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
 import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
+import shop.genieus.study.domains.stamp.domain.entity.StampHistory;
 import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCtStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateResumeStampRequest;
@@ -32,14 +33,15 @@ import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateT
 import shop.genieus.study.domains.stamp.presentation.dto.response.read.CtStampResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.response.read.ResumeStampResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.response.read.StampCategoryResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.StampHistoryResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.response.read.TilStampResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.read.VerifiedStampResponse;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stamps")
 public class StampController {
   private final StampService stampService;
+  private final StampHistoryService stampHistoryService;
   private final StampCategoryService stampCategoryService;
 
   @PostMapping("/ct")
@@ -71,12 +73,12 @@ public class StampController {
   }
 
   @GetMapping("/user/{userId}")
-  public ResponseEntity<VerifiedStampResponse> getStampByDate(
+  public ResponseEntity<StampHistoryResponse> getStampByDate(
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
-    List<VerifiedStampResult> result = stampService.getVerifiedStampByDate(
+    StampHistory stampHistory = stampHistoryService.getStampHistoryByDate(
         new GetStampInfo(userId, date));
-    return ResponseEntity.ok(VerifiedStampResponse.of(result));
+    return ResponseEntity.ok(StampHistoryResponse.of(stampHistory));
   }
 
   @GetMapping("/ct/user/{userId}")
@@ -109,8 +111,7 @@ public class StampController {
   @DeleteMapping("/{id}")
   public ResponseEntity<DeleteStampResponse> deleteStamp(
       @AuthPrincipal CustomPrincipal principal,
-      @PathVariable(name = "id") Long stampId
-  ) {
+      @PathVariable(name = "id") Long stampId) {
     stampService.deleteStamp(new DeleteStampInfo(principal.id(),stampId));
     return ResponseEntity.ok(DeleteStampResponse.of());
   }
