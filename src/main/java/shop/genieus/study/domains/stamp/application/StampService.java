@@ -27,6 +27,7 @@ import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
 import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
 import shop.genieus.study.domains.stamp.domain.entity.Stamp;
 import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
+import shop.genieus.study.domains.stamp.domain.exception.StampBusinessException;
 import shop.genieus.study.domains.stamp.domain.policy.StampVerificationPolicy;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
@@ -141,15 +142,15 @@ public class StampService {
     Long userId = info.userId();
     Long stampId = info.stampId();
     Stamp stamp = stampRepository.findById(stampId);
-    stamp.validate(userId);
+    stamp.delete(userId);
     stampRepository.deleteById(stampId);
   }
 
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {
-//    if (attendanceProvider.existsByUserIdAndDate(userId, currentTime.toLocalDate())) {
-//      return;
-//    }
-//    throw StampBusinessException.mustCheckInBeforeStamping();
+    if (attendanceProvider.existsByUserIdAndDate(userId, currentTime.toLocalDate())) {
+      return;
+    }
+    throw StampBusinessException.mustCheckInBeforeStamping();
   }
 
   private LocalDate getCurrentDate(LocalDate date) {

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import shop.genieus.study.domains.stamp.application.repository.StampRepository;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
 import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
@@ -15,7 +15,7 @@ import shop.genieus.study.domains.stamp.domain.exception.StampNotFoundException;
 import shop.genieus.study.domains.stamp.infrastructure.persistence.repository.StampJpaRepository;
 
 @Slf4j
-@Component
+@Repository
 @RequiredArgsConstructor
 public class StampRepositoryImpl implements StampRepository {
   private final StampJpaRepository jpaRepository;
