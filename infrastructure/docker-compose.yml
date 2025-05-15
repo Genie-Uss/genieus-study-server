@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: attendance-mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: attendance
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+
+  redis:
+    image: redis/redis-stack
+    container_name: attendance-redis
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"   # RedisInsight GUI
+    volumes:
+      - ./redis/data:/data
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: attendance-zipkin
+    restart: unless-stopped
+    ports:
+      - "9411:9411"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: attendance-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka-1:
+    image: confluentinc/cp-kafka:latest
+    container_name: attendance-kafka-1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,EXTERNAL://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+
+  kafka-2:
+    image: confluentinc/cp-kafka:latest
+    container_name: attendance-kafka-2
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9092"
+      - "19093:19093"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:19093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092,EXTERNAL://localhost:19093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+
+  kafka-ui:
+    container_name: attendance-kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8085:8085"
+    environment:
+      SERVER_PORT: 8085
+      KAFKA_CLUSTERS_0_NAME: Genieus-Local-Cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:9092,kafka-2:9092
+    depends_on:
+      - zookeeper
+      - kafka-1
+      - kafka-2
+
+      ############## Prometheus ###############
+  prometheus:
+    image: prom/prometheus
+    container_name: attendance-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  ############## Grafana ###############
+  grafana:
+    image: grafana/grafana
+    container_name: attendance-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+    volumes:
+      - ./grafana/data:/var/lib/grafana
