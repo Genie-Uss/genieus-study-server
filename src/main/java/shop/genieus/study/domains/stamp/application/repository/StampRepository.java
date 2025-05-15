@@ -12,7 +12,7 @@ public interface StampRepository {
 
     Stamp findById(Long id);
 
-    void deleteById(Long id);
+    void delete(Stamp stamp);
 
     List<Stamp> getStampByDate(Long userId, LocalDate date);
 

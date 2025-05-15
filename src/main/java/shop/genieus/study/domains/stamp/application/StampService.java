@@ -143,7 +143,7 @@ public class StampService {
     Long stampId = info.stampId();
     Stamp stamp = stampRepository.findById(stampId);
     stamp.delete(userId);
-    stampRepository.deleteById(stampId);
+    stampRepository.delete(stamp);
   }
 
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {
