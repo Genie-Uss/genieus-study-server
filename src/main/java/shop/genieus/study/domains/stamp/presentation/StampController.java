@@ -99,7 +99,7 @@ public class StampController {
     return ResponseEntity.ok(TilStampResponse.of(result));
   }
 
-  @GetMapping("/resume/user{userId}")
+  @GetMapping("/resume/user/{userId}")
   public ResponseEntity<ResumeStampResponse> getResumeStampByDate(
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
