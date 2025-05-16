@@ -1,6 +1,7 @@
 package shop.genieus.study.domains.attendance.infrastructure.persistence;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceNotFoundException;
@@ -28,5 +29,10 @@ public class AttendanceRepositoryImpl implements AttendanceRepository {
     return jpaRepository
         .findByUserIdAndAttendanceTimeDate(userId, today)
         .orElseThrow(() -> AttendanceNotFoundException.create());
+  }
+
+  @Override
+  public int batchCheckOutUncheckedAttendances(LocalDate date, LocalDateTime checkOutTime) {
+    return jpaRepository.batchCheckOutUncheckedAttendances(date, checkOutTime);
   }
 }
