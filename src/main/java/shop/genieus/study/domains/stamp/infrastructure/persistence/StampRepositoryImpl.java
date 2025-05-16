@@ -33,8 +33,8 @@ public class StampRepositoryImpl implements StampRepository {
   }
 
   @Override
-  public void deleteById(Long id) {
-    jpaRepository.deleteById(id);
+  public void delete(Stamp stamp) {
+    jpaRepository.delete(stamp);
   }
 
   @Override
