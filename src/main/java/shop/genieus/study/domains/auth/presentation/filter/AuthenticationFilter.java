@@ -14,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import shop.genieus.study.commons.util.LoggingUtil;
 import shop.genieus.study.domains.auth.application.AuthenticationService;
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
@@ -35,14 +36,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       LoginRequest loginRequest =
           objectMapper.readValue(request.getInputStream(), LoginRequest.class);
 
+      if (log.isDebugEnabled()) {
+        log.debug(
+            "로그인 시도 - 이메일: {}, IP: {}",
+            LoggingUtil.maskEmail(loginRequest.email()),
+            LoggingUtil.getClientIp(request));
+      }
+
       CustomPrincipal principal =
           authenticationService.getUserByCredentialInfo(loginRequest.toInfo());
 
       return new UsernamePasswordAuthenticationToken(
           principal, null, extractAuthorities(principal.role()));
     } catch (IOException e) {
-      log.error("[IOException] 인증 실패: ", e);
-      throw new AuthenticationException("로그인에 실패했습니다.") {};
+      log.error("로그인 요청 처리 중 IO 오류: {}", e.getMessage());
+      throw new AuthenticationException("로그인 요청을 처리할 수 없습니다.") {};
     }
   }
 
@@ -66,17 +74,18 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       LoginResponse response = createResponse(tokenPair, principal);
       authResponseSender.sendSuccessResponse(httpResponse, response);
 
-      log.info("로그인 성공 user: id-{}", userId);
+      log.info("로그인 성공 - 사용자: {}, IP: {}", userId, LoggingUtil.getClientIp(httpRequest));
     } catch (Exception e) {
-      log.error("[Exception] 인증 중 오류 발생: ", e);
-      throw new AuthenticationException("로그인에 실패했습니다.") {};
+      log.error("인증 완료 후 처리 중 오류: {}", e.getMessage());
+      throw new AuthenticationException("로그인 처리 중 오류가 발생했습니다.") {};
     }
   }
 
   @Override
   protected void unsuccessfulAuthentication(
       HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-    log.info("[AuthenticationException] 인증 실패: {}", failed.getMessage());
+    log.info("로그인 실패 - 원인: {}, IP: {}", failed.getMessage(), LoggingUtil.getClientIp(request));
+
     authResponseSender.sendErrorResponse(
         request, response, HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage(), null);
   }

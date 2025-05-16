@@ -1,5 +1,7 @@
 package shop.genieus.study.domains.auth.application;
 
+import static shop.genieus.study.commons.util.LoggingUtil.maskEmail;
+
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,16 +104,5 @@ public class AuthenticationService {
     tokenRepository.saveRefreshToken(
         tokenPair.getTokenId(), userId, tokenPair.getRefreshTokenCredential());
     return tokenPair;
-  }
-
-  private String maskEmail(String email) {
-    if (email == null || email.isBlank() || !email.contains("@")) {
-      return "[invalid]";
-    }
-    String[] parts = email.split("@");
-    if (parts[0].length() <= 3) {
-      return parts[0].charAt(0) + "***@" + parts[1];
-    }
-    return parts[0].substring(0, 3) + "***@" + parts[1];
   }
 }
