@@ -11,6 +11,7 @@ import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckOutInfo;
+import shop.genieus.study.domains.attendance.application.dto.info.GetAttendanceInfo;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceBusinessException;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceNotFoundException;
 import shop.genieus.study.domains.attendance.application.repository.AttendanceRepository;
@@ -72,8 +73,14 @@ public class AttendanceService implements AttendanceProvider {
     return repository.save(attendance);
   }
 
+  public Attendance getAttendance(GetAttendanceInfo info) {
+    Attendance attendance =
+        repository.findByUserIdAndAttendanceTimeDate(info.targetUserId(), info.targetDate());
+    return attendance;
+  }
+
   @Override
   public boolean existsByUserIdAndDate(Long userId, LocalDate date) {
-    return false;
+    return repository.existsByUserIdAndAttendanceTimeDate(userId, date);
   }
 }

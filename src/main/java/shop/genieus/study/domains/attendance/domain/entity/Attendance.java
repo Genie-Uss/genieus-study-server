@@ -80,4 +80,8 @@ public class Attendance extends BaseEntity {
   public boolean isCheckedOut() {
     return this.attendanceTime.isCheckedOut();
   }
+
+  public boolean isCheckedIn() {
+    return this.attendanceTime.isCheckedIn();
+  }
 }
