@@ -38,13 +38,13 @@ public class AuthenticationService {
 
       return principal;
     } catch (Exception e) {
+      log.warn("인증 실패 - 이메일: {}, 원인: {}", maskEmail(info.email()), e.getMessage());
       throw CustomAuthenticationException.create(e.getMessage());
     }
   }
 
   public TokenPair createAuthenticationToken(Long id) {
     String tokenIdValue = idGenerator.generateUniqueId();
-
     return tokenUtils.createTokenPair(tokenIdValue, id);
   }
 
@@ -57,19 +57,28 @@ public class AuthenticationService {
     try {
       validationResult = tokenUtils.validateTokenAndExtractId(refreshToken);
     } catch (TokenExpiredException e) {
+      log.info("리프레시 토큰 갱신 실패 - 만료된 토큰");
+      return ReIssueTokenResult.expiredRefreshToken();
+    } catch (Exception e) {
+      log.warn("리프레시 토큰 검증 실패 - 원인: {}", e.getMessage());
       return ReIssueTokenResult.expiredRefreshToken();
     }
 
     Long userId = validationResult.getUserId();
     TokenId oldTokenId = validationResult.getTokenId();
 
-    validateRefreshToken(oldTokenId, refreshToken);
-    revokeTokenPair(accessToken, oldTokenId, userId);
+    try {
+      validateRefreshToken(oldTokenId, refreshToken);
+      revokeTokenPair(accessToken, oldTokenId, userId);
 
-    TokenPair newTokenPair = generateAndPersistTokenPair(userId);
-    log.info("토큰 갱신 성공- Id: {}", userId);
+      TokenPair newTokenPair = generateAndPersistTokenPair(userId);
+      log.info("토큰 갱신 성공 - 사용자: {}", userId);
 
-    return ReIssueTokenResult.of(newTokenPair, userId);
+      return ReIssueTokenResult.of(newTokenPair, userId);
+    } catch (Exception e) {
+      log.warn("토큰 갱신 실패 - 사용자: {}, 원인: {}", userId, e.getMessage());
+      return ReIssueTokenResult.expiredRefreshToken();
+    }
   }
 
   private void validateRefreshToken(TokenId tokenId, String refreshToken) {
@@ -93,5 +102,16 @@ public class AuthenticationService {
     tokenRepository.saveRefreshToken(
         tokenPair.getTokenId(), userId, tokenPair.getRefreshTokenCredential());
     return tokenPair;
+  }
+
+  private String maskEmail(String email) {
+    if (email == null || email.isBlank() || !email.contains("@")) {
+      return "[invalid]";
+    }
+    String[] parts = email.split("@");
+    if (parts[0].length() <= 3) {
+      return parts[0].charAt(0) + "***@" + parts[1];
+    }
+    return parts[0].substring(0, 3) + "***@" + parts[1];
   }
 }

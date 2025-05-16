@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import shop.genieus.study.commons.exception.ApiErrorResponse;
 import shop.genieus.study.commons.exception.Domain;
+import shop.genieus.study.commons.util.LoggingUtil;
 import shop.genieus.study.domains.auth.domain.exception.AuthServiceException;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class AuthResponseSender {
       configureResponse(response, HttpServletResponse.SC_OK);
       response.getWriter().write(objectMapper.writeValueAsString(body));
     } catch (IOException e) {
+      log.error("응답 전송 중 IO 오류: {}", e.getMessage());
       throw new RuntimeException("응답 전송 중 오류 발생", e);
     }
   }
@@ -37,8 +39,16 @@ public class AuthResponseSender {
     try {
       configureResponse(response, statusCode);
       writeErrorResponse(request, response, statusCode, message, details);
+
+      if (log.isDebugEnabled()) {
+        log.debug(
+            "에러 응답 전송 - 상태: {}, 메시지: {}, 요청: {}",
+            statusCode,
+            message,
+            LoggingUtil.getRequestInfo(request));
+      }
     } catch (IOException e) {
-      log.error("Error writing response body: {}", e.getMessage());
+      log.error("에러 응답 전송 중 IO 오류: {}", e.getMessage());
       throw new AuthServiceException(e.getMessage());
     }
   }
