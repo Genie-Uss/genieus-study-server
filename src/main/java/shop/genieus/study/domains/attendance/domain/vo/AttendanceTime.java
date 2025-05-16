@@ -119,6 +119,10 @@ public class AttendanceTime {
     return checkOutTime != null;
   }
 
+  public boolean isCheckedIn() {
+    return checkInTime != null;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

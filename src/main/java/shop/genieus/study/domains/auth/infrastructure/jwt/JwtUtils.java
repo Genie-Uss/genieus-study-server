@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import shop.genieus.study.domains.auth.application.dto.result.TokenValidationResult;
 import shop.genieus.study.domains.auth.application.util.TokenUtils;
+import shop.genieus.study.domains.auth.domain.exception.TokenExpiredException;
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
 import shop.genieus.study.domains.auth.infrastructure.jwt.util.JwtProvider;
 import shop.genieus.study.domains.auth.infrastructure.jwt.util.JwtValidator;
@@ -31,9 +32,10 @@ public class JwtUtils implements TokenUtils {
   }
 
   @Override
-  public TokenValidationResult validateTokenAndExtractId(String token) {
+  public TokenValidationResult validateTokenAndExtractId(String token)
+      throws TokenExpiredException {
     Claims claims = jwtValidator.validateToken(token);
 
-    return TokenValidationResult.create(claims.getId(), Long.parseLong(claims.getSubject()));
+    return TokenValidationResult.of(claims.getId(), Long.parseLong(claims.getSubject()));
   }
 }

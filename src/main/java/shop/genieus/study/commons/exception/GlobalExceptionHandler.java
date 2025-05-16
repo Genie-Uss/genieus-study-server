@@ -58,6 +58,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return buildResponse(exception, response);
   }
 
+  @ExceptionHandler(NotFoundException.class)
+  public final ResponseEntity<ApiErrorResponse> handleNotFoundException(
+      NotFoundException exception, WebRequest request) {
+    GlobalErrorSpec spec = GlobalErrorSpec.NOT_FOUND;
+    ApiErrorResponse response =
+        ApiErrorResponse.create(
+            exception.getDomain(), exception.getMessage(), spec.getStatusCode(), request);
+    return buildResponse(exception, response);
+  }
+
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
       MethodArgumentNotValidException exception,

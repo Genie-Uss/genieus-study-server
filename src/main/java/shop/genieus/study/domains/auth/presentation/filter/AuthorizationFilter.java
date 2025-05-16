@@ -3,7 +3,9 @@ package shop.genieus.study.domains.auth.presentation.filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import shop.genieus.study.domains.auth.application.AuthorizationService;
+import shop.genieus.study.domains.auth.application.dto.result.TokenFailCode;
 import shop.genieus.study.domains.auth.application.dto.result.TokenValidationResult;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.auth.presentation.utils.AuthResponseSender;
@@ -44,21 +47,27 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
       if (token != null) {
         TokenValidationResult result = authorizationService.validateAccessToken(token);
+        if (!result.isValid()) {
+          TokenFailCode failCode = result.getFailCode();
+          Map<String, String> details = new HashMap<>(Map.of("code", failCode.getCode()));
+          handleAuthorizationFailure(request, response, failCode.getMessage(), details);
+          return;
+        }
         setAuthentication(result.getUserId());
       } else {
         String message = "유효하지 않은 토큰 값입니다.";
         log.warn("원인: {}, 토큰: {}", message, token);
-        handleAuthorizationFailure(request, response, message);
+        handleAuthorizationFailure(request, response, message, null);
         return;
       }
 
       filterChain.doFilter(request, response);
     } catch (AccessDeniedException accessDeniedException) {
       log.error("AuthenticationException 오류: ", accessDeniedException);
-      handleAuthorizationFailure(request, response, accessDeniedException.getMessage());
+      handleAuthorizationFailure(request, response, accessDeniedException.getMessage(), null);
     } catch (Exception e) {
       log.error("접근 권한 확인 중 오류 발생: ", e);
-      handleAuthorizationFailure(request, response, e.getMessage());
+      handleAuthorizationFailure(request, response, e.getMessage(), null);
     }
   }
 
@@ -71,9 +80,12 @@ public class AuthorizationFilter extends OncePerRequestFilter {
   }
 
   private void handleAuthorizationFailure(
-      HttpServletRequest request, HttpServletResponse response, String message) {
+      HttpServletRequest request,
+      HttpServletResponse response,
+      String message,
+      Map<String, String> details) {
     authResponseSender.sendErrorResponse(
-        request, response, HttpServletResponse.SC_FORBIDDEN, message);
+        request, response, HttpServletResponse.SC_FORBIDDEN, message, details);
   }
 
   public void setAuthentication(Long useId) {
