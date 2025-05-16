@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import shop.genieus.study.commons.util.LoggingUtil;
 import shop.genieus.study.domains.auth.application.AuthenticationService;
 import shop.genieus.study.domains.auth.application.AuthorizationService;
 import shop.genieus.study.domains.auth.application.dto.result.ReIssueTokenResult;
@@ -34,18 +35,22 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
   private final ObjectMapper objectMapper;
 
   @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) {
+    return !request.getRequestURI().equals(REFRESH_URI);
+  }
+
+  @Override
   protected void doFilterInternal(
       HttpServletRequest httpRequest, HttpServletResponse httpResponse, FilterChain filterChain)
       throws ServletException, IOException {
 
-    if (!httpRequest.getRequestURI().equals(REFRESH_URI)) {
-      filterChain.doFilter(httpRequest, httpResponse);
-      return;
-    }
-
     try {
       ReIssueTokenRequest refreshRequest =
           objectMapper.readValue(httpRequest.getInputStream(), ReIssueTokenRequest.class);
+
+      if (log.isDebugEnabled()) {
+        log.debug("토큰 갱신 요청 - IP: {}", LoggingUtil.getClientIp(httpRequest));
+      }
 
       ReIssueTokenResult result =
           authenticationService.reIssueTokenPair(
@@ -60,6 +65,8 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
 
       successfulAuthentication(httpRequest, httpResponse, result);
     } catch (Exception e) {
+      log.warn(
+          "토큰 갱신 요청 처리 중 오류: {}, IP: {}", e.getMessage(), LoggingUtil.getClientIp(httpRequest));
       unsuccessfulAuthentication(httpRequest, httpResponse, e, null);
     }
   }
@@ -67,18 +74,17 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
   protected void successfulAuthentication(
       HttpServletRequest httpRequest, HttpServletResponse httpResponse, ReIssueTokenResult result) {
     try {
-
       CustomPrincipal principal = authorizationService.getPrincipal(result.userId());
 
       RefreshTokenResponse response = createResponse(result.tokenPair(), principal);
       authResponseSender.sendSuccessResponse(httpResponse, response);
 
-      log.info("리프레쉬 토큰 발급 성공 user: id-{}", result.userId());
+      log.info("토큰 갱신 성공 - 사용자: {}, IP: {}", result.userId(), LoggingUtil.getClientIp(httpRequest));
     } catch (AuthenticationException authException) {
-      log.error("AuthenticationException 오류: ", authException);
+      log.error("토큰 갱신 후 인증 정보 조회 오류: {}", authException.getMessage());
       throw authException;
     } catch (Exception e) {
-      log.error("인증 중 오류 발생: ", e);
+      log.error("토큰 갱신 후 응답 생성 중 오류: {}", e.getMessage());
       throw e;
     }
   }
@@ -88,7 +94,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       Exception exception,
       Map<String, String> details) {
-    log.error("리프레쉬 토큰 발급 중 오류 발생: ", exception);
+    log.warn("토큰 갱신 실패 - 원인: {}, IP: {}", exception.getMessage(), LoggingUtil.getClientIp(request));
     authResponseSender.sendErrorResponse(
         request, response, HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage(), details);
   }
@@ -98,7 +104,7 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       String message,
       Map<String, String> details) {
-    log.error("리프레쉬 토큰 발급 중 오류 발생: ", message);
+    log.warn("토큰 갱신 실패 - 메시지: {}, IP: {}", message, LoggingUtil.getClientIp(request));
     authResponseSender.sendErrorResponse(
         request, response, HttpServletResponse.SC_UNAUTHORIZED, message, details);
   }

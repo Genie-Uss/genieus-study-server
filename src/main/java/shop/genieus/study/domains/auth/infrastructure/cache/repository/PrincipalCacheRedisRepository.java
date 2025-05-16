@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import shop.genieus.study.domains.auth.domain.vo.TokenType;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Repository
@@ -14,16 +13,31 @@ public class PrincipalCacheRedisRepository {
 
   private final RedisTemplate<String, CustomPrincipal> principalRedisTemplate;
 
-  public CustomPrincipal save(Long userId, CustomPrincipal principal) {
-    String key = PRINCIPAL_PREFIX + userId;
-    long principalTtl = TokenType.ACCESS.getExpiration().toMillis();
+  public CustomPrincipal save(Long userId, CustomPrincipal principal, long ttlMillis) {
+    if (userId == null || principal == null) {
+      return null;
+    }
 
-    principalRedisTemplate.opsForValue().set(key, principal, principalTtl, TimeUnit.MILLISECONDS);
-    return principal;
+    String key = PRINCIPAL_PREFIX + userId;
+
+    try {
+      principalRedisTemplate.opsForValue().set(key, principal, ttlMillis, TimeUnit.MILLISECONDS);
+      return principal;
+    } catch (Exception e) {
+      return principal;
+    }
   }
 
   public CustomPrincipal findById(Long userId) {
+    if (userId == null) {
+      return null;
+    }
+
     String key = PRINCIPAL_PREFIX + userId;
-    return principalRedisTemplate.opsForValue().get(key);
+    try {
+      return principalRedisTemplate.opsForValue().get(key);
+    } catch (Exception e) {
+      return null;
+    }
   }
 }

@@ -10,21 +10,25 @@ import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 
 @Configuration
 public class RedisConfig {
-
   @Bean
   public RedisTemplate<String, CustomPrincipal> principalRedisTemplate(
-    RedisConnectionFactory connectionFactory) {
-      RedisTemplate<String, CustomPrincipal> template = new RedisTemplate<>();
-      template.setConnectionFactory(connectionFactory);
+      RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, CustomPrincipal> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
 
-      template.setKeySerializer(new StringRedisSerializer());
+    // 키 직렬화에 문자열 직렬화 사용
+    template.setKeySerializer(new StringRedisSerializer());
 
-      template.setValueSerializer(new Jackson2JsonRedisSerializer<>(CustomPrincipal.class));
+    // 값 직렬화에 Jackson 직렬화 사용
+    template.setValueSerializer(new Jackson2JsonRedisSerializer<>(CustomPrincipal.class));
 
-      template.setHashKeySerializer(new StringRedisSerializer());
-      template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(CustomPrincipal.class));
+    // 해시 키/값 직렬화 설정
+    template.setHashKeySerializer(new StringRedisSerializer());
+    template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(CustomPrincipal.class));
 
-      template.afterPropertiesSet();
-      return template;
+    // 템플릿 속성 사용 활성화
+    template.setEnableTransactionSupport(false); // 트랜잭션 비활성화 - 성능 향상
+    template.afterPropertiesSet();
+    return template;
   }
 }
