@@ -22,7 +22,10 @@ public class TokenRepositoryImpl implements TokenRepository {
     String tokenValue = tokenId.value();
     tokenRedisRepository.saveRefreshToken(
         tokenValue, userId, refreshTokenCredential.tokenValue(), ttlMillis);
-    log.info("리프레시 토큰 저장: userId={}, tokenId={}", userId, tokenValue);
+
+    if (log.isDebugEnabled()) {
+      log.debug("리프레시 토큰 저장: userId={}, tokenIdHash={}", userId, tokenValue.hashCode());
+    }
   }
 
   @Override
@@ -31,27 +34,48 @@ public class TokenRepositoryImpl implements TokenRepository {
     if (ttlMillis <= 0) {
       return;
     }
+
     ttlMillis += 60_000;
     tokenRedisRepository.addToBlacklist(tokenId.value(), ttlMillis);
+
+    if (log.isDebugEnabled()) {
+      log.debug("토큰 블랙리스트 등록: tokenIdHash={}, 만료시간={}", tokenId.value().hashCode(), expiration);
+    }
   }
 
   @Override
   public void removeRefreshToken(TokenId tokenId, Long userId) {
     tokenRedisRepository.removeRefreshToken(tokenId.value(), userId);
+
+    if (log.isDebugEnabled()) {
+      log.debug("리프레시 토큰 제거: userId={}, tokenIdHash={}", userId, tokenId.value().hashCode());
+    }
   }
 
   @Override
   public boolean isBlacklisted(TokenId tokenId) {
-    return tokenRedisRepository.isBlacklisted(tokenId.value());
+    boolean blacklisted = tokenRedisRepository.isBlacklisted(tokenId.value());
+
+    if (blacklisted && log.isDebugEnabled()) {
+      log.debug("블랙리스트에 존재하는 토큰: tokenIdHash={}", tokenId.value().hashCode());
+    }
+
+    return blacklisted;
   }
 
   @Override
-  public boolean isValidRefreshToken(TokenId userId, String refreshToken) {
-    if (userId == null || refreshToken == null || refreshToken.isEmpty()) {
+  public boolean isValidRefreshToken(TokenId tokenId, String refreshToken) {
+    if (tokenId == null || refreshToken == null || refreshToken.isEmpty()) {
       return false;
     }
-    String storedToken = tokenRedisRepository.getRefreshToken(userId.value());
+    String storedToken = tokenRedisRepository.getRefreshToken(tokenId.value());
 
-    return storedToken != null && storedToken.equals(refreshToken);
+    boolean isValid = storedToken != null && storedToken.equals(refreshToken);
+
+    if (!isValid && log.isDebugEnabled()) {
+      log.debug("유효하지 않은 리프레시 토큰: tokenIdHash={}", tokenId.value().hashCode());
+    }
+
+    return isValid;
   }
 }

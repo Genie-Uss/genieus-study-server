@@ -37,15 +37,19 @@ public class TokenRedisRepository {
     String refreshTokenKey = REFRESH_TOKEN_PREFIX + tokenId;
 
     Boolean exists = redisTemplate.hasKey(refreshTokenKey);
-    if (Boolean.TRUE.equals(exists)) {
+    if (exists) {
       redisTemplate.delete(refreshTokenKey);
     }
-    redisTemplate.opsForSet().remove(USER_TOKENS_PREFIX + userId, tokenId);
+
+    String userTokensKey = USER_TOKENS_PREFIX + userId;
+    if (redisTemplate.hasKey(userTokensKey)) {
+      redisTemplate.opsForSet().remove(userTokensKey, tokenId);
+    }
   }
 
   public boolean isBlacklisted(String tokenId) {
     String key = BLACKLIST_PREFIX + tokenId;
-    return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    return redisTemplate.hasKey(key);
   }
 
   public String getRefreshToken(String tokenId) {
