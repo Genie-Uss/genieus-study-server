@@ -1,12 +1,14 @@
 package shop.genieus.study.domains.attendance.presentation;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.attendance.application.AttendanceService;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckOutInfo;
+import shop.genieus.study.domains.attendance.application.dto.info.GetAttendanceInfo;
 import shop.genieus.study.domains.attendance.presentation.dto.request.CheckInRequest;
 import shop.genieus.study.domains.attendance.presentation.dto.request.CheckOutRequest;
 import shop.genieus.study.domains.attendance.presentation.dto.response.AttendanceResponse;
@@ -42,11 +44,18 @@ public class AttendanceController {
     return ResponseEntity.ok().body(response);
   }
 
-  // ================================== mock
-
   @GetMapping
   public ResponseEntity<AttendanceResponse> getAttendance(
-      @RequestParam(required = false) String date) {
-    return ResponseEntity.ok().body(AttendanceResponse.mock());
+      @AuthPrincipal CustomPrincipal principal,
+      @RequestParam(required = false) LocalDate date,
+      @RequestParam Long userId) {
+    LocalDate targetDate = (date != null) ? date : LocalDate.now();
+    AttendanceResponse response =
+        AttendanceResponse.from(
+            attendanceService.getAttendance(new GetAttendanceInfo(userId, targetDate)),
+            principal.id(),
+            userId);
+
+    return ResponseEntity.ok().body(response);
   }
 }
