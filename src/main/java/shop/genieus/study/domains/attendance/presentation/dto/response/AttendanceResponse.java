@@ -13,6 +13,7 @@ public record AttendanceResponse(
     boolean isCheckedOut,
     LocalDateTime checkInTime,
     LocalDateTime checkOutTime,
+    int desiredCoreTime,
     int studyDuration,
     boolean isOwner) {
 
@@ -26,6 +27,7 @@ public record AttendanceResponse(
         attendance.isCheckedOut(),
         attendanceTime.getCheckInTime(),
         attendanceTime.getCheckOutTime(),
+        attendance.getDesiredCoreTime(),
         attendance.getStudyResult().getStudyMinutes(),
         userId.equals(targetUserId));
   }
