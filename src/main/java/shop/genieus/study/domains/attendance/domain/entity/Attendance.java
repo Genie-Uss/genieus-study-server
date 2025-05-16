@@ -6,7 +6,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.*;
 import org.hibernate.annotations.Comment;
-import shop.genieus.study.commons.jpa.BaseEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import shop.genieus.study.domains.attendance.domain.event.AttendanceEvent;
 import shop.genieus.study.domains.attendance.domain.exception.AttendanceValidationException;
 import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
 import shop.genieus.study.domains.attendance.domain.vo.StudyResult;
@@ -25,7 +28,7 @@ import shop.genieus.study.domains.attendance.domain.vo.StudyResult;
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Attendance extends BaseEntity {
+public class Attendance extends AbstractAggregateRoot<Attendance> {
   @Id
   @Comment("아이디")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +44,16 @@ public class Attendance extends BaseEntity {
 
   @Embedded private StudyResult studyResult;
 
+  @CreatedBy
+  @Column(name = "created_by", nullable = false, updatable = false)
+  @Comment("생성자")
+  private Long createdBy;
+
+  @LastModifiedBy
+  @Column(name = "updated_by", insertable = false)
+  @Comment("수정자")
+  private Long updatedBy;
+
   public static Attendance checkIn(
       Long userId,
       LocalDateTime checkInTime,
@@ -52,15 +65,20 @@ public class Attendance extends BaseEntity {
         AttendanceTime.of(checkInTime, null, desiredCheckInTime, currentDate, currentDateTime);
     StudyResult studyResult = StudyResult.initial();
 
-    return Attendance.builder()
-        .userId(userId)
-        .desiredCoreTime(desiredCoreTime)
-        .attendanceTime(attendanceTime)
-        .studyResult(studyResult)
-        .build();
+    Attendance attendance =
+        Attendance.builder()
+            .userId(userId)
+            .desiredCoreTime(desiredCoreTime)
+            .attendanceTime(attendanceTime)
+            .studyResult(studyResult)
+            .build();
+
+    attendance.registerEvent(AttendanceEvent.checkIn(userId));
+
+    return attendance;
   }
 
-  public void checkOut(
+  public Attendance checkOut(
       LocalDateTime checkOutTime, LocalDate currentDate, LocalDateTime currentDateTime) {
     if (this.attendanceTime.isCheckedOut()) {
       throw AttendanceValidationException.alreadyCheckedOut();
@@ -75,6 +93,10 @@ public class Attendance extends BaseEntity {
 
     this.attendanceTime = updatedAttendanceTime;
     this.studyResult = updatedStudyResult;
+
+    this.registerEvent(AttendanceEvent.checkOut(userId));
+
+    return this;
   }
 
   public boolean isCheckedOut() {
