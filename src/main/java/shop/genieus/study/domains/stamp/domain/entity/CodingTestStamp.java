@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
+import shop.genieus.study.domains.stamp.domain.event.StampActivityEvent;
 import shop.genieus.study.domains.stamp.domain.vo.AlgorithmType;
 import shop.genieus.study.domains.stamp.domain.vo.PlatformType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
@@ -61,8 +62,11 @@ public class CodingTestStamp extends Stamp {
       PlatformType platformType,
       String description,
       String problemUrl) {
-    return new CodingTestStamp(
-        userId, type, verifiedAt, algorithmType, platformType, description, problemUrl
-    );
+    CodingTestStamp stamp =
+        new CodingTestStamp(
+            userId, type, verifiedAt, algorithmType, platformType, description, problemUrl);
+    stamp.registerEvent(StampActivityEvent.of(stamp));
+
+    return stamp;
   }
 }
