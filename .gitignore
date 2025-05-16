@@ -41,3 +41,5 @@ out/
 ### Infra ###
 infrastructure/mysql
 infrastructure/redis
+
+gradlew
