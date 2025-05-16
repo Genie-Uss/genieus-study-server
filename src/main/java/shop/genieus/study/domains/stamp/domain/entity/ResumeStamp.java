@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
+import shop.genieus.study.domains.stamp.domain.event.StampActivityEvent;
 import shop.genieus.study.domains.stamp.domain.vo.ActivityType;
 import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
@@ -50,8 +51,7 @@ public class ResumeStamp extends Stamp {
       CareerType careerType,
       ActivityType activityType,
       String description,
-      String relatedUrl
-  ) {
+      String relatedUrl) {
     super(userId, type, verifiedAt);
     this.companyName = companyName;
     this.careerType = careerType;
@@ -68,8 +68,19 @@ public class ResumeStamp extends Stamp {
       CareerType careerType,
       ActivityType activityType,
       String description,
-      String relatedUrl
-  ) {
-    return new ResumeStamp(userId, type, verifiedAt, companyName, careerType, activityType, description, relatedUrl);
+      String relatedUrl) {
+    ResumeStamp stamp =
+        new ResumeStamp(
+            userId,
+            type,
+            verifiedAt,
+            companyName,
+            careerType,
+            activityType,
+            description,
+            relatedUrl);
+    stamp.registerEvent(StampActivityEvent.of(stamp));
+
+    return stamp;
   }
 }

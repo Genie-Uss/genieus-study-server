@@ -5,5 +5,6 @@ public enum Domain {
   USER,
   STAMP,
   ATTENDANCE,
+  NOTIFICATION,
   GLOBAL
 }

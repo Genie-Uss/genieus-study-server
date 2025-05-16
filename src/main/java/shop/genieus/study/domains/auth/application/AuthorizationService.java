@@ -3,6 +3,7 @@ package shop.genieus.study.domains.auth.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import shop.genieus.study.commons.provider.AuthProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.auth.application.cache.PrincipalCache;
 import shop.genieus.study.domains.auth.application.dto.result.TokenValidationResult;
@@ -15,7 +16,7 @@ import shop.genieus.study.domains.user.application.UserService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AuthorizationService {
+public class AuthorizationService implements AuthProvider {
   private final TokenRepository tokenRepository;
   private final TokenUtils tokenUtils;
   private final PrincipalCache principalCache;
@@ -30,6 +31,16 @@ public class AuthorizationService {
   }
 
   public CustomPrincipal getPrincipal(Long userId) {
+    return getUserPrincipal(userId);
+  }
+
+  @Override
+  public String getUserNickname(Long userId) {
+    return getUserPrincipal(userId).nickname();
+  }
+
+  private CustomPrincipal getUserPrincipal(Long userId) {
+
     if (userId == null) {
       throw new IllegalArgumentException("사용자 ID는 필수입니다.");
     }

@@ -2,8 +2,6 @@ package shop.genieus.study.domains.stamp.presentation.dto.response.create;
 
 import java.time.LocalDateTime;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStampResult;
-import shop.genieus.study.domains.stamp.domain.vo.CareerType;
-import shop.genieus.study.domains.stamp.domain.vo.ActivityType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 public record CreateResumeStampResponse(
@@ -11,8 +9,8 @@ public record CreateResumeStampResponse(
     StampType type,
     LocalDateTime verifiedAt,
     String companyName,
-    CareerType careerType,
-    ActivityType activityType,
+    String careerType,
+    String activityType,
     String relatedUrl) {
   public static CreateResumeStampResponse of(CreateResumeStampResult result) {
     return new CreateResumeStampResponse(
@@ -20,8 +18,8 @@ public record CreateResumeStampResponse(
         result.type(),
         result.verifiedAt(),
         result.companyName(),
-        result.careerType(),
-        result.activityType(),
+        result.careerType().getFieldName(),
+        result.activityType().getFieldName(),
         result.relatedUrl());
   }
 }

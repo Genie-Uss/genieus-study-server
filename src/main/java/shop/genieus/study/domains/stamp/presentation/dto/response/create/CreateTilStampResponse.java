@@ -2,7 +2,6 @@ package shop.genieus.study.domains.stamp.presentation.dto.response.create;
 
 import java.time.LocalDateTime;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
-import shop.genieus.study.domains.stamp.domain.vo.CategoryType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
 public record CreateTilStampResponse(
@@ -10,7 +9,7 @@ public record CreateTilStampResponse(
     StampType type,
     LocalDateTime verifiedAt,
     String title,
-    CategoryType categoryType,
+    String categoryType,
     String content,
     String relatedUrl) {
   public static CreateTilStampResponse of(CreateTilStampResult result) {
@@ -19,7 +18,7 @@ public record CreateTilStampResponse(
         result.type(),
         result.verifiedAt(),
         result.title(),
-        result.categoryType(),
+        result.categoryType().getFieldName(),
         result.content(),
         result.relatedUrl());
   }
