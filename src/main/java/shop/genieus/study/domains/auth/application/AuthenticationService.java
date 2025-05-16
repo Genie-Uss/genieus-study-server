@@ -14,6 +14,7 @@ import shop.genieus.study.domains.auth.application.repository.TokenRepository;
 import shop.genieus.study.domains.auth.application.util.IdGenerator;
 import shop.genieus.study.domains.auth.application.util.TokenUtils;
 import shop.genieus.study.domains.auth.domain.exception.CustomAuthenticationException;
+import shop.genieus.study.domains.auth.domain.exception.TokenExpiredException;
 import shop.genieus.study.domains.auth.domain.vo.TokenCredential;
 import shop.genieus.study.domains.auth.domain.vo.TokenId;
 import shop.genieus.study.domains.auth.domain.vo.TokenPair;
@@ -52,7 +53,12 @@ public class AuthenticationService {
   }
 
   public ReIssueTokenResult reIssueTokenPair(String accessToken, String refreshToken) {
-    TokenValidationResult validationResult = tokenUtils.validateTokenAndExtractId(refreshToken);
+    TokenValidationResult validationResult;
+    try {
+      validationResult = tokenUtils.validateTokenAndExtractId(refreshToken);
+    } catch (TokenExpiredException e) {
+      return ReIssueTokenResult.expiredRefreshToken();
+    }
 
     Long userId = validationResult.getUserId();
     TokenId oldTokenId = validationResult.getTokenId();
@@ -63,7 +69,7 @@ public class AuthenticationService {
     TokenPair newTokenPair = generateAndPersistTokenPair(userId);
     log.info("토큰 갱신 성공- Id: {}", userId);
 
-    return new ReIssueTokenResult(newTokenPair, userId);
+    return ReIssueTokenResult.of(newTokenPair, userId);
   }
 
   private void validateRefreshToken(TokenId tokenId, String refreshToken) {

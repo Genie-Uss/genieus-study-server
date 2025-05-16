@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -28,10 +29,14 @@ public class AuthResponseSender {
   }
 
   public void sendErrorResponse(
-      HttpServletRequest request, HttpServletResponse response, int statusCode, String message) {
+      HttpServletRequest request,
+      HttpServletResponse response,
+      int statusCode,
+      String message,
+      Map<String, String> details) {
     try {
       configureResponse(response, statusCode);
-      writeErrorResponse(request, response, statusCode, message);
+      writeErrorResponse(request, response, statusCode, message, details);
     } catch (IOException e) {
       log.error("Error writing response body: {}", e.getMessage());
       throw new AuthServiceException(e.getMessage());
@@ -45,10 +50,14 @@ public class AuthResponseSender {
   }
 
   private void writeErrorResponse(
-      HttpServletRequest request, HttpServletResponse response, int statusCode, String message)
+      HttpServletRequest request,
+      HttpServletResponse response,
+      int statusCode,
+      String message,
+      Map<String, String> details)
       throws IOException {
     ApiErrorResponse errorResponse =
-        ApiErrorResponse.create(Domain.AUTH, message, statusCode, request);
+        ApiErrorResponse.create(Domain.AUTH, message, statusCode, request, details);
     response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
   }
 }

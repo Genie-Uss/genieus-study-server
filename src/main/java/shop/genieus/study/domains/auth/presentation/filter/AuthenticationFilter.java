@@ -31,7 +31,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   @Override
   public Authentication attemptAuthentication(
       HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-    log.info("AuthenticationFilter");
     try {
       LoginRequest loginRequest =
           objectMapper.readValue(request.getInputStream(), LoginRequest.class);
@@ -79,7 +78,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
     log.info("[AuthenticationException] 인증 실패: {}", failed.getMessage());
     authResponseSender.sendErrorResponse(
-        request, response, HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
+        request, response, HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage(), null);
   }
 
   private LoginResponse createResponse(TokenPair tokenPair, CustomPrincipal principal) {

@@ -8,6 +8,7 @@ import shop.genieus.study.domains.auth.application.cache.PrincipalCache;
 import shop.genieus.study.domains.auth.application.dto.result.TokenValidationResult;
 import shop.genieus.study.domains.auth.application.repository.TokenRepository;
 import shop.genieus.study.domains.auth.application.util.TokenUtils;
+import shop.genieus.study.domains.auth.domain.exception.TokenExpiredException;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.user.application.UserService;
 
@@ -35,7 +36,12 @@ public class AuthorizationService {
   }
 
   private TokenValidationResult validateTokenAndCheckBlacklist(String token) {
-    TokenValidationResult tokenValidationResult = tokenUtils.validateTokenAndExtractId(token);
+    TokenValidationResult tokenValidationResult;
+    try {
+      tokenValidationResult = tokenUtils.validateTokenAndExtractId(token);
+    } catch (TokenExpiredException e) {
+      return TokenValidationResult.expiredAccessToken();
+    }
     if (tokenRepository.isBlacklisted(tokenValidationResult.getTokenId())) {
       throw new IllegalArgumentException("차단된 JWT 토큰입니다.");
     }
