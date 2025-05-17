@@ -19,7 +19,7 @@ public class AttendanceBatchService {
   private final DateTimeProvider dateTimeProvider;
 
   @Transactional
-  @Scheduled(cron = "0 0 0 * * *")
+  @Scheduled(cron = "${scheduler.attendance.system-check-out-cron}")
   public void autoCheckOutAttendances() {
     LocalDate yesterday = dateTimeProvider.getCurrentDate().minusDays(1);
     LocalDateTime checkoutTime = yesterday.atTime(23, 59, 59);

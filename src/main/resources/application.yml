@@ -3,7 +3,6 @@ spring:
     name: server
   config:
     import: 'classpath:discord-config.yml'
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3307/attendance
@@ -58,3 +57,16 @@ cors:
     - Content-Disposition
   allow-credentials: true
   max-age: 3600
+
+scheduler:
+  attendance:
+    # 매일 자정에 자동 퇴실 처리
+    system-check-out-cron: "0 0 0 * * *"
+  notification:
+    # 매일 08:50에 출석 알림
+    check-in-cron: "0 50 8 * * 1-5"
+    # 매일 16:00에 코어 시간 종료 알림
+    check-out-cron: "0 0 16 * * 1-5"
+
+server:
+  url: https://study.genieus.shop
