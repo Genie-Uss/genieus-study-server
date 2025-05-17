@@ -1,40 +1,27 @@
 spring:
   application:
     name: server
-  config:
-    import: 'classpath:discord-config.yml'
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/attendance
-    username: root
-    password: 1234
-
-    redis:
-      host: localhost
-      port: 6379
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 2
-          max-wait: -1ms
-        shutdown-timeout: 100ms
-        client-name: auth-service
-        client-options:
-          connect-timeout: 3000ms  # 3초
-        read-from: REPLICA_PREFERRED  # 레플리카 우선 읽기
-
+  profiles:
+    active: local
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-        show_sql: true
+    open-in-view: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+logging:
+  level:
+    root: INFO
+    shop.genieus.study: INFO
+    org.hibernate.SQL: INFO
+
 jwt:
   secret:
-    key: gP2Fc2lT54kHcFWlo2V0RcZ03YlVPuztdb8L04Rzzys=
+    key: ${JWT_SECRET_KEY:gP2Fc2lT54kHcFWlo2V0RcZ03YlVPuztdb8L04Rzzys=}
 
 cors:
   allowed-origins:
@@ -60,13 +47,7 @@ cors:
 
 scheduler:
   attendance:
-    # 매일 자정에 자동 퇴실 처리
-    system-check-out-cron: "0 0 0 * * *"
+    system-check-out-cron: "0 0 0 * * *"  # 매일 자정에 자동 퇴실 처리
   notification:
-    # 매일 08:50에 출석 알림
-    check-in-cron: "0 50 8 * * 1-5"
-    # 매일 16:00에 코어 시간 종료 알림
-    check-out-cron: "0 0 16 * * 1-5"
-
-server:
-  url: https://study.genieus.shop
+    check-in-cron: "0 50 8 * * 1-5"       # 매일 08:50에 출석 알림 (평일)
+    check-out-cron: "0 0 16 * * 1-5"      # 매일 16:00에 코어 시간 종료 알림 (평일)
