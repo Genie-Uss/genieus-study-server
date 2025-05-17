@@ -1,0 +1,4 @@
+discord:
+  webhook-url:
+    attendance: ${DISCORD_ATTENDANCE_HOOK}
+    activity: ${DISCORD_ACTIVITY_HOOK}

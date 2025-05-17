@@ -45,3 +45,5 @@ infrastructure/redis
 gradlew
 
 discord-config.yml
+
+.env

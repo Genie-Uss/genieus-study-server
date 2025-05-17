@@ -1,0 +1,159 @@
+name: Java CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, test ]
+  pull_request:
+    branches: [ main, develop, test ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (skip tests)
+        run: ./gradlew build -x test
+
+  build-and-push-image:
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/test')
+    runs-on: ubuntu-latest
+
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      REPOSITORY: ${{ secrets.GCP_REPOSITORY }}
+      IMAGE_NAME: ${{ secrets.GCP_IMAGE_NAME }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (skip tests)
+        run: ./gradlew build -x test
+
+      - name: Set environment variables
+        id: vars
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "ENV=prod" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/test" ]]; then
+            echo "ENV=test" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=test" >> $GITHUB_OUTPUT
+          else
+            echo "ENV=dev" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=dev" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.IMAGE_TAG }} .
+          docker build -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.IMAGE_TAG }}
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy-to-server:
+    needs: build-and-push-image
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test')
+    runs-on: ubuntu-latest
+
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      REPOSITORY: ${{ secrets.GCP_REPOSITORY }}
+      IMAGE_NAME: ${{ secrets.GCP_IMAGE_NAME }}
+
+    steps:
+      - name: Set environment variables
+        id: vars
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "ENV=prod" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
+          else
+            echo "ENV=test" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=test" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_VM_SSH_KEY }}
+          script: |
+            cd ~/projects
+
+            export GCP_REGION=${{ secrets.GCP_REGION }}
+            export GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
+            export REPOSITORY=${{ secrets.GCP_REPOSITORY }}
+            export IMAGE_NAME=${{ secrets.GCP_IMAGE_NAME }}
+            export IMAGE_TAG=${{ steps.vars.outputs.IMAGE_TAG }}
+            export ENV=${{ steps.vars.outputs.ENV }}
+
+            grep -q "^SPRING_PROFILES_ACTIVE=" .env && \
+              sed -i "s/^SPRING_PROFILES_ACTIVE=.*/SPRING_PROFILES_ACTIVE=${ENV}/" .env || \
+              echo "SPRING_PROFILES_ACTIVE=${ENV}" >> .env
+
+            gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
+
+            docker pull $GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
+
+            CONTAINER_NAME="genieus-study-app"
+            if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
+              echo "기존 애플리케이션 컨테이너를 중지하고 제거합니다."
+              docker stop ${CONTAINER_NAME}
+              docker rm ${CONTAINER_NAME}
+            fi
+
+            source .env
+
+            docker run -d \
+              --name ${CONTAINER_NAME} \
+              --restart always \
+              --network genieus-network \
+              -p ${APP_PORT:-8080}:${CONTAINER_PORT:-8080} \
+              --env-file .env \
+              $GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
+
+            docker image prune -af --filter "until=24h"
+
+            echo "배포 완료: $(date) - 환경: $ENV, 이미지: $IMAGE_TAG, 포트: ${APP_PORT:-8080}"

@@ -1,0 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: 'classpath:discord-config-prod.yml'
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+        shutdown-timeout: 100ms
+        client-name: auth-service
+        client-options:
+          connect-timeout: 3000ms
+        read-from: REPLICA_PREFERRED
+
+logging:
+  level:
+    root: WARN
+    shop.genieus.study: INFO
+    org.hibernate.SQL: WARN
+
+server:
+  url: ${GENIEUS_STUDY_SERVER_URL}
