@@ -33,18 +33,28 @@ public class NotificationProcessor {
   private void handle(NotificationMessageBuilder builder) {
     try {
       Long userId = builder.getUserId();
-      String nickname = authProvider.getUserNickname(userId);
+      String message;
       NotificationChannel channel = mapChannelType(builder.getChannelType());
 
-      String message = formatter.format(builder, nickname);
+      if (userId == -1L) {
+        message = builder.getEmoji() + " " + builder.buildMessage();
+        log.debug("시스템 알림 처리: channel={}, title={}", channel, builder.buildTitle());
+      } else {
+        String nickname = authProvider.getUserNickname(userId);
+        message = formatter.format(builder, nickname);
+        log.debug("사용자 알림 처리: userId={}, channel={}", userId, channel);
+      }
+
       Notification notification =
           Notification.create(userId, builder.buildTitle(), message, channel);
-
       boolean success = dispatcher.dispatch(notification, builder.getColorCode());
+
       if (success) {
         notification.markAsSent();
+        log.debug("알림 발송 성공: channel={}, userId={}", channel, userId);
       } else {
         notification.markAsFailed("전송 실패");
+        log.warn("알림 발송 실패: channel={}, userId={}", channel, userId);
       }
 
       save(notification);

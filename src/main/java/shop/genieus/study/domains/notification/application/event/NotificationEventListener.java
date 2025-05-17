@@ -17,9 +17,10 @@ public class NotificationEventListener {
   @EventListener
   public void handleNotificationEvent(NotificationMessageBuilder event) {
     try {
+      log.info("알림 이벤트 처리");
       notificationService.processAndSend(event);
     } catch (Exception e) {
-      log.error("이벤트 처리 중 오류 발생", e);
+      log.error("알림 이벤트 처리 중 오류 발생", e);
     }
   }
 }
