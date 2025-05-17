@@ -9,6 +9,7 @@ import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import shop.genieus.study.domains.attendance.domain.event.AttendanceEvent;
 import shop.genieus.study.domains.attendance.domain.exception.AttendanceValidationException;
 import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
@@ -26,6 +27,7 @@ import shop.genieus.study.domains.attendance.domain.vo.StudyResult;
           columnNames = {"userId", "date"})
     })
 @Builder(access = AccessLevel.PRIVATE)
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attendance extends AbstractAggregateRoot<Attendance> {
