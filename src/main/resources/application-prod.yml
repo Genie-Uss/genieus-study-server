@@ -35,3 +35,4 @@ logging:
 
 server:
   url: ${GENIEUS_STUDY_SERVER_URL}
+  port: ${APP_SERVER_PORT}
