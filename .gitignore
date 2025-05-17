@@ -42,8 +42,6 @@ out/
 infrastructure/mysql
 infrastructure/redis
 
-gradlew
-
 discord-config.yml
 
 .env
