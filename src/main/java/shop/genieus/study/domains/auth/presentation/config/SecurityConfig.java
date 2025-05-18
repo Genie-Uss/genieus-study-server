@@ -62,6 +62,8 @@ public class SecurityConfig {
                 // register user
                 .requestMatchers(HttpMethod.POST, "/users")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/check-nickname", "/users/check-email")
+                .permitAll()
                 // any request
                 .anyRequest()
                 .authenticated());
