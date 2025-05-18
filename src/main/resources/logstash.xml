@@ -1,0 +1,16 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdc>true</includeMdc>
+            <includeContext>false</includeContext>
+            <customFields>{"application":"genieus-study-app"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="shop.genieus.study" level="INFO"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
+</configuration>
