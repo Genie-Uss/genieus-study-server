@@ -4,9 +4,12 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
 import shop.genieus.study.domains.user.domain.vo.Email;
+import shop.genieus.study.domains.user.domain.vo.Nickname;
 
 public interface UserJpaRepository extends JpaRepository<User, Long> {
   Optional<User> findByEmail(Email email);
 
   boolean existsByEmail(Email email);
+
+  boolean existsByNickname(Nickname nickname);
 }

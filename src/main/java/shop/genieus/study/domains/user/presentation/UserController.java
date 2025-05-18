@@ -2,13 +2,11 @@ package shop.genieus.study.domains.user.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.user.application.UserService;
-import shop.genieus.study.domains.user.presentation.dto.request.RegisterUserRequest;
-import shop.genieus.study.domains.user.presentation.dto.response.RegisterUserResponse;
+import shop.genieus.study.domains.user.presentation.dto.request.SignupUserRequest;
+import shop.genieus.study.domains.user.presentation.dto.response.CheckAvailableResponse;
+import shop.genieus.study.domains.user.presentation.dto.response.SignupUserResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +15,19 @@ public class UserController {
   private final UserService service;
 
   @PostMapping
-  public ResponseEntity<RegisterUserResponse> signup(@RequestBody RegisterUserRequest request) {
-    RegisterUserResponse response = RegisterUserResponse.from(service.registerUser(request.to()));
+  public ResponseEntity<SignupUserResponse> signup(@RequestBody SignupUserRequest request) {
+    SignupUserResponse response = SignupUserResponse.from(service.signupUser(request.to()));
     return ResponseEntity.ok().body(response);
+  }
+
+  @GetMapping("/check-nickname")
+  public ResponseEntity<CheckAvailableResponse> checkNickname(@RequestParam String nickname) {
+    return ResponseEntity.ok()
+        .body(new CheckAvailableResponse(service.checkNicknameAvailable(nickname)));
+  }
+
+  @GetMapping("/check-email")
+  public ResponseEntity<CheckAvailableResponse> checkEmail(@RequestParam String email) {
+    return ResponseEntity.ok().body(new CheckAvailableResponse(service.checkEmailAvailable(email)));
   }
 }
