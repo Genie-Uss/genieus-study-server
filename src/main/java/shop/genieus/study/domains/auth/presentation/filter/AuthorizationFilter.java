@@ -36,7 +36,14 @@ public class AuthorizationFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
     String path = request.getRequestURI();
-    return path.equals("/users") && request.getMethod().equals("POST") || path.equals("/errors");
+    String method = request.getMethod();
+    String GET = "GET";
+    String POST = "POST";
+
+    return (path.equals("/users") && method.equals(POST))
+        || (path.equals("/errors"))
+        || (path.equals("/users/check-nickname") && method.equals(GET))
+        || (path.equals("/users/check-email") && method.equals(GET));
   }
 
   @Override

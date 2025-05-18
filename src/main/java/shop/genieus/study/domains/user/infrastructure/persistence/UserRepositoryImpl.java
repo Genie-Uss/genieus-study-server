@@ -7,6 +7,7 @@ import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.Email;
+import shop.genieus.study.domains.user.domain.vo.Nickname;
 import shop.genieus.study.domains.user.infrastructure.persistence.repository.UserJpaRepository;
 
 @Repository
@@ -29,6 +30,11 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public boolean existsByEmail(String email) {
     return jpaRepository.existsByEmail(Email.of(email));
+  }
+
+  @Override
+  public boolean existsByNickname(String nickname) {
+    return jpaRepository.existsByNickname(Nickname.of(nickname));
   }
 
   @Override

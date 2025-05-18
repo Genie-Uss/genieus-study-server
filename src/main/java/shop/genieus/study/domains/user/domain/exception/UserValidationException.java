@@ -55,4 +55,24 @@ public class UserValidationException extends ValidationException {
   public static UserValidationException invalidUserRole(String userRole) {
     return new UserValidationException("잘못된 사용자 역할입니다: " + userRole);
   }
+
+  public static UserValidationException accountPending() {
+    return new UserValidationException("계정 승인 대기 중입니다. 관리자 승인 후 로그인이 가능합니다.");
+  }
+
+  public static UserValidationException accountRejected() {
+    return new UserValidationException("계정 승인이 거부되었습니다. 관리자에게 문의하세요.");
+  }
+
+  public static UserValidationException accountInactive() {
+    return new UserValidationException("비활성화된 계정입니다. 관리자에게 문의하세요.");
+  }
+
+  public static UserValidationException accountLocked() {
+    return new UserValidationException("계정이 잠겨 있습니다. 관리자에게 문의하세요.");
+  }
+
+  public static UserValidationException accountNotApproved() {
+    return new UserValidationException("로그인할 수 없는 계정 상태입니다. 관리자에게 문의하세요.");
+  }
 }

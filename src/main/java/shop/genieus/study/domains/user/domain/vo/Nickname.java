@@ -13,7 +13,7 @@ import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 public class Nickname {
   private static final int MAX_LENGTH = 5;
 
-  @Column(name = "name", length = MAX_LENGTH, nullable = false)
+  @Column(name = "nickname", length = MAX_LENGTH, nullable = false, unique = true)
   private String value;
 
   private Nickname(String value) {
