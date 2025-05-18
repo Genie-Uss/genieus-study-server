@@ -72,6 +72,9 @@ public class UserService implements UserProvider {
       if (!user.matchPassword(password, encryptionService)) {
         throw UserValidationException.noEmailOrPassword();
       }
+
+      validateLoginAllowed(user);
+
       return from(user);
     } catch (Exception exception) {
       throw new IllegalArgumentException(exception.getMessage());
@@ -92,5 +95,20 @@ public class UserService implements UserProvider {
 
   private <T, R> R getValueOrNull(T obj, Function<T, R> getter) {
     return Optional.ofNullable(obj).map(getter).orElse(null);
+  }
+
+  private void validateLoginAllowed(User user) {
+    if (!user.canLogin()) {
+      if (user.isPending()) {
+        throw UserValidationException.accountPending();
+      } else if (user.isRejected()) {
+        throw UserValidationException.accountRejected();
+      } else if (user.isInactive()) {
+        throw UserValidationException.accountInactive();
+      } else if (user.isLocked()) {
+        throw UserValidationException.accountLocked();
+      }
+      throw UserValidationException.accountNotApproved();
+    }
   }
 }

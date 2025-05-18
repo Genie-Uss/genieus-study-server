@@ -7,10 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.commons.jpa.BaseEntity;
 import shop.genieus.study.domains.user.application.PasswordEncryptionService;
-import shop.genieus.study.domains.user.domain.vo.Email;
-import shop.genieus.study.domains.user.domain.vo.Nickname;
-import shop.genieus.study.domains.user.domain.vo.Password;
-import shop.genieus.study.domains.user.domain.vo.UserRole;
+import shop.genieus.study.domains.user.domain.vo.*;
 
 @Entity
 @Getter
@@ -58,9 +55,15 @@ public class User extends BaseEntity {
   private int desiredCoreTime = 240;
 
   @Builder.Default
-  @Comment("활성화 시간")
+  @Comment("활성화")
   @Column(nullable = false)
   private Boolean isActive = true;
+
+  @Builder.Default
+  @Comment("사용자 상태")
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private AccountStatus status = AccountStatus.PENDING;
 
   public static User create(
       String email,
@@ -85,5 +88,25 @@ public class User extends BaseEntity {
 
   public boolean isRoleAdmin() {
     return this.role.isRoleAdmin();
+  }
+
+  public boolean canLogin() {
+    return this.status.canLogin();
+  }
+
+  public boolean isPending() {
+    return this.status.isPending();
+  }
+
+  public boolean isRejected() {
+    return this.status.isRejected();
+  }
+
+  public boolean isInactive() {
+    return this.status.isInactive();
+  }
+
+  public boolean isLocked() {
+    return this.status.isLocked();
   }
 }
