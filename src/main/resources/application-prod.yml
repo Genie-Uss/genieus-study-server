@@ -32,6 +32,11 @@ logging:
     root: WARN
     shop.genieus.study: INFO
     org.hibernate.SQL: WARN
+  file: # logging.file.name이나 logging.file.path를 설정하지 않아야 로그가 stdout/stderr로 출력
+    name:  # 비워둠
+    path:  # 비워둠
+  pattern: # 'pattern' 키 추가
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%15.15t] %-40.40logger{39}: %m%n"
 
 server:
   url: ${GENIEUS_STUDY_SERVER_URL}

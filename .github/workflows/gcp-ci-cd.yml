@@ -2,7 +2,7 @@ name: CI/CD for Monolith on GCP
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build-and-deploy:
@@ -117,6 +117,9 @@ jobs:
               --restart always \
               --network ${NETWORK_NAME} \
               -p ${APP_SERVER_PORT}:${APP_SERVER_PORT} \
+              --log-driver json-file \
+              --log-opt max-size=100m \
+              --log-opt max-file=5 \
               --env-file ./.env \
               "${IMAGE_PATH}:latest"
             
