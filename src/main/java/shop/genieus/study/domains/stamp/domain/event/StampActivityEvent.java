@@ -15,6 +15,7 @@ import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
 @Getter
 @RequiredArgsConstructor
 public class StampActivityEvent implements NotificationMessageBuilder {
+  private static final int MAX_DESCRIPTION_LENGTH = 150;
 
   private final Long userId;
   private final String title;
@@ -31,7 +32,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
             s.getUserId(),
             null,
             inlineCodes(s.getAlgorithmType().getFieldName(), s.getPlatformType().getFieldName()),
-            s.getDescription(),
+            truncateText(s.getDescription()),
             safeUrl(s.getProblemUrl()),
             StampTypeWrapper.CT);
       }
@@ -41,7 +42,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
             s.getUserId(),
             s.getTitle(),
             inlineCode(s.getCategoryType().getFieldName()),
-            s.getContent(),
+            truncateText(s.getContent()),
             safeUrl(s.getRelatedUrl()),
             StampTypeWrapper.TIL);
       }
@@ -51,7 +52,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
             s.getUserId(),
             s.getCompanyName(),
             inlineCodes(s.getCareerType().getFieldName(), s.getActivityType().getFieldName()),
-            s.getDescription(),
+            truncateText(s.getDescription()),
             safeUrl(s.getRelatedUrl()),
             StampTypeWrapper.RESUME);
       }
@@ -72,6 +73,13 @@ public class StampActivityEvent implements NotificationMessageBuilder {
         .collect(Collectors.joining(" "));
   }
 
+  private static String truncateText(String text) {
+    if (text == null || text.length() <= MAX_DESCRIPTION_LENGTH) {
+      return text;
+    }
+    return text.substring(0, MAX_DESCRIPTION_LENGTH - 3) + "...";
+  }
+
   @Override
   public String buildTitle() {
     return "**[_" + stampType.getDisplayName() + "_] 도장 알림**";
@@ -90,7 +98,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
     sb.append(description).append("\n\n").append("_**#**_ ").append(category);
 
     if (url != null) {
-      sb.append("　　_:link: [링크](").append(url).append(")_");
+      sb.append("　　:link: [링크](").append(url).append(")");
     }
 
     return sb.toString();

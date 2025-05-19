@@ -31,6 +31,7 @@ public class NotificationProcessor {
   }
 
   private void handle(NotificationMessageBuilder builder) {
+    Notification notification = null;
     try {
       Long userId = builder.getUserId();
       String message;
@@ -41,25 +42,39 @@ public class NotificationProcessor {
         log.debug("시스템 알림 처리: channel={}, title={}", channel, builder.buildTitle());
       } else {
         String nickname = authProvider.getUserNickname(userId);
-        message = formatter.format(builder, nickname);
-        log.debug("사용자 알림 처리: userId={}, channel={}", userId, channel);
+        try {
+          message = formatter.format(builder, nickname);
+          log.debug("사용자 알림 처리: userId={}, channel={}", userId, channel);
+        } catch (Exception e) {
+          log.error("알림 포맷팅 중 오류: {}", e.getMessage(), e);
+          message = builder.getEmoji() + " " + nickname + "님의 알림: " + builder.buildTitle();
+        }
       }
 
-      Notification notification =
-          Notification.create(userId, builder.buildTitle(), message, channel);
-      boolean success = dispatcher.dispatch(notification, builder.getColorCode());
+      notification = Notification.create(userId, builder.buildTitle(), message, channel);
+
+      boolean success = false;
+      try {
+        success = dispatcher.dispatch(notification, builder.getColorCode());
+      } catch (Exception e) {
+        log.error("알림 전송 중 오류: {}", e.getMessage(), e);
+      }
 
       if (success) {
         notification.markAsSent();
         log.debug("알림 발송 성공: channel={}, userId={}", channel, userId);
       } else {
-        notification.markAsFailed("전송 실패");
+        notification.markAsFailed("전송 실패 - 포맷터 또는 디스패처에서 예외 발생");
         log.warn("알림 발송 실패: channel={}, userId={}", channel, userId);
       }
 
       save(notification);
     } catch (Exception e) {
       log.error("알림 처리 중 오류 발생", e);
+      if (notification != null) {
+        notification.markAsFailed("처리 중 예외 발생: " + e.getMessage());
+        save(notification);
+      }
     }
   }
 
