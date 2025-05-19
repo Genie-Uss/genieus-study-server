@@ -2,8 +2,9 @@ package shop.genieus.study.domains.notification.application.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import shop.genieus.study.commons.notification.NotificationMessageBuilder;
 import shop.genieus.study.domains.notification.application.NotificationService;
 
@@ -14,7 +15,7 @@ public class NotificationEventListener {
 
   private final NotificationService notificationService;
 
-  @EventListener
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void handleNotificationEvent(NotificationMessageBuilder event) {
     try {
       log.info("알림 이벤트 처리");
