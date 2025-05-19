@@ -37,7 +37,7 @@ public class ResumeStamp extends Stamp {
   private ActivityType activityType;
 
   @Comment("상세 내용")
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "TEXT")
   private String description;
 
   @Comment("관련 URL")

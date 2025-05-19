@@ -28,7 +28,7 @@ public class TilStamp extends Stamp {
   private CategoryType categoryType;
 
   @Comment("상세 내용")
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "TEXT")
   private String content;
 
   @Comment("관련 URL")

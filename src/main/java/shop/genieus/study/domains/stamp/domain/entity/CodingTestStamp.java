@@ -33,7 +33,7 @@ public class CodingTestStamp extends Stamp {
   private PlatformType platformType;
 
   @Comment("문제 설명")
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "TEXT")
   private String description;
 
   @Comment("문제 URL")
