@@ -7,7 +7,15 @@ import shop.genieus.study.commons.notification.NotificationMessageBuilder;
 public class NotificationFormatter {
 
   public String format(NotificationMessageBuilder builder, String nickname) {
-    String formatted = String.format(builder.buildMessage(), nickname);
+    String message = builder.buildMessage();
+
+    String formatted;
+    if (message.contains("%s")) {
+      formatted = message.replaceFirst("%s", nickname);
+    } else {
+      formatted = nickname + ": " + message;
+    }
+
     return builder.getEmoji() + " " + formatted;
   }
 }
