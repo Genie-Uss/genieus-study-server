@@ -85,7 +85,7 @@ public class StampService {
             userId,
             StampType.RESUME,
             verifiedAt,
-            info.companyName(),
+            info.title(),
             info.careerType(),
             info.activityType(),
             info.description(),

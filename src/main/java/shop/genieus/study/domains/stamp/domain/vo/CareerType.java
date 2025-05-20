@@ -10,7 +10,9 @@ public enum CareerType {
   EXPERIENCED("경력"),
   INTERN("인턴"),
   CONTRACT("계약직"),
-  FREELANCER("프리랜서");
+  FREELANCER("프리랜서"),
+  NOT_APPLICABLE("해당 없음"),
+  ;
 
   private final String fieldName;
 }

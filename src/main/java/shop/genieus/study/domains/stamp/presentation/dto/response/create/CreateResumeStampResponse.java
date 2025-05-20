@@ -8,7 +8,7 @@ public record CreateResumeStampResponse(
     Long id,
     StampType type,
     LocalDateTime verifiedAt,
-    String companyName,
+    String title,
     String careerType,
     String activityType,
     String relatedUrl) {
@@ -17,7 +17,7 @@ public record CreateResumeStampResponse(
         result.id(),
         result.type(),
         result.verifiedAt(),
-        result.companyName(),
+        result.title(),
         result.careerType().getFieldName(),
         result.activityType().getFieldName(),
         result.relatedUrl());

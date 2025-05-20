@@ -22,9 +22,9 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResumeStamp extends Stamp {
 
-  @Comment("회사/기관명")
+  @Comment("제목")
   @Column(nullable = false)
-  private String companyName;
+  private String title;
 
   @Comment("경력 유형")
   @Enumerated(EnumType.STRING)
@@ -47,13 +47,13 @@ public class ResumeStamp extends Stamp {
       Long userId,
       StampType type,
       LocalDateTime verifiedAt,
-      String companyName,
+      String title,
       CareerType careerType,
       ActivityType activityType,
       String description,
       String relatedUrl) {
     super(userId, type, verifiedAt);
-    this.companyName = companyName;
+    this.title = title;
     this.careerType = careerType;
     this.activityType = activityType;
     this.description = description;
@@ -64,21 +64,14 @@ public class ResumeStamp extends Stamp {
       Long userId,
       StampType type,
       LocalDateTime verifiedAt,
-      String companyName,
+      String title,
       CareerType careerType,
       ActivityType activityType,
       String description,
       String relatedUrl) {
     ResumeStamp stamp =
         new ResumeStamp(
-            userId,
-            type,
-            verifiedAt,
-            companyName,
-            careerType,
-            activityType,
-            description,
-            relatedUrl);
+            userId, type, verifiedAt, title, careerType, activityType, description, relatedUrl);
     stamp.registerEvent(StampActivityEvent.of(stamp));
 
     return stamp;

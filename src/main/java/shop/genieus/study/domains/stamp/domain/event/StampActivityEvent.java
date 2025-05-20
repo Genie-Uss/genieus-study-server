@@ -50,7 +50,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
         ResumeStamp s = (ResumeStamp) stamp;
         yield new StampActivityEvent(
             s.getUserId(),
-            s.getCompanyName(),
+            s.getTitle(),
             inlineCodes(s.getCareerType().getFieldName(), s.getActivityType().getFieldName()),
             truncateText(s.getDescription()),
             safeUrl(s.getRelatedUrl()),
