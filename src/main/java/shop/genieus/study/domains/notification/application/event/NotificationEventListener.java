@@ -15,7 +15,7 @@ public class NotificationEventListener {
 
   private final NotificationService notificationService;
 
-  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
   public void handleNotificationEvent(NotificationMessageBuilder event) {
     try {
       log.info("알림 이벤트 처리");
