@@ -2,7 +2,7 @@
 
 <div align="center">
   <h3><a href="https://study.genieus.shop/" style="color:purple">Genieus Study 바로가기</a></h3>
- <img src="https://private-user-images.githubusercontent.com/111328823/446671981-59743dc4-b301-4632-bc14-554f3bd3e304.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzI0OTEsIm5iZiI6MTc0NzkzMjE5MSwicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjcxOTgxLTU5NzQzZGM0LWIzMDEtNDYzMi1iYzE0LTU1NGYzYmQzZTMwNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxNjQzMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00MWFhYTgxZWRlMWU5ZmNlMGQ0NDU0MTZmNmFlMjlhNTYxNDBiYTEzZmNmYzkzOTZhODZiYmM1MzBmNjRjMTFjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.b_Z89LO01dfHHzcV0Xf-OYlABDhITtaN99oWbHsr8Yw" width="150" height="150" />
+ <img src="https://file.notion.so/f/f/e12c77a4-5bb4-41c4-a657-0d03087c89e0/f45edc29-9759-42d3-9e46-9a1407ca1b4a/Genie.png?table=block&id=1fb94064-be05-80e9-8fd5-f3e6cb94ce2c&spaceId=e12c77a4-5bb4-41c4-a657-0d03087c89e0&expirationTimestamp=1747958400000&signature=GphbQJzdEba9zK4cqh4ZlGDhTB-mAqQ8yy7nhOloHuU&downloadName=Genie.png" width="150" height="150" />
 
 ☑️ 매일 **출석 체크**하는 게 번거롭지 않으신가요?
 
@@ -198,13 +198,13 @@
 
 ## 🏗 시스템 아키텍처
 
-![system architecture](https://private-user-images.githubusercontent.com/111328823/446671612-9243b08a-236e-47c7-8042-8f8f5d1192d3.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzIzMDMsIm5iZiI6MTc0NzkzMjAwMywicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjcxNjEyLTkyNDNiMDhhLTIzNmUtNDdjNy04MDQyLThmOGY1ZDExOTJkMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxNjQwMDNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mNjg1ODFkNGRlZWM4YTIxY2FjY2EyOTU2MGUwZGFkOWRmMTY1NmMzOTliYzMyYWY4MGViYjVmMTE1YWU5OTQ4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.teMUULMOk2mvqXAmdov0jqLf4Kg2aZ2pVC3tqIOYQQ8)
+![system architecture](https://file.notion.so/f/f/e12c77a4-5bb4-41c4-a657-0d03087c89e0/81e84118-b7c0-4a4c-b71d-8a771bbf22d8/system_architecture.svg?table=block&id=1fb94064-be05-80fd-882a-c96910b17410&spaceId=e12c77a4-5bb4-41c4-a657-0d03087c89e0&expirationTimestamp=1747958400000&signature=kzGpb2rrjgntb9U_e0VsHp4WAlFnzbOjKv6t-MSb9mU&downloadName=system+architecture.svg)
 
 <br/><br/>
 
 ## 도메인 아키텍처
 
-<img src="https://private-user-images.githubusercontent.com/111328823/446691421-9c3b271b-966e-4fe1-ab7e-04548908faa7.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzU1MDksIm5iZiI6MTc0NzkzNTIwOSwicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjkxNDIxLTljM2IyNzFiLTk2NmUtNGZlMS1hYjdlLTA0NTQ4OTA4ZmFhNy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxNzMzMjlaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0zMDI0ODZjNzgwZDlmNjU4ZmI5NDJlNDc3M2YyMjlhOThlYzJlOTcxZjFhOGUzYjc3NWNkZDUzMTdlOWEyZDhlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.H9LH374OulO9Oq_P9M33dYybh-a0-rRnMG3PRlL0Q74" />
+<img src="https://file.notion.so/f/f/e12c77a4-5bb4-41c4-a657-0d03087c89e0/c2cfb629-0a10-45e0-be70-fb6b262c0497/domain_architecture.png?table=block&id=1fb94064-be05-8053-9773-c0ed4238ff20&spaceId=e12c77a4-5bb4-41c4-a657-0d03087c89e0&expirationTimestamp=1747958400000&signature=SiqiqCYnZE1RbJxLGKUG-Ptk3WNLx02FYhZwJRNhfvs&downloadName=domain+architecture.png" />
 
 <br/><br/>
 
