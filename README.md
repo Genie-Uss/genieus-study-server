@@ -2,7 +2,7 @@
 
 <div align="center">
   <h3><a href="https://study.genieus.shop/" style="color:purple">Genieus Study 바로가기</a></h3>
- <img src="https://drive.usercontent.google.com/download?id=1ss8TW8XEcv9fiAyfYBXApKS_vEWTE9Au" width="150" height="150" />
+ <img src="https://private-user-images.githubusercontent.com/111328823/446671981-59743dc4-b301-4632-bc14-554f3bd3e304.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzI0OTEsIm5iZiI6MTc0NzkzMjE5MSwicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjcxOTgxLTU5NzQzZGM0LWIzMDEtNDYzMi1iYzE0LTU1NGYzYmQzZTMwNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxNjQzMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00MWFhYTgxZWRlMWU5ZmNlMGQ0NDU0MTZmNmFlMjlhNTYxNDBiYTEzZmNmYzkzOTZhODZiYmM1MzBmNjRjMTFjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.b_Z89LO01dfHHzcV0Xf-OYlABDhITtaN99oWbHsr8Yw" width="150" height="150" />
 
 ☑️ 매일 **출석 체크**하는 게 번거롭지 않으신가요?
 
@@ -198,60 +198,13 @@
 
 ## 🏗 시스템 아키텍처
 
-![system architecture](https://drive.usercontent.google.com/download?id=1ik5S5Ienc_l0jRb4PJLdDRaSMUmupPff)
+![system architecture](https://private-user-images.githubusercontent.com/111328823/446671612-9243b08a-236e-47c7-8042-8f8f5d1192d3.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzIzMDMsIm5iZiI6MTc0NzkzMjAwMywicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjcxNjEyLTkyNDNiMDhhLTIzNmUtNDdjNy04MDQyLThmOGY1ZDExOTJkMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxNjQwMDNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mNjg1ODFkNGRlZWM4YTIxY2FjY2EyOTU2MGUwZGFkOWRmMTY1NmMzOTliYzMyYWY4MGViYjVmMTE1YWU5OTQ4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.teMUULMOk2mvqXAmdov0jqLf4Kg2aZ2pVC3tqIOYQQ8)
 
 <br/><br/>
 
 ## 도메인 아키텍처
 
-<div align="center">
-
-```mermaid
-graph TB
-    subgraph "🏗️ Domain Layer"
-        User[👥 User<br/>사용자 관리 및 인증]
-        Auth[🔐 Auth<br/>JWT 기반 인증/인가]
-        Attendance[📅 Attendance<br/>출석 관리]
-        Stamp[🎯 Stamp<br/>인증 도장 시스템]
-        LearningGoal[📊 LearningGoal<br/>학습 목표 관리]
-        Notification[🔔 Notification<br/>알림 시스템]
-    end
-    
-    subgraph "📱 Presentation Layer"
-        Controllers[REST Controllers]
-    end
-    
-    subgraph "🗄️ Infrastructure Layer"
-        Database[(MySQL)]
-        Cache[(Redis)]
-        External[Discord Webhook]
-    end
-    
-    Controllers --> User
-    Controllers --> Auth
-    Controllers --> Attendance
-    Controllers --> Stamp
-    Controllers --> LearningGoal
-    
-    User --> Database
-    Attendance --> Database
-    Stamp --> Database
-    LearningGoal --> Database
-    Auth --> Cache
-    
-    Attendance -.->|Event| Notification
-    Stamp -.->|Event| Notification
-    Notification --> External
-    
-    style User fill:#e1f5fe
-    style Auth fill:#fff3e0
-    style Attendance fill:#f3e5f5
-    style Stamp fill:#e8f5e8
-    style LearningGoal fill:#fce4ec
-    style Notification fill:#f1f8e9
-```
-
-</div>
+<img src="https://private-user-images.githubusercontent.com/111328823/446691421-9c3b271b-966e-4fe1-ab7e-04548908faa7.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzU1MDksIm5iZiI6MTc0NzkzNTIwOSwicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjkxNDIxLTljM2IyNzFiLTk2NmUtNGZlMS1hYjdlLTA0NTQ4OTA4ZmFhNy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxNzMzMjlaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0zMDI0ODZjNzgwZDlmNjU4ZmI5NDJlNDc3M2YyMjlhOThlYzJlOTcxZjFhOGUzYjc3NWNkZDUzMTdlOWEyZDhlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.H9LH374OulO9Oq_P9M33dYybh-a0-rRnMG3PRlL0Q74" />
 
 <br/><br/>
 
