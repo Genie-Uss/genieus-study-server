@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.domains.user.application.dto.info.SignupUserInfo;
+import shop.genieus.study.domains.user.application.dto.result.UserInfoResult;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
@@ -44,6 +45,11 @@ public class UserService implements UserProvider {
   public boolean checkEmailAvailable(String email) {
     boolean exist = repository.existsByEmail(email);
     return !exist;
+  }
+
+  public UserInfoResult getUserInfo(Long userId) {
+    User user = findById(userId);
+    return new UserInfoResult(user.getId(), user.getNickname().getValue());
   }
 
   private void isSamePasswordAndPasswordConfirm(SignupUserInfo info) {
