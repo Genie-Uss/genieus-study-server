@@ -2,7 +2,7 @@
 
 <div align="center">
   <h3><a href="https://study.genieus.shop/" style="color:purple">Genieus Study 바로가기</a></h3>
- <img src="https://file.notion.so/f/f/e12c77a4-5bb4-41c4-a657-0d03087c89e0/f45edc29-9759-42d3-9e46-9a1407ca1b4a/Genie.png?table=block&id=1fb94064-be05-80e9-8fd5-f3e6cb94ce2c&spaceId=e12c77a4-5bb4-41c4-a657-0d03087c89e0&expirationTimestamp=1747958400000&signature=GphbQJzdEba9zK4cqh4ZlGDhTB-mAqQ8yy7nhOloHuU&downloadName=Genie.png" width="150" height="150" />
+ <img src="https://private-user-images.githubusercontent.com/111328823/446671981-59743dc4-b301-4632-bc14-554f3bd3e304.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzkwODMsIm5iZiI6MTc0NzkzODc4MywicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjcxOTgxLTU5NzQzZGM0LWIzMDEtNDYzMi1iYzE0LTU1NGYzYmQzZTMwNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxODMzMDNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hMmFhZTQ5Yjc0OGI2ODhjMzRkYjIyMTM0ZmVhZDEzNWNiOGQyZmRjYjFhMTVjNzNkZWJmZGUxYjQyMDdjZWM3JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.0tB3QNTbPrpD3S4hVPyQxT1rJOnPl5mNABk1Ov0iOJY" width="150" height="150" />
 
 ☑️ 매일 **출석 체크**하는 게 번거롭지 않으신가요?
 
@@ -198,13 +198,13 @@
 
 ## 🏗 시스템 아키텍처
 
-![system architecture](https://file.notion.so/f/f/e12c77a4-5bb4-41c4-a657-0d03087c89e0/81e84118-b7c0-4a4c-b71d-8a771bbf22d8/system_architecture.svg?table=block&id=1fb94064-be05-80fd-882a-c96910b17410&spaceId=e12c77a4-5bb4-41c4-a657-0d03087c89e0&expirationTimestamp=1747958400000&signature=kzGpb2rrjgntb9U_e0VsHp4WAlFnzbOjKv6t-MSb9mU&downloadName=system+architecture.svg)
+![system architecture](https://private-user-images.githubusercontent.com/111328823/446711098-555a6b39-68db-405e-a0ce-49e6c303c914.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5MzkwNDgsIm5iZiI6MTc0NzkzODc0OCwicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NzExMDk4LTU1NWE2YjM5LTY4ZGItNDA1ZS1hMGNlLTQ5ZTZjMzAzYzkxNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxODMyMjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hNDBmNmZmY2RmOTY0ZmJmZDllZmViNTBiNzRkYzJmYjlkNzQwODU3ZTFmYTQ4Mjg1NDg4MzI0YjM0ZjI2MTEyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.kxcHNqDu2iLhP_9moBMss1I872cZX4TunlQQe5C_0Co)
 
 <br/><br/>
 
 ## 도메인 아키텍처
 
-<img src="https://file.notion.so/f/f/e12c77a4-5bb4-41c4-a657-0d03087c89e0/c2cfb629-0a10-45e0-be70-fb6b262c0497/domain_architecture.png?table=block&id=1fb94064-be05-8053-9773-c0ed4238ff20&spaceId=e12c77a4-5bb4-41c4-a657-0d03087c89e0&expirationTimestamp=1747958400000&signature=SiqiqCYnZE1RbJxLGKUG-Ptk3WNLx02FYhZwJRNhfvs&downloadName=domain+architecture.png" />
+<img src="https://private-user-images.githubusercontent.com/111328823/446691421-9c3b271b-966e-4fe1-ab7e-04548908faa7.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDc5Mzg5NDUsIm5iZiI6MTc0NzkzODY0NSwicGF0aCI6Ii8xMTEzMjg4MjMvNDQ2NjkxNDIxLTljM2IyNzFiLTk2NmUtNGZlMS1hYjdlLTA0NTQ4OTA4ZmFhNy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyMlQxODMwNDVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0zZGJjZTg4MmNjNWQzNjdkMDRhMjZkYzU0NGMzMjA1NTVkOGNjNWIwNmJhNTQ2MTAwODU0Njc3ZDU1MGE1NTNkJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.gNmpxGv2CodSX1yuPEP65SowPInyGn3d-b2fZLkjhAw" />
 
 <br/><br/>
 
