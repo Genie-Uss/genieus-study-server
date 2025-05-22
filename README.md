@@ -2,7 +2,7 @@
 
 <div align="center">
   <h3><a href="https://study.genieus.shop/" style="color:purple">Genieus Study 바로가기</a></h3>
- <img src="https://github.com/user-attachments/assets/4f82c77f-ac03-4ec2-a035-9a02520b87a3" width="150" height="150" />
+ <img src="https://drive.usercontent.google.com/download?id=1ss8TW8XEcv9fiAyfYBXApKS_vEWTE9Au" width="150" height="150" />
 
 ☑️ 매일 **출석 체크**하는 게 번거롭지 않으신가요?
 
@@ -198,9 +198,7 @@
 
 ## 🏗 시스템 아키텍처
 
-![시스템 아키텍처](https://github.com/user-attachments/assets/8eed7724-7ee8-48ac-babe-60e1dea47624)
-
-- ### 상세 네트워크 구성 보기 → [📝 Docs](https://github.com/Genie-Uss/genieus-study-server/wiki/system-architecture#%EF%B8%8F-%EC%83%81%EC%84%B8-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EA%B5%AC%EC%84%B1)
+![system architecture](https://drive.usercontent.google.com/download?id=1ik5S5Ienc_l0jRb4PJLdDRaSMUmupPff)
 
 <br/><br/>
 
@@ -208,8 +206,50 @@
 
 <div align="center">
 
-![도메인 아키텍처](https://github.com/user-attachments/assets/2099dd27-fde0-4dac-ab91-4f5139e20715)
-
+```mermaid
+graph TB
+    subgraph "🏗️ Domain Layer"
+        User[👥 User<br/>사용자 관리 및 인증]
+        Auth[🔐 Auth<br/>JWT 기반 인증/인가]
+        Attendance[📅 Attendance<br/>출석 관리]
+        Stamp[🎯 Stamp<br/>인증 도장 시스템]
+        LearningGoal[📊 LearningGoal<br/>학습 목표 관리]
+        Notification[🔔 Notification<br/>알림 시스템]
+    end
+    
+    subgraph "📱 Presentation Layer"
+        Controllers[REST Controllers]
+    end
+    
+    subgraph "🗄️ Infrastructure Layer"
+        Database[(MySQL)]
+        Cache[(Redis)]
+        External[Discord Webhook]
+    end
+    
+    Controllers --> User
+    Controllers --> Auth
+    Controllers --> Attendance
+    Controllers --> Stamp
+    Controllers --> LearningGoal
+    
+    User --> Database
+    Attendance --> Database
+    Stamp --> Database
+    LearningGoal --> Database
+    Auth --> Cache
+    
+    Attendance -.->|Event| Notification
+    Stamp -.->|Event| Notification
+    Notification --> External
+    
+    style User fill:#e1f5fe
+    style Auth fill:#fff3e0
+    style Attendance fill:#f3e5f5
+    style Stamp fill:#e8f5e8
+    style LearningGoal fill:#fce4ec
+    style Notification fill:#f1f8e9
+```
 
 </div>
 
