@@ -1,5 +1,6 @@
 package shop.genieus.study.domains.user.application;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -8,34 +9,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
-import shop.genieus.study.domains.user.application.dto.info.SignupUserInfo;
+import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
 import shop.genieus.study.domains.user.application.dto.result.UserInfoResult;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
+import shop.genieus.study.domains.user.application.repository.UserSettingHistoryRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
+import shop.genieus.study.domains.user.domain.entity.UserSettingHistory;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.Email;
 import shop.genieus.study.domains.user.domain.vo.Nickname;
+import shop.genieus.study.domains.user.domain.vo.UserSettings;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Transactional
-public class UserService implements UserProvider {
+public class UserQueryService implements UserProvider {
   private final UserRepository repository;
+  private final UserSettingHistoryRepository settingHistoryRepository;
   private final PasswordEncryptionService encryptionService;
-
-  public User signupUser(SignupUserInfo info) {
-    this.isSamePasswordAndPasswordConfirm(info);
-    this.isEmailAlreadyRegistered(info);
-
-    return repository.save(
-        User.create(info.email(), info.password(), encryptionService, info.nickname()));
-  }
-
-  public User findById(Long userId) {
-    return repository.findById(userId);
-  }
 
   public boolean checkNicknameAvailable(String nickname) {
     boolean exist = repository.existsByNickname(nickname);
@@ -50,19 +43,6 @@ public class UserService implements UserProvider {
   public UserInfoResult getUserInfo(Long userId) {
     User user = findById(userId);
     return new UserInfoResult(user.getId(), user.getNickname().getValue());
-  }
-
-  private void isSamePasswordAndPasswordConfirm(SignupUserInfo info) {
-    if (!info.password().equals(info.confirmPassword())) {
-      throw UserValidationException.noPasswordConfirm();
-    }
-  }
-
-  private void isEmailAlreadyRegistered(SignupUserInfo info) {
-    String email = info.email();
-    if (repository.existsByEmail(email)) {
-      throw UserValidationException.duplicateEmail(email);
-    }
   }
 
   @Override
@@ -87,20 +67,13 @@ public class UserService implements UserProvider {
     }
   }
 
-  private UserInfo from(User user) {
-    return new UserInfo(
-        user.getId(),
-        getValueOrNull(user.getEmail(), Email::getValue),
-        getValueOrNull(user.getNickname(), Nickname::getValue),
-        user.getProfileImage(),
-        getValueOrNull(user.getRole(), Enum::name),
-        user.getDesiredCheckInTime(),
-        user.getDesiredCoreTime(),
-        user.getIsActive());
+  @Override
+  public UserSettingHistoryInfo getEffectiveSettingsByDate(Long userId, LocalDate date) {
+    return from(getUserSettingHistoryByDate(userId, date));
   }
 
-  private <T, R> R getValueOrNull(T obj, Function<T, R> getter) {
-    return Optional.ofNullable(obj).map(getter).orElse(null);
+  private User findById(Long userId) {
+    return repository.findById(userId);
   }
 
   private void validateLoginAllowed(User user) {
@@ -116,5 +89,37 @@ public class UserService implements UserProvider {
       }
       throw UserValidationException.accountNotApproved();
     }
+  }
+
+  private UserSettingHistory getUserSettingHistoryByDate(Long userId, LocalDate date) {
+    return settingHistoryRepository.findEffectiveSettings(userId, date);
+  }
+
+  private UserInfo from(User user) {
+    UserSettings currentUserSettings = user.getCurrentSettings();
+    return new UserInfo(
+        user.getId(),
+        getValueOrNull(user.getEmail(), Email::getValue),
+        getValueOrNull(user.getNickname(), Nickname::getValue),
+        user.getProfileImage(),
+        getValueOrNull(user.getRole(), Enum::name),
+        getValueOrNull(currentUserSettings, UserSettings::getDesiredCheckInTime),
+        getValueOrNull(currentUserSettings, UserSettings::getDesiredCoreTime),
+        user.getIsActive());
+  }
+
+  private UserSettingHistoryInfo from(UserSettingHistory history) {
+    return new UserSettingHistoryInfo(
+        history.getId(),
+        history.getUserId(),
+        history.getEffectiveFromDate(),
+        history.getEffectiveToDate(),
+        history.getDesiredCheckInTime(),
+        history.getDesiredCoreTime(),
+        history.isActive());
+  }
+
+  private <T, R> R getValueOrNull(T obj, Function<T, R> getter) {
+    return Optional.ofNullable(obj).map(getter).orElse(null);
   }
 }
