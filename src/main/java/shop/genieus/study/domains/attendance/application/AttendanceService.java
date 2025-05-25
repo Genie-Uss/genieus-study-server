@@ -41,16 +41,20 @@ public class AttendanceService implements AttendanceProvider {
 
     UserInfo userInfo = userProvider.findByUserId(info.userId());
 
-    Attendance attendance =
-        Attendance.checkIn(
-            info.userId(),
-            checkInDateTime,
-            userInfo.desiredCheckInTime(),
-            currentDateTime.toLocalDate(),
-            currentDateTime,
-            userInfo.desiredCoreTime());
-
-    return repository.save(attendance);
+    try {
+      Attendance attendance =
+          Attendance.checkIn(
+              info.userId(),
+              checkInDateTime,
+              userInfo.desiredCheckInTime(),
+              currentDateTime.toLocalDate(),
+              currentDateTime,
+              userInfo.desiredCoreTime());
+      return repository.save(attendance);
+    } catch (Exception e) {
+      log.warn("출석 처리 중 오류- check in info: {}, 현재 시각: {}", info, currentDateTime);
+      throw e;
+    }
   }
 
   public Attendance checkOut(CheckOutInfo info) {
@@ -85,7 +89,7 @@ public class AttendanceService implements AttendanceProvider {
 
       return AttendanceResult.from(attendance);
     } catch (AttendanceNotFoundException e) {
-      log.info("{}의 출석 정보를 찾을 수 없음: {}", info.targetDate(), e);
+      log.info("{}의 출석 정보를 찾을 수 없음: {}", info.targetDate());
 
       UserSettingHistoryInfo settingInfo =
           userProvider.getEffectiveSettingsByDate(targetUserId, targetDate);

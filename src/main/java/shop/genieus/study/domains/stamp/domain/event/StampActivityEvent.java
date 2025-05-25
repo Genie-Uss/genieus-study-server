@@ -1,5 +1,6 @@
 package shop.genieus.study.domains.stamp.domain.event;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -23,8 +24,10 @@ public class StampActivityEvent implements NotificationMessageBuilder {
   private final String description;
   private final String url;
   private final StampTypeWrapper stampType;
+  private final LocalDateTime verifiedAt;
 
   public static StampActivityEvent of(Stamp stamp) {
+    LocalDateTime verifiedAt = stamp.getVerifiedAt();
     return switch (stamp.getType()) {
       case CT -> {
         CodingTestStamp s = (CodingTestStamp) stamp;
@@ -34,7 +37,8 @@ public class StampActivityEvent implements NotificationMessageBuilder {
             inlineCodes(s.getAlgorithmType().getFieldName(), s.getPlatformType().getFieldName()),
             truncateText(s.getDescription()),
             safeUrl(s.getProblemUrl()),
-            StampTypeWrapper.CT);
+            StampTypeWrapper.CT,
+            verifiedAt);
       }
       case TIL -> {
         TilStamp s = (TilStamp) stamp;
@@ -44,7 +48,8 @@ public class StampActivityEvent implements NotificationMessageBuilder {
             inlineCode(s.getCategoryType().getFieldName()),
             truncateText(s.getContent()),
             safeUrl(s.getRelatedUrl()),
-            StampTypeWrapper.TIL);
+            StampTypeWrapper.TIL,
+            verifiedAt);
       }
       case RESUME -> {
         ResumeStamp s = (ResumeStamp) stamp;
@@ -54,7 +59,8 @@ public class StampActivityEvent implements NotificationMessageBuilder {
             inlineCodes(s.getCareerType().getFieldName(), s.getActivityType().getFieldName()),
             truncateText(s.getDescription()),
             safeUrl(s.getRelatedUrl()),
-            StampTypeWrapper.RESUME);
+            StampTypeWrapper.RESUME,
+            verifiedAt);
       }
     };
   }
@@ -78,6 +84,25 @@ public class StampActivityEvent implements NotificationMessageBuilder {
       return text;
     }
     return text.substring(0, MAX_DESCRIPTION_LENGTH - 3) + "...";
+  }
+
+  @Override
+  public boolean requiresFrontendLink() {
+    return true;
+  }
+
+  @Override
+  public String buildFrontendUrl(String baseUrl) {
+    String date = verifiedAt.toLocalDate().toString();
+
+    String path =
+        switch (stampType) {
+          case CT -> "/stamps/ct/user/" + userId + "?date=" + date;
+          case TIL -> "/stamps/til/user/" + userId + "?date=" + date;
+          case RESUME -> "/stamps/resume/user/" + userId + "?date=" + date;
+        };
+
+    return baseUrl + path;
   }
 
   @Override

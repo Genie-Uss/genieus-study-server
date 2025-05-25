@@ -36,4 +36,8 @@ logging:
     org.hibernate.type.descriptor.sql: TRACE
 
 server:
-  url: http://localhost:8080
+  url: http://localhost:3001
+  port: 8080
+
+frontend:
+  url: ${server.url}

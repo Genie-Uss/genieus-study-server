@@ -12,4 +12,12 @@ public interface NotificationMessageBuilder {
   NotificationChannelType getChannelType();
 
   String getEmoji();
+
+  default boolean requiresFrontendLink() {
+    return false;
+  }
+
+  default String buildFrontendUrl(String baseUrl) {
+    return baseUrl;
+  }
 }

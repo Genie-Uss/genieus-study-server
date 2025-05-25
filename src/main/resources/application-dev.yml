@@ -28,4 +28,8 @@ spring:
         read-from: REPLICA_PREFERRED
 
 server:
-  url: https://study-dev.genieus.shop
+  url: http://localhost:3001
+  port: 8080
+
+frontend:
+  url: ${server.url}

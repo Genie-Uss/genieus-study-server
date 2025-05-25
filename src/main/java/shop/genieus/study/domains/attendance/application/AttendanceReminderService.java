@@ -16,13 +16,13 @@ public class AttendanceReminderService {
 
   private final ApplicationEventPublisher eventPublisher;
 
-  @Value("${server.url}")
-  private String serverUrl;
+  @Value("${frontend.url}")
+  private String frontedUrl;
 
   @Scheduled(cron = "${scheduler.notification.check-in-cron}")
   public void sendCheckInReminder() {
     log.info("출석 알림 이벤트 발행 시작");
-    CheckInReminderEvent event = new CheckInReminderEvent(serverUrl);
+    CheckInReminderEvent event = new CheckInReminderEvent(frontedUrl);
     eventPublisher.publishEvent(event);
     log.info("출석 알림 이벤트 발행 완료");
   }
@@ -30,7 +30,7 @@ public class AttendanceReminderService {
   @Scheduled(cron = "${scheduler.notification.check-out-cron}")
   public void sendCheckOutReminder() {
     log.info("코어 시간 종료 알림 이벤트 발행 시작");
-    CheckOutReminderEvent event = new CheckOutReminderEvent(serverUrl);
+    CheckOutReminderEvent event = new CheckOutReminderEvent(frontedUrl);
     eventPublisher.publishEvent(event);
     log.info("코어 시간 종료 알림 이벤트 발행 완료");
   }
