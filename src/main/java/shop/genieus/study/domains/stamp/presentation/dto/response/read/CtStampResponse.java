@@ -1,13 +1,20 @@
 package shop.genieus.study.domains.stamp.presentation.dto.response.read;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
 
-public record CtStampResponse(List<Detail> details) {
+public record CtStampResponse(LocalDate date, boolean isOwner, List<Detail> details) {
 
-  public static CtStampResponse of(List<CodingTestStamp> stamps) {
-    return new CtStampResponse(stamps.stream().map(Detail::of).toList());
+  public static CtStampResponse of(LocalDate date, CustomPrincipal principal, Long targetUserId, List<CodingTestStamp> stamps) {
+    return new CtStampResponse(date, isOwner(principal.id(), targetUserId), stamps.stream().map(Detail::of).toList());
+  }
+
+  private static boolean isOwner(Long requestUserId, Long targetUserId) {
+    return Objects.equals(requestUserId, targetUserId);
   }
 
   public record Detail(

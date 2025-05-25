@@ -46,10 +46,8 @@ public class StampController {
 
   @PostMapping("/ct")
   public ResponseEntity<CreateCtStampResponse> createCtStamp(
-      @AuthPrincipal CustomPrincipal principal,
-      @RequestBody @Valid CreateCtStampRequest request) {
-    CreateCtStampResult result =
-        stampService.createCodingTestStamp(request.toInfo(principal));
+      @AuthPrincipal CustomPrincipal principal, @RequestBody @Valid CreateCtStampRequest request) {
+    CreateCtStampResult result = stampService.createCodingTestStamp(request.toInfo(principal));
     CreateCtStampResponse response = CreateCtStampResponse.of(result);
     return ResponseEntity.ok(response);
   }
@@ -66,59 +64,56 @@ public class StampController {
   public ResponseEntity<CreateResumeStampResponse> createResumeStamp(
       @AuthPrincipal CustomPrincipal principal,
       @RequestBody @Valid CreateResumeStampRequest request) {
-    CreateResumeStampResult result =
-        stampService.createJobActivityStamp(request.toInfo(principal));
+    CreateResumeStampResult result = stampService.createJobActivityStamp(request.toInfo(principal));
     CreateResumeStampResponse response = CreateResumeStampResponse.of(result);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/user/{userId}")
   public ResponseEntity<StampHistoryResponse> getStampByDate(
-      @PathVariable Long userId,
-      @RequestParam(required = false) LocalDate date) {
-    StampHistory stampHistory = stampHistoryService.getStampHistoryByDate(
-        new GetStampInfo(userId, date));
+      @PathVariable Long userId, @RequestParam(required = false) LocalDate date) {
+    StampHistory stampHistory =
+        stampHistoryService.getStampHistoryByDate(new GetStampInfo(userId, date));
     return ResponseEntity.ok(StampHistoryResponse.of(stampHistory));
   }
 
   @GetMapping("/ct/user/{userId}")
   public ResponseEntity<CtStampResponse> getCtStampByDate(
+      @AuthPrincipal CustomPrincipal principal,
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
-    List<CodingTestStamp> result = stampService.getCtStampByDate(
-        new GetCtStampInfo(userId, date));
-    return ResponseEntity.ok(CtStampResponse.of(result));
+    List<CodingTestStamp> result = stampService.getCtStampByDate(new GetCtStampInfo(userId, date));
+    return ResponseEntity.ok(CtStampResponse.of(date, principal, userId, result));
   }
 
   @GetMapping("/til/user/{userId}")
   public ResponseEntity<TilStampResponse> getTilStampByDate(
+      @AuthPrincipal CustomPrincipal principal,
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
-    List<TilStamp> result = stampService.getTilStampByDate(
-        new GetTilStampInfo(userId, date));
-    return ResponseEntity.ok(TilStampResponse.of(result));
+    List<TilStamp> result = stampService.getTilStampByDate(new GetTilStampInfo(userId, date));
+    return ResponseEntity.ok(TilStampResponse.of(date, principal, userId, result));
   }
 
   @GetMapping("/resume/user/{userId}")
   public ResponseEntity<ResumeStampResponse> getResumeStampByDate(
+      @AuthPrincipal CustomPrincipal principal,
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
-    List<ResumeStamp> result = stampService.getResumeStampByDate(
-        new GetResumeStampInfo(userId, date));
-    return ResponseEntity.ok(ResumeStampResponse.of(result));
+    List<ResumeStamp> result =
+        stampService.getResumeStampByDate(new GetResumeStampInfo(userId, date));
+    return ResponseEntity.ok(ResumeStampResponse.of(date, principal, userId, result));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<DeleteStampResponse> deleteStamp(
-      @AuthPrincipal CustomPrincipal principal,
-      @PathVariable(name = "id") Long stampId) {
-    stampService.deleteStamp(new DeleteStampInfo(principal.id(),stampId));
+      @AuthPrincipal CustomPrincipal principal, @PathVariable(name = "id") Long stampId) {
+    stampService.deleteStamp(new DeleteStampInfo(principal.id(), stampId));
     return ResponseEntity.ok(DeleteStampResponse.of());
   }
 
   @GetMapping("/categories")
-  public ResponseEntity<StampCategoryResponse> getCategories(
-      @RequestParam String type){
+  public ResponseEntity<StampCategoryResponse> getCategories(@RequestParam String type) {
     StampCategoryResponse categories = stampCategoryService.getCategories(type);
     return ResponseEntity.ok(categories);
   }
