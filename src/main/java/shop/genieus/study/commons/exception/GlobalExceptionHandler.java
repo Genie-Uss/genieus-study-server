@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -126,6 +127,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ApiErrorResponse response =
         ApiErrorResponse.create(
             Domain.GLOBAL, spec.getMessage(), spec.getStatusCode(), request, details);
+    return buildResponse(exception, response);
+  }
+
+  protected ResponseEntity<Object> handleAccessDeniedException(
+      AccessDeniedException exception,
+      HttpHeaders headers,
+      HttpStatusCode status,
+      WebRequest request) {
+
+    GlobalErrorSpec spec = GlobalErrorSpec.ACCESS_DENIED;
+
+    ApiErrorResponse response =
+        ApiErrorResponse.create(
+            Domain.GLOBAL, exception.getMessage(), spec.getStatusCode(), request, null);
     return buildResponse(exception, response);
   }
 

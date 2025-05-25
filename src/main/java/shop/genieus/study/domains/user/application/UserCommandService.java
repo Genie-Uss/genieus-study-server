@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.domains.user.application.dto.info.SignupUserInfo;
+import shop.genieus.study.domains.user.application.dto.info.UpdateUserSettingInfo;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.application.repository.UserSettingHistoryRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
@@ -38,12 +39,15 @@ public class UserCommandService {
     return saved;
   }
 
-  public void updateUserSettings(Long userId, LocalTime newCheckInTime, int newCoreTime) {
+  public void updateUserSettings(UpdateUserSettingInfo info) {
+    Long userId = info.userId();
     User user = findById(userId);
-    LocalDate today = dateTimeProvider.getCurrentDate();
 
+    LocalTime newCheckInTime = info.newCheckInTime();
+    int newCoreTime = info.newCoreTime();
     user.updateSettings(newCheckInTime, newCoreTime);
 
+    LocalDate today = dateTimeProvider.getCurrentDate();
     deactivateCurrentHistory(userId, today);
     createNewSettingHistory(userId, today, newCheckInTime, newCoreTime);
 

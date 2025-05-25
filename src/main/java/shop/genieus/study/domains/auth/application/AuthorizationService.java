@@ -11,7 +11,7 @@ import shop.genieus.study.domains.auth.application.repository.TokenRepository;
 import shop.genieus.study.domains.auth.application.util.TokenUtils;
 import shop.genieus.study.domains.auth.domain.exception.TokenExpiredException;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
-import shop.genieus.study.domains.user.application.UserService;
+import shop.genieus.study.domains.user.application.UserQueryService;
 
 @Slf4j
 @Service
@@ -20,7 +20,7 @@ public class AuthorizationService implements AuthProvider {
   private final TokenRepository tokenRepository;
   private final TokenUtils tokenUtils;
   private final PrincipalCache principalCache;
-  private final UserService userService;
+  private final UserQueryService userService;
 
   public TokenValidationResult validateAccessToken(String accessToken) {
     if (accessToken == null || accessToken.isBlank()) {

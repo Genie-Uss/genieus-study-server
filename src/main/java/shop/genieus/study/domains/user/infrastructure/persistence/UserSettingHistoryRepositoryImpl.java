@@ -2,7 +2,6 @@ package shop.genieus.study.domains.user.infrastructure.persistence;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import shop.genieus.study.domains.user.application.exception.UserSettingHistoryNotFoundException;
 import shop.genieus.study.domains.user.application.repository.UserSettingHistoryRepository;
@@ -23,7 +22,7 @@ public class UserSettingHistoryRepositoryImpl implements UserSettingHistoryRepos
   @Override
   public UserSettingHistory findEffectiveSettings(Long userId, LocalDate date) {
     return jpaRepository
-        .findEffectiveSettings(userId, date, PageRequest.of(0, 1))
+        .findEffectiveSettings(userId, date)
         .orElseThrow(() -> UserSettingHistoryNotFoundException.create(date, userId));
   }
 

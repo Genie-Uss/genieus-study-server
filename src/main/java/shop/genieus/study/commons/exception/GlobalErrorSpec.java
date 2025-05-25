@@ -1,8 +1,6 @@
 package shop.genieus.study.commons.exception;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.*;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,8 @@ public enum GlobalErrorSpec {
   NOT_READABLE(BAD_REQUEST.value(), "입력하신 데이터가 잘못된 형식입니다."),
   INVALID_REQUEST(BAD_REQUEST.value(), "요청하신 값이 올바르지 않습니다. 요청 값을 확인해 주세요."),
   NOT_ALLOWED(METHOD_NOT_ALLOWED.value(), "허용되지 않은 HTTP 메서드입니다"),
-  NOT_FOUND(HttpStatus.NOT_FOUND.value(), "요청하신 데이터를 찾을 수 없습니다.");
+  NOT_FOUND(HttpStatus.NOT_FOUND.value(), "요청하신 데이터를 찾을 수 없습니다."),
+  ACCESS_DENIED(FORBIDDEN.value(), "접근할 수 없는 데이터입니다.");
 
   private final int statusCode;
   private final String message;
