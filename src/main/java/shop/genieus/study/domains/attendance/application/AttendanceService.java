@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.UserInfo;
+import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckOutInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.GetAttendanceInfo;
+import shop.genieus.study.domains.attendance.application.dto.result.AttendanceResult;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceBusinessException;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceNotFoundException;
 import shop.genieus.study.domains.attendance.application.repository.AttendanceRepository;
@@ -73,10 +75,27 @@ public class AttendanceService implements AttendanceProvider {
     return repository.save(attendance);
   }
 
-  public Attendance getAttendance(GetAttendanceInfo info) {
-    Attendance attendance =
-        repository.findByUserIdAndAttendanceTimeDate(info.targetUserId(), info.targetDate());
-    return attendance;
+  public AttendanceResult getAttendance(GetAttendanceInfo info) {
+    Long targetUserId = info.targetUserId();
+    LocalDate targetDate = info.targetDate();
+
+    try {
+      Attendance attendance =
+          repository.findByUserIdAndAttendanceTimeDate(targetUserId, targetDate);
+
+      return AttendanceResult.from(attendance);
+    } catch (AttendanceNotFoundException e) {
+      log.info("{}의 출석 정보를 찾을 수 없음: {}", info.targetDate(), e);
+
+      UserSettingHistoryInfo settingInfo =
+          userProvider.getEffectiveSettingsByDate(targetUserId, targetDate);
+
+      return AttendanceResult.notFound(
+          targetUserId,
+          settingInfo.desiredCoreTime(),
+          targetDate,
+          settingInfo.desiredCheckInTime());
+    }
   }
 
   @Override

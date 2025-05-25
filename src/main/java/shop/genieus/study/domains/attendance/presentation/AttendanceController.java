@@ -50,6 +50,7 @@ public class AttendanceController {
       @RequestParam(required = false) LocalDate date,
       @RequestParam Long userId) {
     LocalDate targetDate = (date != null) ? date : LocalDate.now();
+
     AttendanceResponse response =
         AttendanceResponse.from(
             attendanceService.getAttendance(new GetAttendanceInfo(userId, targetDate)),

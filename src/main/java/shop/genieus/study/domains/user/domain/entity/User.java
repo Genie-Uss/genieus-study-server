@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.commons.jpa.BaseEntity;
 import shop.genieus.study.domains.user.application.PasswordEncryptionService;
+import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.*;
 
 @Entity
@@ -44,15 +45,7 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private UserRole role = UserRole.ROLE_USER;
 
-  @Builder.Default
-  @Comment("희망 출석 시각")
-  @Column(nullable = false)
-  private LocalTime desiredCheckInTime = LocalTime.of(9, 0);
-
-  @Builder.Default
-  @Comment("희망 코어 시간 (분)")
-  @Column(nullable = false)
-  private int desiredCoreTime = 240;
+  @Embedded private UserSettings currentSettings;
 
   @Builder.Default
   @Comment("활성화")
@@ -74,12 +67,22 @@ public class User extends BaseEntity {
         .email(Email.of(email))
         .password(Password.of(password, passwordEncryptionService))
         .nickname(Nickname.of(nickname))
+        .currentSettings(UserSettings.defaultSettings())
         .build();
   }
 
   public boolean matchPassword(
       String plainPassword, PasswordEncryptionService passwordEncryptionService) {
     return this.password.matches(plainPassword, passwordEncryptionService);
+  }
+
+  public void updateSettings(LocalTime newCheckInTime, int newCoreTime) {
+    if (currentSettings.isSameAs(newCheckInTime, newCoreTime)) {
+      throw UserValidationException.sameSetting();
+    }
+
+    UserSettings newSettings = UserSettings.of(newCheckInTime, newCoreTime);
+    this.currentSettings = newSettings;
   }
 
   public boolean isRoleUser() {

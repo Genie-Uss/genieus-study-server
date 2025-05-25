@@ -75,4 +75,20 @@ public class UserValidationException extends ValidationException {
   public static UserValidationException accountNotApproved() {
     return new UserValidationException("로그인할 수 없는 계정 상태입니다. 관리자에게 문의하세요.");
   }
+
+  public static UserValidationException requiredCheckInTime() {
+    return new UserValidationException("출석 시간은 필수입니다.");
+  }
+
+  public static UserValidationException invalidCheckInTimeRange() {
+    return new UserValidationException("출석 시간은 06:00-12:00 사이여야 합니다.");
+  }
+
+  public static UserValidationException invalidCoreTimeRange(int min, int max) {
+    return new UserValidationException(String.format("코어 시간은 %d분-%d분 사이여야 합니다.", min, max));
+  }
+
+  public static UserValidationException sameSetting() {
+    return new UserValidationException("기존 설정과 동일합니다.");
+  }
 }

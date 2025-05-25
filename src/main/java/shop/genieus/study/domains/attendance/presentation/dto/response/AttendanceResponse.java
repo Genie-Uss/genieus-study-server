@@ -2,8 +2,7 @@ package shop.genieus.study.domains.attendance.presentation.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import shop.genieus.study.domains.attendance.domain.entity.Attendance;
-import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
+import shop.genieus.study.domains.attendance.application.dto.result.AttendanceResult;
 
 public record AttendanceResponse(
     Long id,
@@ -17,18 +16,22 @@ public record AttendanceResponse(
     int studyDuration,
     boolean isOwner) {
 
-  public static AttendanceResponse from(Attendance attendance, Long userId, Long targetUserId) {
-    AttendanceTime attendanceTime = attendance.getAttendanceTime();
+  public static AttendanceResponse from(
+      AttendanceResult result, Long requestUserId, Long targetUserId) {
     return new AttendanceResponse(
-        attendance.getId(),
-        attendance.getUserId(),
-        attendanceTime.getDate(),
-        attendance.isCheckedIn(),
-        attendance.isCheckedOut(),
-        attendanceTime.getCheckInTime(),
-        attendanceTime.getCheckOutTime(),
-        attendance.getDesiredCoreTime(),
-        attendance.getStudyResult().getStudyMinutes(),
-        userId.equals(targetUserId));
+        result.id(),
+        result.userId(),
+        result.date(),
+        result.isCheckedIn(),
+        result.isCheckedOut(),
+        result.checkInTime(),
+        result.checkOutTime(),
+        result.desiredCoreTime(),
+        result.studyMinutes(),
+        isOwner(requestUserId, targetUserId));
+  }
+
+  private static boolean isOwner(Long requestUserId, Long targetUserId) {
+    return requestUserId.equals(targetUserId);
   }
 }
