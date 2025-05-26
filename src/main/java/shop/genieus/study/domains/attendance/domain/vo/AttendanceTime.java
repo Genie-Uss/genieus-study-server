@@ -76,7 +76,7 @@ public class AttendanceTime {
       throw AttendanceValidationException.notTodayCheckIn();
     }
 
-    if (checkInTime.isAfter(currentDateTime)) {
+    if (checkInTime.minusSeconds(30).isAfter(currentDateTime)) {
       throw AttendanceValidationException.futureTimeCheckIn();
     }
   }
@@ -103,7 +103,7 @@ public class AttendanceTime {
       throw AttendanceValidationException.notTodayCheckOut();
     }
 
-    if (checkOutTime.isAfter(currentDateTime)) {
+    if (checkOutTime.minusSeconds(30).isAfter(currentDateTime)) {
       throw AttendanceValidationException.futureTimeCheckOut();
     }
   }
