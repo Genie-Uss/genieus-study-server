@@ -60,7 +60,8 @@ public class AttendanceTime {
 
     boolean isLate = false;
     if (desiredCheckInTime != null && checkInTime != null) {
-      isLate = checkInTime.toLocalTime().isAfter(desiredCheckInTime);
+      LocalTime actualTime = checkInTime.toLocalTime().withSecond(0).withNano(0);
+      isLate = actualTime.isAfter(desiredCheckInTime);
     }
 
     return new AttendanceTime(date, checkInTime, checkOutTime, desiredCheckInTime, isLate);

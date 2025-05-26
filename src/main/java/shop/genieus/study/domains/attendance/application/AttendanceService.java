@@ -89,7 +89,7 @@ public class AttendanceService implements AttendanceProvider {
 
       return AttendanceResult.from(attendance);
     } catch (AttendanceNotFoundException e) {
-      log.info("{}의 출석 정보를 찾을 수 없음: {}", info.targetDate());
+      log.info("{}의 출석 정보를 찾을 수 없음", info.targetDate());
 
       UserSettingHistoryInfo settingInfo =
           userProvider.getEffectiveSettingsByDate(targetUserId, targetDate);
