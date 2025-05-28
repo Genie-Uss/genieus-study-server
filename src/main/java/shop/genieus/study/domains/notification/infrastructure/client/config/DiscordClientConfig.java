@@ -20,7 +20,11 @@ public class DiscordClientConfig {
   public Map<NotificationChannel, NotificationSender> notificationChannelClients(
       DiscordWebhookClient discordWebhookClient) {
     return Map.of(
-        NotificationChannel.DISCORD_ATTENDANCE, discordWebhookClient,
-        NotificationChannel.DISCORD_ACTIVITY, discordWebhookClient);
+        NotificationChannel.DISCORD_ATTENDANCE,
+        discordWebhookClient,
+        NotificationChannel.DISCORD_ACTIVITY,
+        discordWebhookClient,
+        NotificationChannel.DISCORD_STATISTICS,
+        discordWebhookClient);
   }
 }

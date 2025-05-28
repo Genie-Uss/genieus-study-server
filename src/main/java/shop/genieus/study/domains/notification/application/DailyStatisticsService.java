@@ -22,6 +22,7 @@ import shop.genieus.study.domains.notification.domain.vo.UserStatistics;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DailyStatisticsService {
 
   private final AttendanceProvider attendanceProvider;
@@ -31,7 +32,6 @@ public class DailyStatisticsService {
   private final DateTimeProvider dateTimeProvider;
   private final ApplicationEventPublisher eventPublisher;
 
-  @Transactional(readOnly = true)
   @Scheduled(cron = "${scheduler.notification.daily-statistics-cron}")
   public void sendDailyStatistics() {
     LocalDate yesterday = dateTimeProvider.getYesterday();

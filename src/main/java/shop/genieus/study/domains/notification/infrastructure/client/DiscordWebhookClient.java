@@ -68,13 +68,15 @@ public class DiscordWebhookClient implements NotificationSender {
 
   private boolean isDiscordChannel(NotificationChannel channel) {
     return channel == NotificationChannel.DISCORD_ATTENDANCE
-        || channel == NotificationChannel.DISCORD_ACTIVITY;
+        || channel == NotificationChannel.DISCORD_ACTIVITY
+        || channel == NotificationChannel.DISCORD_STATISTICS;
   }
 
   private String getWebhookUrl(NotificationChannel channel) {
     return switch (channel) {
       case DISCORD_ATTENDANCE -> discordProperties.getWebhookUrl().getAttendance();
       case DISCORD_ACTIVITY -> discordProperties.getWebhookUrl().getActivity();
+      case DISCORD_STATISTICS -> discordProperties.getWebhookUrl().getStatistics();
       default -> "";
     };
   }
