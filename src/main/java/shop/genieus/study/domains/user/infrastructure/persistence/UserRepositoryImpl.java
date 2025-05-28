@@ -1,5 +1,6 @@
 package shop.genieus.study.domains.user.infrastructure.persistence;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
@@ -40,5 +41,10 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public User findById(Long userId) {
     return jpaRepository.findById(userId).orElseThrow(() -> UserNotFoundException.create());
+  }
+
+  @Override
+  public List<User> findAllActiveUsers() {
+    return jpaRepository.findAllActiveUsers();
   }
 }

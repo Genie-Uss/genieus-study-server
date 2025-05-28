@@ -2,6 +2,7 @@ package shop.genieus.study.domains.attendance.infrastructure.persistence.reposit
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,4 +26,8 @@ public interface AttendanceJpaRepository extends JpaRepository<Attendance, Long>
       nativeQuery = true)
   int batchCheckOutUncheckedAttendances(
       @Param("date") LocalDate date, @Param("checkOutTime") LocalDateTime checkOutTime);
+
+  @Query("SELECT a FROM Attendance a WHERE a.userId IN :userIds AND a.attendanceTime.date = :date")
+  List<Attendance> findByUserIdsAndAttendanceTimeDate(
+      @Param("userIds") List<Long> userIds, @Param("date") LocalDate date);
 }

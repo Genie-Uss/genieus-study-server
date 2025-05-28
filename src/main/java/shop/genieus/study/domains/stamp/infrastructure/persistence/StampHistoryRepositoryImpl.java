@@ -1,6 +1,7 @@
 package shop.genieus.study.domains.stamp.infrastructure.persistence;
 
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,11 @@ public class StampHistoryRepositoryImpl implements StampHistoryRepository {
 
   @Override
   public StampHistory findByUserIdAndVerifiedAt(Long userId, LocalDate verifiedAt) {
-    return jpaRepository.findByUserIdAndVerifiedAt(userId,verifiedAt).orElse(null);
+    return jpaRepository.findByUserIdAndVerifiedAt(userId, verifiedAt).orElse(null);
+  }
+
+  @Override
+  public List<StampHistory> findByUserIdsAndVerifiedAt(List<Long> userIds, LocalDate verifiedAt) {
+    return jpaRepository.findByUserIdsAndVerifiedAt(userIds, verifiedAt);
   }
 }
