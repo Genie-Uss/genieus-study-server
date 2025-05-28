@@ -1,8 +1,8 @@
 package shop.genieus.study.domains.user.application;
 
 import java.time.LocalDate;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,14 +12,12 @@ import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
 import shop.genieus.study.domains.user.application.dto.result.UserInfoResult;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
+import shop.genieus.study.domains.user.application.mapper.UserMapper;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.application.repository.UserSettingHistoryRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
 import shop.genieus.study.domains.user.domain.entity.UserSettingHistory;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
-import shop.genieus.study.domains.user.domain.vo.Email;
-import shop.genieus.study.domains.user.domain.vo.Nickname;
-import shop.genieus.study.domains.user.domain.vo.UserSettings;
 
 @Slf4j
 @Service
@@ -28,6 +26,7 @@ import shop.genieus.study.domains.user.domain.vo.UserSettings;
 public class UserQueryService implements UserProvider {
   private final UserRepository repository;
   private final UserSettingHistoryRepository settingHistoryRepository;
+  private final UserMapper mapper;
   private final PasswordEncryptionService encryptionService;
 
   public boolean checkNicknameAvailable(String nickname) {
@@ -47,7 +46,7 @@ public class UserQueryService implements UserProvider {
 
   @Override
   public UserInfo findByUserId(Long userId) throws UserNotFoundException {
-    return from(findById(userId));
+    return mapper.from(findById(userId));
   }
 
   @Override
@@ -61,7 +60,7 @@ public class UserQueryService implements UserProvider {
 
       validateLoginAllowed(user);
 
-      return from(user);
+      return mapper.from(user);
     } catch (Exception exception) {
       throw new IllegalArgumentException(exception.getMessage());
     }
@@ -69,7 +68,14 @@ public class UserQueryService implements UserProvider {
 
   @Override
   public UserSettingHistoryInfo getEffectiveSettingsByDate(Long userId, LocalDate date) {
-    return from(getUserSettingHistoryByDate(userId, date));
+    return mapper.from(getUserSettingHistoryByDate(userId, date));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UserInfo> getAllActiveUsers() {
+    List<User> activeUsers = repository.findAllActiveUsers(); // JPA Repository에 추가 필요
+    return activeUsers.stream().map(au -> mapper.from(au)).collect(Collectors.toList());
   }
 
   private User findById(Long userId) {
@@ -93,33 +99,5 @@ public class UserQueryService implements UserProvider {
 
   private UserSettingHistory getUserSettingHistoryByDate(Long userId, LocalDate date) {
     return settingHistoryRepository.findEffectiveSettings(userId, date);
-  }
-
-  private UserInfo from(User user) {
-    UserSettings currentUserSettings = user.getCurrentSettings();
-    return new UserInfo(
-        user.getId(),
-        getValueOrNull(user.getEmail(), Email::getValue),
-        getValueOrNull(user.getNickname(), Nickname::getValue),
-        user.getProfileImage(),
-        getValueOrNull(user.getRole(), Enum::name),
-        getValueOrNull(currentUserSettings, UserSettings::getDesiredCheckInTime),
-        getValueOrNull(currentUserSettings, UserSettings::getDesiredCoreTime),
-        user.getIsActive());
-  }
-
-  private UserSettingHistoryInfo from(UserSettingHistory history) {
-    return new UserSettingHistoryInfo(
-        history.getId(),
-        history.getUserId(),
-        history.getEffectiveFromDate(),
-        history.getEffectiveToDate(),
-        history.getDesiredCheckInTime(),
-        history.getDesiredCoreTime(),
-        history.isActive());
-  }
-
-  private <T, R> R getValueOrNull(T obj, Function<T, R> getter) {
-    return Optional.ofNullable(obj).map(getter).orElse(null);
   }
 }
