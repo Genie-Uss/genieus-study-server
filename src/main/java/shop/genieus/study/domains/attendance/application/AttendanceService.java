@@ -2,12 +2,16 @@ package shop.genieus.study.domains.attendance.application;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.commons.provider.UserProvider;
+import shop.genieus.study.commons.provider.dto.AttendanceInfo;
 import shop.genieus.study.commons.provider.dto.UserInfo;
 import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
@@ -16,6 +20,7 @@ import shop.genieus.study.domains.attendance.application.dto.info.GetAttendanceI
 import shop.genieus.study.domains.attendance.application.dto.result.AttendanceResult;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceBusinessException;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceNotFoundException;
+import shop.genieus.study.domains.attendance.application.mapper.AttendanceMapper;
 import shop.genieus.study.domains.attendance.application.repository.AttendanceRepository;
 import shop.genieus.study.domains.attendance.application.time.DateTimePort;
 import shop.genieus.study.domains.attendance.domain.entity.Attendance;
@@ -26,6 +31,7 @@ import shop.genieus.study.domains.attendance.domain.entity.Attendance;
 @RequiredArgsConstructor
 public class AttendanceService implements AttendanceProvider {
   private final AttendanceRepository repository;
+  private final AttendanceMapper mapper;
   private final UserProvider userProvider;
   private final DateTimePort dateTimePort;
 
@@ -79,6 +85,7 @@ public class AttendanceService implements AttendanceProvider {
     return repository.save(attendance);
   }
 
+  @Transactional(readOnly = true)
   public AttendanceResult getAttendance(GetAttendanceInfo info) {
     Long targetUserId = info.targetUserId();
     LocalDate targetDate = info.targetDate();
@@ -100,6 +107,16 @@ public class AttendanceService implements AttendanceProvider {
           targetDate,
           settingInfo.desiredCheckInTime());
     }
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Map<Long, AttendanceInfo> getAttendances(List<Long> userIds, LocalDate date) {
+    List<Attendance> existingAttendances =
+        repository.findByUserIdsAndAttendanceTimeDate(userIds, date);
+
+    return existingAttendances.stream()
+        .collect(Collectors.toMap(att -> att.getUserId(), att -> mapper.from(att)));
   }
 
   @Override

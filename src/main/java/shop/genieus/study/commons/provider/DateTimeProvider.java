@@ -9,10 +9,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DateTimeProvider {
-  private  final Clock clock;
+  private final Clock clock;
 
   public LocalDate getCurrentDate() {
     return LocalDate.now(clock);
+  }
+
+  public LocalDate getYesterday() {
+    return getCurrentDate().minusDays(1);
   }
 
   public LocalDateTime getCurrentDateTime() {

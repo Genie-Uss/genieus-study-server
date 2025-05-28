@@ -1,5 +1,6 @@
 package shop.genieus.study.domains.user.application.repository;
 
+import java.util.List;
 import shop.genieus.study.domains.user.domain.entity.User;
 
 public interface UserRepository {
@@ -12,4 +13,6 @@ public interface UserRepository {
   boolean existsByNickname(String nickname);
 
   User findById(Long userId);
+
+  List<User> findAllActiveUsers();
 }
