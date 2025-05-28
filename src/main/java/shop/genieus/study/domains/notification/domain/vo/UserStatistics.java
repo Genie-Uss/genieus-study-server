@@ -1,0 +1,89 @@
+package shop.genieus.study.domains.notification.domain.vo;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.Getter;
+import shop.genieus.study.commons.provider.dto.AttendanceInfo;
+import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
+
+@Getter
+public class UserStatistics {
+  private final Long userId;
+  private final String nickname;
+  private final List<FinePolicy> fineReasons;
+  private final int totalFine;
+  private final String fineReason;
+  private final String attendanceStatus;
+  private final String ctStatus;
+  private final String tilStatus;
+  private final String resumeStatus;
+  private final int totalVerifiedCount;
+
+  public UserStatistics(
+      Long userId, String nickname, AttendanceInfo attendance, StampHistoryInfo stampHistory) {
+    this.userId = userId;
+    this.nickname = nickname;
+    this.fineReasons = new ArrayList<>();
+
+    this.attendanceStatus = processAttendance(attendance);
+
+    calculateStampFines(stampHistory);
+    this.ctStatus = formatStampStatus(stampHistory.ctVerified(), stampHistory.ctCount());
+    this.tilStatus = formatStampStatus(stampHistory.tilVerified(), stampHistory.tilCount());
+    this.resumeStatus =
+        formatStampStatus(stampHistory.resumeVerified(), stampHistory.resumeCount());
+    this.totalVerifiedCount = stampHistory.totalVerifiedCount();
+
+    this.totalFine = fineReasons.stream().mapToInt(FinePolicy::getAmount).sum();
+    this.fineReason = getFineReasonText();
+  }
+
+  private String processAttendance(AttendanceInfo attendance) {
+    if (attendance == null) {
+      fineReasons.add(FinePolicy.NO_ATTENDANCE);
+      return "`결석`";
+    } else if (attendance.isLate()) {
+      fineReasons.add(FinePolicy.LATE_ATTENDANCE);
+      return "`지각` (" + formatTime(attendance.checkInTime().toLocalTime()) + ")";
+    } else {
+      return "`출석` (" + formatTime(attendance.checkInTime().toLocalTime()) + ")";
+    }
+  }
+
+  private void calculateStampFines(StampHistoryInfo stampHistory) {
+    if (!stampHistory.ctVerified()) {
+      fineReasons.add(FinePolicy.MISSING_CT);
+    }
+    if (!stampHistory.tilVerified()) {
+      fineReasons.add(FinePolicy.MISSING_TIL);
+    }
+    if (!stampHistory.resumeVerified()) {
+      fineReasons.add(FinePolicy.MISSING_RESUME);
+    }
+  }
+
+  private String formatStampStatus(boolean verified, int count) {
+    if (count == 0 && !verified) {
+      return "`인증 없음`";
+    }
+    String status = verified ? "`O`" : "`X`";
+    return String.format("%s (%d개)", status, count);
+  }
+
+  private String formatTime(LocalTime time) {
+    if (time == null) return "--:--";
+    return time.format(DateTimeFormatter.ofPattern("HH:mm"));
+  }
+
+  public String getFineReasonText() {
+    if (fineReasons.isEmpty()) {
+      return "벌금 없음";
+    }
+    return fineReasons.stream()
+        .map(FinePolicy::getDescription)
+        .reduce((a, b) -> a + ", " + b)
+        .orElse("");
+  }
+}
