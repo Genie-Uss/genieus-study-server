@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum NotificationChannel {
   DISCORD_ATTENDANCE("디스코드-출석"),
   DISCORD_ACTIVITY("디스코드-활동"),
+  DISCORD_STATISTICS("디스코드-통계"),
   ;
   private final String description;
 }

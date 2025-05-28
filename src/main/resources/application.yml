@@ -51,3 +51,4 @@ scheduler:
   notification:
     check-in-cron: "0 50 8 * * 1-5"       # 매일 08:50에 출석 알림 (평일)
     check-out-cron: "0 0 16 * * 1-5"      # 매일 16:00에 코어 시간 종료 알림 (평일)
+    daily-statistics-cron: "0 50 8 * * 2-6"  # 화~토 08:50 (전날 통계)

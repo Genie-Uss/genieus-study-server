@@ -18,5 +18,6 @@ public class DiscordProperties {
   public static class Webhook {
     private String attendance;
     private String activity;
+    private String statistics;
   }
 }

@@ -91,6 +91,7 @@ public class NotificationProcessor {
     return switch (type) {
       case ATTENDANCE -> NotificationChannel.DISCORD_ATTENDANCE;
       case ACTIVITY -> NotificationChannel.DISCORD_ACTIVITY;
+      case STATISTICS -> NotificationChannel.DISCORD_STATISTICS;
     };
   }
 
