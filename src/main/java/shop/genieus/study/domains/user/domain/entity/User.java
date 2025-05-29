@@ -86,6 +86,29 @@ public class User extends BaseEntity {
     this.currentSettings = newSettings;
   }
 
+  public void approveWithParticipation(boolean isParticipating) {
+    approve();
+    updateParticipation(isParticipating);
+  }
+
+  public void approve() {
+    if (!this.status.isPending()) {
+      throw UserValidationException.userNotPending();
+    }
+    this.status = AccountStatus.APPROVED;
+  }
+
+  public void updateParticipation(boolean isParticipating) {
+    UserSettings currentSettings = this.currentSettings;
+    ParticipationStatus participationStatus =
+        isParticipating ? ParticipationStatus.ACTIVE : ParticipationStatus.INACTIVE;
+
+    updateSettings(
+        currentSettings.getDesiredCheckInTime(),
+        currentSettings.getDesiredCoreTime(),
+        participationStatus);
+  }
+
   public boolean isRoleUser() {
     return this.role.isRoleUser();
   }
@@ -112,5 +135,9 @@ public class User extends BaseEntity {
 
   public boolean isLocked() {
     return this.status.isLocked();
+  }
+
+  public boolean isParticipating() {
+    return this.currentSettings.isParticipating();
   }
 }

@@ -99,4 +99,8 @@ public class UserValidationException extends ValidationException {
   public static UserValidationException sameParticipationStatus() {
     return new UserValidationException("기존 참여 상태와 동일합니다.");
   }
+
+  public static UserValidationException userNotPending() {
+    return new UserValidationException("승인 대기 상태인 사용자만 승인할 수 있습니다.");
+  }
 }

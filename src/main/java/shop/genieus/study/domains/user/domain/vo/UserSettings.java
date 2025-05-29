@@ -33,9 +33,9 @@ public class UserSettings {
   @Column(
       name = "participation_status",
       nullable = false,
-      columnDefinition = "VARCHAR(50) DEFAULT 'ACTIVE'")
+      columnDefinition = "VARCHAR(50) DEFAULT 'INACTIVE'")
   @Enumerated(EnumType.STRING)
-  private ParticipationStatus participationStatus = ParticipationStatus.ACTIVE;
+  private ParticipationStatus participationStatus = ParticipationStatus.INACTIVE;
 
   private UserSettings(
       LocalTime desiredCheckInTime, int desiredCoreTime, ParticipationStatus participationStatus) {
@@ -54,7 +54,7 @@ public class UserSettings {
   }
 
   public static UserSettings defaultSettings() {
-    return new UserSettings(LocalTime.of(9, 0), 240, ParticipationStatus.ACTIVE);
+    return new UserSettings(LocalTime.of(9, 0), 240, ParticipationStatus.INACTIVE);
   }
 
   private static void validateCheckInTime(LocalTime checkInTime) {
@@ -83,6 +83,10 @@ public class UserSettings {
     return this.desiredCheckInTime.equals(checkInTime)
         && this.desiredCoreTime == coreTime
         && this.participationStatus == participationStatus;
+  }
+
+  public boolean isParticipating() {
+    return this.participationStatus == ParticipationStatus.ACTIVE;
   }
 
   @Override
