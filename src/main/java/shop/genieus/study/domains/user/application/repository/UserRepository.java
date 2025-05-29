@@ -15,4 +15,6 @@ public interface UserRepository {
   User findById(Long userId);
 
   List<User> findAllActiveUsers();
+
+  List<User> findAllParticipatingUsers();
 }

@@ -72,10 +72,15 @@ public class UserQueryService implements UserProvider {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<UserInfo> getAllActiveUsers() {
-    List<User> activeUsers = repository.findAllActiveUsers(); // JPA Repository에 추가 필요
+    List<User> activeUsers = repository.findAllActiveUsers();
     return activeUsers.stream().map(au -> mapper.from(au)).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<UserInfo> getAllParticipatingUsers() {
+    List<User> participatingUsers = repository.findAllParticipatingUsers();
+    return participatingUsers.stream().map(mapper::from).collect(Collectors.toList());
   }
 
   private User findById(Long userId) {
