@@ -1,5 +1,6 @@
 package shop.genieus.study.commons.provider.dto;
 
+
 import java.time.LocalTime;
 
 public record UserInfo(
@@ -10,4 +11,5 @@ public record UserInfo(
     String roleName,
     LocalTime desiredCheckInTime,
     Integer desiredCoreTime,
-    Boolean isActive) {}
+    Boolean isActive,
+    String participationStatus) {}

@@ -2,6 +2,8 @@ package shop.genieus.study.domains.user.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.time.LocalTime;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -27,20 +29,32 @@ public class UserSettings {
   @Column(name = "desired_core_time", nullable = false)
   private int desiredCoreTime;
 
-  private UserSettings(LocalTime desiredCheckInTime, int desiredCoreTime) {
+  @Comment("참여 상태")
+  @Column(
+      name = "participation_status",
+      nullable = false,
+      columnDefinition = "VARCHAR(50) DEFAULT 'ACTIVE'")
+  @Enumerated(EnumType.STRING)
+  private ParticipationStatus participationStatus = ParticipationStatus.ACTIVE;
+
+  private UserSettings(
+      LocalTime desiredCheckInTime, int desiredCoreTime, ParticipationStatus participationStatus) {
     validateCheckInTime(desiredCheckInTime);
     validateCoreTime(desiredCoreTime);
+    validateParticipationStatus(participationStatus);
 
     this.desiredCheckInTime = desiredCheckInTime;
     this.desiredCoreTime = desiredCoreTime;
+    this.participationStatus = participationStatus;
   }
 
-  public static UserSettings of(LocalTime desiredCheckInTime, int desiredCoreTime) {
-    return new UserSettings(desiredCheckInTime, desiredCoreTime);
+  public static UserSettings of(
+      LocalTime desiredCheckInTime, int desiredCoreTime, ParticipationStatus participationStatus) {
+    return new UserSettings(desiredCheckInTime, desiredCoreTime, participationStatus);
   }
 
   public static UserSettings defaultSettings() {
-    return new UserSettings(LocalTime.of(9, 0), 240);
+    return new UserSettings(LocalTime.of(9, 0), 240, ParticipationStatus.ACTIVE);
   }
 
   private static void validateCheckInTime(LocalTime checkInTime) {
@@ -55,6 +69,12 @@ public class UserSettings {
   private static void validateCoreTime(int coreTime) {
     if (coreTime < MIN_CORE_TIME || coreTime > MAX_CORE_TIME) {
       throw UserValidationException.invalidCoreTimeRange(MIN_CORE_TIME, MAX_CORE_TIME);
+    }
+  }
+
+  private static void validateParticipationStatus(ParticipationStatus participationStatus) {
+    if (participationStatus == null) {
+      throw UserValidationException.requiredParticipationStatus();
     }
   }
 

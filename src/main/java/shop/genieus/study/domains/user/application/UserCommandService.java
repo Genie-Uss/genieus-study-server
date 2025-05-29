@@ -14,6 +14,7 @@ import shop.genieus.study.domains.user.application.repository.UserSettingHistory
 import shop.genieus.study.domains.user.domain.entity.User;
 import shop.genieus.study.domains.user.domain.entity.UserSettingHistory;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
+import shop.genieus.study.domains.user.domain.vo.ParticipationStatus;
 import shop.genieus.study.domains.user.domain.vo.UserSettings;
 
 @Slf4j
@@ -49,7 +50,12 @@ public class UserCommandService {
 
     LocalDate today = dateTimeProvider.getCurrentDate();
     deactivateCurrentHistory(userId, today);
-    createNewSettingHistory(userId, today, newCheckInTime, newCoreTime);
+    createNewSettingHistory(
+        userId,
+        today,
+        newCheckInTime,
+        newCoreTime,
+        user.getCurrentSettings().getParticipationStatus());
 
     repository.save(user);
 
@@ -67,7 +73,11 @@ public class UserCommandService {
 
     UserSettingHistory initialHistory =
         UserSettingHistory.create(
-            user.getId(), today, settings.getDesiredCheckInTime(), settings.getDesiredCoreTime());
+            user.getId(),
+            today,
+            settings.getDesiredCheckInTime(),
+            settings.getDesiredCoreTime(),
+            settings.getParticipationStatus());
 
     settingHistoryRepository.save(initialHistory);
 
@@ -88,9 +98,14 @@ public class UserCommandService {
   }
 
   private void createNewSettingHistory(
-      Long userId, LocalDate effectiveDate, LocalTime checkInTime, int coreTime) {
+      Long userId,
+      LocalDate effectiveDate,
+      LocalTime checkInTime,
+      int coreTime,
+      ParticipationStatus participationStatus) {
     UserSettingHistory newHistory =
-        UserSettingHistory.create(userId, effectiveDate, checkInTime, coreTime);
+        UserSettingHistory.create(
+            userId, effectiveDate, checkInTime, coreTime, participationStatus);
 
     settingHistoryRepository.save(newHistory);
 

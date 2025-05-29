@@ -91,4 +91,8 @@ public class UserValidationException extends ValidationException {
   public static UserValidationException sameSetting() {
     return new UserValidationException("기존 설정과 동일합니다.");
   }
+
+  public static UserValidationException requiredParticipationStatus() {
+    return new UserValidationException("참여 상태는 필수입니다.");
+  }
 }

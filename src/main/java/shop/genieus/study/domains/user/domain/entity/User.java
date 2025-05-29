@@ -81,7 +81,8 @@ public class User extends BaseEntity {
       throw UserValidationException.sameSetting();
     }
 
-    UserSettings newSettings = UserSettings.of(newCheckInTime, newCoreTime);
+    UserSettings newSettings =
+        UserSettings.of(newCheckInTime, newCoreTime, currentSettings.getParticipationStatus());
     this.currentSettings = newSettings;
   }
 
