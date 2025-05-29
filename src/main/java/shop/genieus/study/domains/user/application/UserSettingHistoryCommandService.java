@@ -31,15 +31,17 @@ public class UserSettingHistoryCommandService {
     log.info("초기 설정 이력 생성: userId={}", user.getId());
   }
 
-  public void updateSettingHistory(
-      Long userId,
-      LocalDate effectiveDate,
-      LocalTime checkInTime,
-      int coreTime,
-      ParticipationStatus participationStatus) {
-
+  public void updateSettingHistory(User user, LocalDate effectiveDate) {
+    Long userId = user.getId();
     deactivateCurrentHistory(userId, effectiveDate);
-    createNewSettingHistory(userId, effectiveDate, checkInTime, coreTime, participationStatus);
+
+    UserSettings settings = user.getCurrentSettings();
+    createNewSettingHistory(
+        userId,
+        effectiveDate,
+        settings.getDesiredCheckInTime(),
+        settings.getDesiredCoreTime(),
+        settings.getParticipationStatus());
   }
 
   private void deactivateCurrentHistory(Long userId, LocalDate effectiveDate) {

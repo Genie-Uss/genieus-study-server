@@ -13,6 +13,7 @@ import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
 import shop.genieus.study.domains.user.application.dto.result.UserInfoResult;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.application.mapper.UserMapper;
+import shop.genieus.study.domains.user.application.repository.UserCacheRepository;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.application.repository.UserSettingHistoryRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
@@ -25,6 +26,7 @@ import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 @RequiredArgsConstructor
 public class UserQueryService implements UserProvider {
   private final UserRepository repository;
+  private final UserCacheRepository userCacheRepository;
   private final UserSettingHistoryRepository settingHistoryRepository;
   private final UserMapper mapper;
   private final PasswordEncryptionService encryptionService;
@@ -79,8 +81,19 @@ public class UserQueryService implements UserProvider {
 
   @Override
   public List<UserInfo> getAllParticipatingUsers() {
+    List<UserInfo> cachedUsers = userCacheRepository.findAllParticipatingUsers();
+
+    if (cachedUsers != null) {
+      return cachedUsers;
+    }
+
+    log.debug("참여 사용자 캐시 미스 - DB에서 조회 및 캐싱");
     List<User> participatingUsers = repository.findAllParticipatingUsers();
-    return participatingUsers.stream().map(mapper::from).collect(Collectors.toList());
+    List<UserInfo> users =
+        participatingUsers.stream().map(mapper::from).collect(Collectors.toList());
+
+    userCacheRepository.saveParticipatingUsers(users);
+    return users;
   }
 
   private User findById(Long userId) {

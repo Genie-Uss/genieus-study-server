@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.DateTimeProvider;
+import shop.genieus.study.domains.user.application.dto.info.ApproveUserInfo;
 import shop.genieus.study.domains.user.application.dto.info.SignupUserInfo;
 import shop.genieus.study.domains.user.application.dto.info.UpdateParticipationStatusInfo;
 import shop.genieus.study.domains.user.application.dto.info.UpdateUserSettingInfo;
+import shop.genieus.study.domains.user.application.repository.UserCacheRepository;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
@@ -22,6 +24,7 @@ import shop.genieus.study.domains.user.domain.vo.UserSettings;
 @RequiredArgsConstructor
 public class UserCommandService {
   private final UserRepository repository;
+  private final UserCacheRepository userCacheRepository;
   private final UserSettingHistoryCommandService historyCommandService;
   private final PasswordEncryptionService encryptionService;
   private final DateTimeProvider dateTimeProvider;
@@ -37,7 +40,36 @@ public class UserCommandService {
     LocalDate today = dateTimeProvider.getCurrentDate();
     historyCommandService.createInitialSettingHistory(saved, today);
 
+    log.info("새 사용자 가입: userId={}, email={}, status=PENDING", saved.getId(), info.email());
+
     return saved;
+  }
+
+  public void approveUser(ApproveUserInfo info) {
+    Long adminUserId = info.adminUserId();
+    Long targetUserId = info.targetUserId();
+
+    User targetUser = findById(targetUserId);
+
+    if (!targetUser.isPending()) {
+      throw UserValidationException.userNotPending();
+    }
+
+    targetUser.approveWithParticipation(info.isParticipating());
+    User updated = repository.save(targetUser);
+
+    LocalDate today = dateTimeProvider.getCurrentDate();
+    historyCommandService.updateSettingHistory(updated, today);
+
+    if (updated.isParticipating()) {
+      userCacheRepository.invalidateParticipatingUsers();
+    }
+
+    log.info(
+        "사용자 승인 완료: adminUserId={}, targetUserId={}, participationStatus={}",
+        adminUserId,
+        targetUserId,
+        targetUser.getCurrentSettings().getParticipationStatus());
   }
 
   public void updateUserSettings(UpdateUserSettingInfo info) {
@@ -50,11 +82,9 @@ public class UserCommandService {
 
     user.updateSettings(newCheckInTime, newCoreTime, currentStatus);
 
+    User updated = repository.save(user);
     LocalDate today = dateTimeProvider.getCurrentDate();
-    historyCommandService.updateSettingHistory(
-        userId, today, newCheckInTime, newCoreTime, currentStatus);
-
-    repository.save(user);
+    historyCommandService.updateSettingHistory(updated, today);
 
     log.info(
         "사용자 설정 변경: userId={}, checkInTime={}, coreTime={}", userId, newCheckInTime, newCoreTime);
@@ -64,7 +94,6 @@ public class UserCommandService {
     Long adminUserId = info.adminUserId();
     Long targetUserId = info.targetUserId();
     ParticipationStatus newStatus = info.participationStatus();
-    String reason = info.reason();
 
     User targetUser = findById(targetUserId);
     UserSettings currentSettings = targetUser.getCurrentSettings();
@@ -77,23 +106,18 @@ public class UserCommandService {
     targetUser.updateSettings(
         currentSettings.getDesiredCheckInTime(), currentSettings.getDesiredCoreTime(), newStatus);
 
+    User updated = repository.save(targetUser);
     LocalDate today = dateTimeProvider.getCurrentDate();
-    historyCommandService.updateSettingHistory(
-        targetUserId,
-        today,
-        currentSettings.getDesiredCheckInTime(),
-        currentSettings.getDesiredCoreTime(),
-        newStatus);
+    historyCommandService.updateSettingHistory(updated, today);
 
-    repository.save(targetUser);
+    userCacheRepository.invalidateParticipatingUsers();
 
     log.info(
-        "참여 상태 변경: adminUserId={}, targetUserId={}, {} -> {}, reason='{}'",
+        "참여 상태 변경: adminUserId={}, targetUserId={}, {} -> {}",
         adminUserId,
         targetUserId,
         currentStatus,
-        newStatus,
-        reason);
+        newStatus);
   }
 
   private User findById(Long userId) {
