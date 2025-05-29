@@ -38,15 +38,15 @@ public class DailyStatisticsService {
     log.info("일일 통계 수집 시작: {}", yesterday);
 
     try {
-      List<UserInfo> activeUsers = userProvider.getAllActiveUsers();
-      if (activeUsers.isEmpty()) {
-        log.info("활성 사용자가 없어 통계 생성을 건너뜁니다.");
+      List<UserInfo> participatingUsers = userProvider.getAllParticipatingUsers();
+      if (participatingUsers.isEmpty()) {
+        log.info("통계에 포함될 활성 참여자가 없어 통계 생성을 건너뜁니다.");
         return;
       }
 
       Map<Long, String> userNicknameMap = new HashMap<>();
       List<Long> userIds = new ArrayList<>();
-      for (UserInfo userInfo : activeUsers) {
+      for (UserInfo userInfo : participatingUsers) {
         userNicknameMap.put(userInfo.id(), userInfo.nickname());
         userIds.add(userInfo.id());
       }

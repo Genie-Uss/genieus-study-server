@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.commons.jpa.BaseEntity;
+import shop.genieus.study.domains.user.domain.vo.ParticipationStatus;
 
 @Entity
 @Getter
@@ -15,11 +16,6 @@ import shop.genieus.study.commons.jpa.BaseEntity;
     indexes = {
       @Index(name = "idx_user_effective_date", columnList = "userId, effectiveFromDate"),
       @Index(name = "idx_user_active", columnList = "userId, isActive")
-    },
-    uniqueConstraints = {
-      @UniqueConstraint(
-          name = "uk_user_effective_date",
-          columnNames = {"userId", "effectiveFromDate"})
     })
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -54,14 +50,24 @@ public class UserSettingHistory extends BaseEntity {
   @Column(nullable = false)
   private boolean isActive;
 
+  @Comment("참여 상태")
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ParticipationStatus participationStatus;
+
   public static UserSettingHistory create(
-      Long userId, LocalDate effectiveFromDate, LocalTime desiredCheckInTime, int desiredCoreTime) {
+      Long userId,
+      LocalDate effectiveFromDate,
+      LocalTime desiredCheckInTime,
+      int desiredCoreTime,
+      ParticipationStatus participationStatus) {
 
     return UserSettingHistory.builder()
         .userId(userId)
         .effectiveFromDate(effectiveFromDate)
         .desiredCheckInTime(desiredCheckInTime)
         .desiredCoreTime(desiredCoreTime)
+        .participationStatus(participationStatus)
         .isActive(true)
         .build();
   }

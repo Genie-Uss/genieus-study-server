@@ -13,4 +13,6 @@ public interface UserProvider {
   UserSettingHistoryInfo getEffectiveSettingsByDate(Long userId, LocalDate date);
 
   List<UserInfo> getAllActiveUsers();
+
+  List<UserInfo> getAllParticipatingUsers();
 }

@@ -47,4 +47,9 @@ public class UserRepositoryImpl implements UserRepository {
   public List<User> findAllActiveUsers() {
     return jpaRepository.findAllActiveUsers();
   }
+
+  @Override
+  public List<User> findAllParticipatingUsers() {
+    return jpaRepository.findAllParticipatingUsers();
+  }
 }

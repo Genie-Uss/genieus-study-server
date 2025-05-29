@@ -23,7 +23,8 @@ public class UserMapper {
         getValueOrNull(user.getRole(), Enum::name),
         getValueOrNull(currentUserSettings, UserSettings::getDesiredCheckInTime),
         getValueOrNull(currentUserSettings, UserSettings::getDesiredCoreTime),
-        user.getIsActive());
+        user.getIsActive(),
+        currentUserSettings.getParticipationStatus().name());
   }
 
   public UserSettingHistoryInfo from(UserSettingHistory history) {

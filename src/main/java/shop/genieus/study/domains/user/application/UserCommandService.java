@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.domains.user.application.dto.info.SignupUserInfo;
+import shop.genieus.study.domains.user.application.dto.info.UpdateParticipationStatusInfo;
 import shop.genieus.study.domains.user.application.dto.info.UpdateUserSettingInfo;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
-import shop.genieus.study.domains.user.application.repository.UserSettingHistoryRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
-import shop.genieus.study.domains.user.domain.entity.UserSettingHistory;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
+import shop.genieus.study.domains.user.domain.vo.ParticipationStatus;
 import shop.genieus.study.domains.user.domain.vo.UserSettings;
 
 @Slf4j
@@ -22,7 +22,7 @@ import shop.genieus.study.domains.user.domain.vo.UserSettings;
 @RequiredArgsConstructor
 public class UserCommandService {
   private final UserRepository repository;
-  private final UserSettingHistoryRepository settingHistoryRepository;
+  private final UserSettingHistoryCommandService historyCommandService;
   private final PasswordEncryptionService encryptionService;
   private final DateTimeProvider dateTimeProvider;
 
@@ -34,7 +34,8 @@ public class UserCommandService {
         repository.save(
             User.create(info.email(), info.password(), encryptionService, info.nickname()));
 
-    createInitialSettingHistory(saved);
+    LocalDate today = dateTimeProvider.getCurrentDate();
+    historyCommandService.createInitialSettingHistory(saved, today);
 
     return saved;
   }
@@ -45,11 +46,13 @@ public class UserCommandService {
 
     LocalTime newCheckInTime = info.newCheckInTime();
     int newCoreTime = info.newCoreTime();
-    user.updateSettings(newCheckInTime, newCoreTime);
+    ParticipationStatus currentStatus = user.getCurrentSettings().getParticipationStatus();
+
+    user.updateSettings(newCheckInTime, newCoreTime, currentStatus);
 
     LocalDate today = dateTimeProvider.getCurrentDate();
-    deactivateCurrentHistory(userId, today);
-    createNewSettingHistory(userId, today, newCheckInTime, newCoreTime);
+    historyCommandService.updateSettingHistory(
+        userId, today, newCheckInTime, newCoreTime, currentStatus);
 
     repository.save(user);
 
@@ -57,49 +60,44 @@ public class UserCommandService {
         "사용자 설정 변경: userId={}, checkInTime={}, coreTime={}", userId, newCheckInTime, newCoreTime);
   }
 
+  public void updateParticipationStatus(UpdateParticipationStatusInfo info) {
+    Long adminUserId = info.adminUserId();
+    Long targetUserId = info.targetUserId();
+    ParticipationStatus newStatus = info.participationStatus();
+    String reason = info.reason();
+
+    User targetUser = findById(targetUserId);
+    UserSettings currentSettings = targetUser.getCurrentSettings();
+    ParticipationStatus currentStatus = currentSettings.getParticipationStatus();
+
+    if (currentStatus == newStatus) {
+      throw UserValidationException.sameParticipationStatus();
+    }
+
+    targetUser.updateSettings(
+        currentSettings.getDesiredCheckInTime(), currentSettings.getDesiredCoreTime(), newStatus);
+
+    LocalDate today = dateTimeProvider.getCurrentDate();
+    historyCommandService.updateSettingHistory(
+        targetUserId,
+        today,
+        currentSettings.getDesiredCheckInTime(),
+        currentSettings.getDesiredCoreTime(),
+        newStatus);
+
+    repository.save(targetUser);
+
+    log.info(
+        "참여 상태 변경: adminUserId={}, targetUserId={}, {} -> {}, reason='{}'",
+        adminUserId,
+        targetUserId,
+        currentStatus,
+        newStatus,
+        reason);
+  }
+
   private User findById(Long userId) {
     return repository.findById(userId);
-  }
-
-  private void createInitialSettingHistory(User user) {
-    UserSettings settings = user.getCurrentSettings();
-    LocalDate today = dateTimeProvider.getCurrentDate();
-
-    UserSettingHistory initialHistory =
-        UserSettingHistory.create(
-            user.getId(), today, settings.getDesiredCheckInTime(), settings.getDesiredCoreTime());
-
-    settingHistoryRepository.save(initialHistory);
-
-    log.info("초기 설정 이력 생성: userId={}", user.getId());
-  }
-
-  private void deactivateCurrentHistory(Long userId, LocalDate effectiveDate) {
-    UserSettingHistory history = settingHistoryRepository.findCurrentActiveSettings(userId);
-
-    history.deactivate(effectiveDate);
-    settingHistoryRepository.save(history);
-
-    log.info(
-        "기존 설정 이력 비활성화: userId={}, historyId={}, effectiveToDate={}",
-        userId,
-        history.getId(),
-        history.getEffectiveToDate());
-  }
-
-  private void createNewSettingHistory(
-      Long userId, LocalDate effectiveDate, LocalTime checkInTime, int coreTime) {
-    UserSettingHistory newHistory =
-        UserSettingHistory.create(userId, effectiveDate, checkInTime, coreTime);
-
-    settingHistoryRepository.save(newHistory);
-
-    log.info(
-        "새 설정 이력 생성: userId={}, effectiveFromDate={}, checkInTime={}, coreTime={}",
-        userId,
-        effectiveDate,
-        checkInTime,
-        coreTime);
   }
 
   private void isSamePasswordAndPasswordConfirm(SignupUserInfo info) {
