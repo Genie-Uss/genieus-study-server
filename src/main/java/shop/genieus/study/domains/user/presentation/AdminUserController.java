@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.user.application.UserCommandService;
+import shop.genieus.study.domains.user.presentation.dto.request.ApproveUserRequest;
 import shop.genieus.study.domains.user.presentation.dto.request.UpdateParticipationStatusRequest;
 
 @RestController
@@ -16,6 +17,17 @@ import shop.genieus.study.domains.user.presentation.dto.request.UpdateParticipat
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminUserController {
   private final UserCommandService userCommandService;
+
+  @PostMapping("/{userId}/approve")
+  public ResponseEntity<Void> approveUser(
+      @AuthPrincipal CustomPrincipal principal,
+      @PathVariable Long userId,
+      @RequestBody @Valid ApproveUserRequest request) {
+
+    userCommandService.approveUser(request.toInfo(principal.id(), userId));
+
+    return ResponseEntity.noContent().build();
+  }
 
   @PatchMapping("/{userId}/participation-status")
   public ResponseEntity<Void> updateParticipationStatus(
