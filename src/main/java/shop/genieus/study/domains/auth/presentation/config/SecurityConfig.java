@@ -65,6 +65,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/users/check-nickname", "/users/check-email")
                 .permitAll()
                 // any request
+                .requestMatchers("/admin/**")
+                .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated());
 
