@@ -8,13 +8,11 @@ import lombok.RequiredArgsConstructor;
 import shop.genieus.study.commons.notification.NotificationChannelType;
 import shop.genieus.study.commons.notification.NotificationMessageBuilder;
 import shop.genieus.study.domains.notification.domain.vo.UserStatistics;
+import shop.genieus.study.domains.notification.domain.vo.VerificationStatusChecker;
 
 @Getter
 @RequiredArgsConstructor
 public class DailyStatisticsEvent implements NotificationMessageBuilder {
-  private static final Set<String> PRESENT = Set.of("출석", "✅", "O");
-  private static final Set<String> LATE = Set.of("지각", "⏰");
-  private static final Set<String> ABSENT = Set.of("결석", "❌", "X", "인증 없음");
 
   private final Long userId = -1L;
   private final LocalDate targetDate;
@@ -49,13 +47,13 @@ public class DailyStatisticsEvent implements NotificationMessageBuilder {
               stat.getNickname(), stat.getTotalVerifiedCount()));
 
       sb.append("> └　**`출석`**　")
-          .append(convertToEmoji(stat.getAttendanceStatus()))
+          .append(VerificationStatusChecker.convertToEmoji(stat.getAttendanceStatus()))
           .append("　　**`CT`**　")
-          .append(convertToEmoji(stat.getCtStatus()))
+          .append(VerificationStatusChecker.convertToEmoji(stat.getCtStatus()))
           .append("　　**`TIL`**　")
-          .append(convertToEmoji(stat.getTilStatus()))
+          .append(VerificationStatusChecker.convertToEmoji(stat.getTilStatus()))
           .append("　　**`구직`**　")
-          .append(convertToEmoji(stat.getResumeStatus()))
+          .append(VerificationStatusChecker.convertToEmoji(stat.getResumeStatus()))
           .append("\n");
 
       sb.append(String.format("> └　:money_with_wings: %,d원\n", stat.getTotalFine()));
@@ -72,8 +70,11 @@ public class DailyStatisticsEvent implements NotificationMessageBuilder {
 
     for (UserStatistics stat : userStatistics) {
       String attendance = stat.getAttendanceStatus();
-      if (containsAny(attendance, ABSENT)) totalAbsent++;
-      else if (containsAny(attendance, LATE)) totalLate++;
+      if (VerificationStatusChecker.isAbsent(attendance)) {
+        totalAbsent++;
+      } else if (VerificationStatusChecker.isLate(attendance)) {
+        totalLate++;
+      }
 
       int fine = stat.getTotalFine();
       totalFine += fine;
@@ -100,20 +101,6 @@ public class DailyStatisticsEvent implements NotificationMessageBuilder {
     } else {
       sb.append("### :trophy: 이런..\n").append("아무도 완벽한 하루를 보내지 못했네요.. 내일은 더 화이팅! :muscle:\n");
     }
-  }
-
-  private String convertToEmoji(String status) {
-    if (containsAny(status, PRESENT)) return ":white_check_mark:";
-    if (containsAny(status, LATE)) return ":warning:";
-    if (containsAny(status, ABSENT)) return ":x:";
-    return ":question:";
-  }
-
-  private boolean containsAny(String status, Set<String> keywords) {
-    for (String keyword : keywords) {
-      if (status.contains(keyword)) return true;
-    }
-    return false;
   }
 
   @Override

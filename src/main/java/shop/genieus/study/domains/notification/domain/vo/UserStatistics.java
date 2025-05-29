@@ -34,7 +34,8 @@ public class UserStatistics {
     this.tilStatus = formatStampStatus(stampHistory.tilVerified(), stampHistory.tilCount());
     this.resumeStatus =
         formatStampStatus(stampHistory.resumeVerified(), stampHistory.resumeCount());
-    this.totalVerifiedCount = stampHistory.totalVerifiedCount();
+
+    this.totalVerifiedCount = calculateTotalVerifiedCount(attendanceStatus, stampHistory);
 
     this.totalFine = fineReasons.stream().mapToInt(FinePolicy::getAmount).sum();
     this.fineReason = getFineReasonText();
@@ -62,6 +63,24 @@ public class UserStatistics {
     if (!stampHistory.resumeVerified()) {
       fineReasons.add(FinePolicy.MISSING_RESUME);
     }
+  }
+
+  private int calculateTotalVerifiedCount(String attendanceStatus, StampHistoryInfo stampHistory) {
+    int count = 0;
+
+    if (VerificationStatusChecker.isAttendanceVerified(attendanceStatus)) {
+      count++;
+    }
+    if (stampHistory.ctVerified()) {
+      count++;
+    }
+    if (stampHistory.tilVerified()) {
+      count++;
+    }
+    if (stampHistory.resumeVerified()) {
+      count++;
+    }
+    return count;
   }
 
   private String formatStampStatus(boolean verified, int count) {
