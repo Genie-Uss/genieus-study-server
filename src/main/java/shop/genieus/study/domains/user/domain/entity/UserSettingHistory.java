@@ -16,11 +16,6 @@ import shop.genieus.study.domains.user.domain.vo.ParticipationStatus;
     indexes = {
       @Index(name = "idx_user_effective_date", columnList = "userId, effectiveFromDate"),
       @Index(name = "idx_user_active", columnList = "userId, isActive")
-    },
-    uniqueConstraints = {
-      @UniqueConstraint(
-          name = "uk_user_effective_date",
-          columnNames = {"userId", "effectiveFromDate"})
     })
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

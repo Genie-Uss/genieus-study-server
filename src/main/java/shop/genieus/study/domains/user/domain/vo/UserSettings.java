@@ -78,8 +78,11 @@ public class UserSettings {
     }
   }
 
-  public boolean isSameAs(LocalTime checkInTime, int coreTime) {
-    return this.desiredCheckInTime.equals(checkInTime) && this.desiredCoreTime == coreTime;
+  public boolean isSameAs(
+      LocalTime checkInTime, int coreTime, ParticipationStatus participationStatus) {
+    return this.desiredCheckInTime.equals(checkInTime)
+        && this.desiredCoreTime == coreTime
+        && this.participationStatus == participationStatus;
   }
 
   @Override

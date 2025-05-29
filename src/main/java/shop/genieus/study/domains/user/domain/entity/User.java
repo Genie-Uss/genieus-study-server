@@ -76,13 +76,13 @@ public class User extends BaseEntity {
     return this.password.matches(plainPassword, passwordEncryptionService);
   }
 
-  public void updateSettings(LocalTime newCheckInTime, int newCoreTime) {
-    if (currentSettings.isSameAs(newCheckInTime, newCoreTime)) {
+  public void updateSettings(
+      LocalTime newCheckInTime, int newCoreTime, ParticipationStatus newParticipationStatus) {
+    if (currentSettings.isSameAs(newCheckInTime, newCoreTime, newParticipationStatus)) {
       throw UserValidationException.sameSetting();
     }
 
-    UserSettings newSettings =
-        UserSettings.of(newCheckInTime, newCoreTime, currentSettings.getParticipationStatus());
+    UserSettings newSettings = UserSettings.of(newCheckInTime, newCoreTime, newParticipationStatus);
     this.currentSettings = newSettings;
   }
 
