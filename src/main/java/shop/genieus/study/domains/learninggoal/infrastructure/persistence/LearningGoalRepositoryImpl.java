@@ -16,6 +16,11 @@ public class LearningGoalRepositoryImpl implements LearningGoalRepository {
 
   @Override
   public List<LearningGoal> findByUserIdAndDate(Long userId, LocalDate date) {
-    return jpaRepository.findByUserIdAndDate(userId, date);
+    return jpaRepository.findByUserIdAndDateOrderByCreatedAt(userId, date);
+  }
+
+  @Override
+  public LearningGoal save(LearningGoal learningGoal) {
+    return jpaRepository.save(learningGoal);
   }
 }

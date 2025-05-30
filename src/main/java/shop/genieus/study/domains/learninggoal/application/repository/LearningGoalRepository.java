@@ -6,4 +6,6 @@ import shop.genieus.study.domains.learninggoal.domain.entity.LearningGoal;
 
 public interface LearningGoalRepository {
   List<LearningGoal> findByUserIdAndDate(Long userId, LocalDate date);
+
+  LearningGoal save(LearningGoal learningGoal);
 }
