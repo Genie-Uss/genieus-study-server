@@ -10,6 +10,7 @@ import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.learninggoal.application.LearningGoalCommandService;
 import shop.genieus.study.domains.learninggoal.application.LearningGoalQueryService;
 import shop.genieus.study.domains.learninggoal.application.dto.info.GetLearningGoalsInfo;
+import shop.genieus.study.domains.learninggoal.application.dto.info.ToggleLearningGoalInfo;
 import shop.genieus.study.domains.learninggoal.application.dto.result.LearningGoalListResult;
 import shop.genieus.study.domains.learninggoal.domain.entity.LearningGoal;
 import shop.genieus.study.domains.learninggoal.presentation.dto.request.CreateLearningGoalRequest;
@@ -34,7 +35,7 @@ public class LearningGoalController {
     LearningGoalListResult result =
         queryService.getLearningGoals(new GetLearningGoalsInfo(userId, principal.id(), date));
 
-    return ResponseEntity.ok(LearningGoalListResponse.from(result));
+    return ResponseEntity.ok().body(LearningGoalListResponse.from(result));
   }
 
   @PostMapping
@@ -43,13 +44,16 @@ public class LearningGoalController {
       @RequestBody @Valid CreateLearningGoalRequest request) {
     LearningGoal goal = commandService.createLearningGoal(request.toInfo(principal));
 
-    return ResponseEntity.ok(LearningGoalResponse.from(goal));
+    return ResponseEntity.ok().body(LearningGoalResponse.from(goal));
   }
 
-  @PatchMapping
-  public ResponseEntity<ToggleLearningGoalResponse>
-      toggleLearningGoal() { // toggle goal(목표 달성 on/off)
-    return ResponseEntity.ok(ToggleLearningGoalResponse.mock());
+  @PatchMapping("/{goalId}")
+  public ResponseEntity<ToggleLearningGoalResponse> toggleLearningGoal(
+      @AuthPrincipal CustomPrincipal principal, @PathVariable Long goalId) {
+    LearningGoal goal =
+        commandService.toggleLearningGoal(new ToggleLearningGoalInfo(principal.id(), goalId));
+
+    return ResponseEntity.ok().body(ToggleLearningGoalResponse.from(goal));
   }
 
   @DeleteMapping

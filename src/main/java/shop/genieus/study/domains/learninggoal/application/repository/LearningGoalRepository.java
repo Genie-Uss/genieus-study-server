@@ -8,4 +8,6 @@ public interface LearningGoalRepository {
   List<LearningGoal> findByUserIdAndDate(Long userId, LocalDate date);
 
   LearningGoal save(LearningGoal learningGoal);
+
+  LearningGoal findById(Long goalId);
 }

@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.domains.learninggoal.application.dto.info.CreateLearningGoalInfo;
+import shop.genieus.study.domains.learninggoal.application.dto.info.ToggleLearningGoalInfo;
 import shop.genieus.study.domains.learninggoal.application.repository.LearningGoalRepository;
 import shop.genieus.study.domains.learninggoal.domain.entity.LearningGoal;
+import shop.genieus.study.domains.learninggoal.domain.exception.LearningGoalBusinessException;
 
 @Slf4j
 @Service
@@ -31,5 +33,27 @@ public class LearningGoalCommandService {
         saved.getId());
 
     return saved;
+  }
+
+  public LearningGoal toggleLearningGoal(ToggleLearningGoalInfo info) {
+    LearningGoal learningGoal = repository.findById(info.goalId());
+    validateOwnership(learningGoal, info.userId());
+
+    learningGoal.toggleCompletion();
+    LearningGoal updated = repository.save(learningGoal);
+
+    log.info(
+        "학습 목표 완료 상태 변경: userId={}, goalId={}, completed={}",
+        updated.getUserId(),
+        updated.getId(),
+        updated.getIsCompleted());
+
+    return updated;
+  }
+
+  private void validateOwnership(LearningGoal learningGoal, Long userId) {
+    if (!learningGoal.isOwnedBy(userId)) {
+      throw LearningGoalBusinessException.noPermissionForGoal();
+    }
   }
 }
