@@ -1,0 +1,9 @@
+package shop.genieus.study.domains.learninggoal.application.repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import shop.genieus.study.domains.learninggoal.domain.entity.LearningGoal;
+
+public interface LearningGoalRepository {
+  List<LearningGoal> findByUserIdAndDate(Long userId, LocalDate date);
+}
