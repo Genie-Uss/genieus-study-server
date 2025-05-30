@@ -6,5 +6,6 @@ public enum Domain {
   STAMP,
   ATTENDANCE,
   NOTIFICATION,
+  LEARNING_GOAL,
   GLOBAL
 }
