@@ -9,6 +9,7 @@ import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.learninggoal.application.LearningGoalCommandService;
 import shop.genieus.study.domains.learninggoal.application.LearningGoalQueryService;
+import shop.genieus.study.domains.learninggoal.application.dto.info.DeleteLearningGoalInfo;
 import shop.genieus.study.domains.learninggoal.application.dto.info.GetLearningGoalsInfo;
 import shop.genieus.study.domains.learninggoal.application.dto.info.ToggleLearningGoalInfo;
 import shop.genieus.study.domains.learninggoal.application.dto.result.LearningGoalListResult;
@@ -56,8 +57,11 @@ public class LearningGoalController {
     return ResponseEntity.ok().body(ToggleLearningGoalResponse.from(goal));
   }
 
-  @DeleteMapping
-  public ResponseEntity<DeleteLearningGoalResponse> deleteLearningGoal() { // delete goal
-    return ResponseEntity.ok(DeleteLearningGoalResponse.mock());
+  @DeleteMapping("/{goalId}")
+  public ResponseEntity<DeleteLearningGoalResponse> deleteLearningGoal(
+      @AuthPrincipal CustomPrincipal principal, @PathVariable Long goalId) {
+    commandService.deleteLearningGoal(new DeleteLearningGoalInfo(principal.id(), goalId));
+
+    return ResponseEntity.ok().body(DeleteLearningGoalResponse.of());
   }
 }

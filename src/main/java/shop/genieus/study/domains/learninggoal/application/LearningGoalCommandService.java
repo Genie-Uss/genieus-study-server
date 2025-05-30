@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.domains.learninggoal.application.dto.info.CreateLearningGoalInfo;
+import shop.genieus.study.domains.learninggoal.application.dto.info.DeleteLearningGoalInfo;
 import shop.genieus.study.domains.learninggoal.application.dto.info.ToggleLearningGoalInfo;
 import shop.genieus.study.domains.learninggoal.application.repository.LearningGoalRepository;
 import shop.genieus.study.domains.learninggoal.domain.entity.LearningGoal;
@@ -49,6 +50,17 @@ public class LearningGoalCommandService {
         updated.getIsCompleted());
 
     return updated;
+  }
+
+  public void deleteLearningGoal(DeleteLearningGoalInfo info) {
+    Long userId = info.userId();
+    Long goalId = info.goalId();
+
+    LearningGoal goal = repository.findById(goalId);
+    validateOwnership(goal, userId);
+    repository.delete(goal);
+
+    log.info("학습 목표 삭제: userId={}, goalId={}", userId, goalId);
   }
 
   private void validateOwnership(LearningGoal learningGoal, Long userId) {

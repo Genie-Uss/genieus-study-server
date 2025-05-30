@@ -10,4 +10,6 @@ public interface LearningGoalRepository {
   LearningGoal save(LearningGoal learningGoal);
 
   LearningGoal findById(Long goalId);
+
+  void delete(LearningGoal goal);
 }

@@ -29,4 +29,9 @@ public class LearningGoalRepositoryImpl implements LearningGoalRepository {
   public LearningGoal findById(Long id) {
     return jpaRepository.findById(id).orElseThrow(() -> LearningGoalNotFoundException.create(id));
   }
+
+  @Override
+  public void delete(LearningGoal learningGoal) {
+    jpaRepository.delete(learningGoal);
+  }
 }
