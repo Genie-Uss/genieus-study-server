@@ -76,4 +76,20 @@ public class ResumeStamp extends Stamp {
 
     return stamp;
   }
+
+  @Override
+  public String[] getCategories() {
+    String[] categories = {careerType.getFieldName(), activityType.getFieldName()};
+    return categories;
+  }
+
+  @Override
+  public String getContent() {
+    return description;
+  }
+
+  @Override
+  public String getUrl() {
+    return relatedUrl;
+  }
 }

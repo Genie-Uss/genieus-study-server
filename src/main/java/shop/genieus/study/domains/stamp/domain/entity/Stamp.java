@@ -27,23 +27,20 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 @Table(name = "g_stamps")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Stamp extends AbstractAggregateRoot<Stamp> {
-  @Id
-  @Comment("인증 도장 아이디")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
+public class Stamp extends AbstractAggregateRoot<Stamp> implements DescribableStamp {
   @Column(nullable = false)
   @Comment("유저 아이디")
   protected Long userId;
-
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   @Comment("스탬프 유형")
   protected StampType type;
-
   @Comment("인증 시간")
   protected LocalDateTime verifiedAt;
+  @Id
+  @Comment("인증 도장 아이디")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   protected Stamp(Long userId, StampType type, LocalDateTime verifiedAt) {
     this.userId = userId;

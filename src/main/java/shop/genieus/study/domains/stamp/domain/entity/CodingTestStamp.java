@@ -69,4 +69,25 @@ public class CodingTestStamp extends Stamp {
 
     return stamp;
   }
+
+  @Override
+  public String[] getCategories() {
+    String[] categories = {algorithmType.getFieldName(), platformType.getFieldName()};
+    return categories;
+  }
+
+  @Override
+  public String getTitle() {
+    return "[" + platformType.getFieldName() + "] " + algorithmType.getFieldName();
+  }
+
+  @Override
+  public String getContent() {
+    return description;
+  }
+
+  @Override
+  public String getUrl() {
+    return problemUrl;
+  }
 }

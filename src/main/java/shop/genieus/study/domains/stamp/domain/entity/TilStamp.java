@@ -63,4 +63,15 @@ public class TilStamp extends Stamp {
 
     return stamp;
   }
+
+  @Override
+  public String[] getCategories() {
+    String[] categories = {categoryType.getFieldName()};
+    return categories;
+  }
+
+  @Override
+  public String getUrl() {
+    return relatedUrl;
+  }
 }
