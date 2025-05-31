@@ -22,6 +22,7 @@ import shop.genieus.study.domains.stamp.application.dto.info.get.GetStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.get.GetTilStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.result.*;
 import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
+import shop.genieus.study.domains.stamp.application.event.StampViewDeletedEvent;
 import shop.genieus.study.domains.stamp.application.repository.StampRepository;
 import shop.genieus.study.domains.stamp.application.repository.StampViewRepository;
 import shop.genieus.study.domains.stamp.domain.entity.*;
@@ -150,6 +151,7 @@ public class StampService {
     Stamp stamp = stampRepository.findById(stampId);
     stamp.delete(userId);
     stampRepository.delete(stamp);
+    publisher.publishEvent(StampViewDeletedEvent.of(stampId));
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -162,6 +164,12 @@ public class StampService {
         saved.getType(),
         saved.getUserId(),
         saved.getNickname());
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void onStampViewDeleted(StampViewDeletedEvent event) {
+    stampViewRepository.deleteById(event.id());
+    log.info("Stamp View 삭제: id={}", event.id());
   }
 
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {

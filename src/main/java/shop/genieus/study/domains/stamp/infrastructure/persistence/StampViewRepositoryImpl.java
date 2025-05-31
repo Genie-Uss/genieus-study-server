@@ -16,6 +16,7 @@ public class StampViewRepositoryImpl implements StampViewRepository {
   @PersistenceContext private final EntityManager em;
   private final StampViewJpaRepository jpaRepository;
 
+  @Override
   public StampView save(StampView view) {
     em.createNativeQuery(
             """
@@ -42,5 +43,10 @@ public class StampViewRepositoryImpl implements StampViewRepository {
         .executeUpdate();
 
     return view;
+  }
+
+  @Override
+  public void deleteById(Long id) {
+    jpaRepository.deleteById(id);
   }
 }

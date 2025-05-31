@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
+import shop.genieus.study.domains.stamp.application.event.StampViewDeletedEvent;
 import shop.genieus.study.domains.stamp.domain.event.StampCreatedEvent;
 import shop.genieus.study.domains.stamp.domain.event.StampDeletedEvent;
 
@@ -29,5 +30,10 @@ public class StampEventListener {
   @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
   public void onStampDeleted(StampDeletedEvent event) {
     stampHistoryService.onStampDeleted(event);
+  }
+
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  public void onStampViewDeleted(StampViewDeletedEvent event) {
+    stampService.onStampViewDeleted(event);
   }
 }
