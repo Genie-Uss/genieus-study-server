@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.notification.application.assembler;
+package shop.genieus.study.domains.statistics.application.assembler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import shop.genieus.study.commons.provider.dto.AttendanceInfo;
 import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
-import shop.genieus.study.domains.notification.domain.vo.UserStatistics;
+import shop.genieus.study.domains.statistics.domain.vo.UserStatistics;
 
 @Slf4j
 @Component

@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.notification.application;
+package shop.genieus.study.domains.statistics.application;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -15,9 +15,9 @@ import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.dto.AttendanceInfo;
 import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
 import shop.genieus.study.commons.provider.dto.UserInfo;
-import shop.genieus.study.domains.notification.application.assembler.DailyStatisticsAssembler;
-import shop.genieus.study.domains.notification.application.event.DailyStatisticsEvent;
-import shop.genieus.study.domains.notification.domain.vo.UserStatistics;
+import shop.genieus.study.domains.statistics.application.assembler.DailyStatisticsAssembler;
+import shop.genieus.study.domains.statistics.domain.event.DailyStatisticsEvent;
+import shop.genieus.study.domains.statistics.domain.vo.UserStatistics;
 
 @Slf4j
 @Service

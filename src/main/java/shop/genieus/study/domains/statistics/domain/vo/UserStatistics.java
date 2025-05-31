@@ -1,6 +1,6 @@
-package shop.genieus.study.domains.notification.domain.vo;
+package shop.genieus.study.domains.statistics.domain.vo;
 
-import static shop.genieus.study.domains.notification.domain.vo.VerificationStatusChecker.*;
+import static shop.genieus.study.domains.statistics.domain.vo.VerificationStatusChecker.*;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

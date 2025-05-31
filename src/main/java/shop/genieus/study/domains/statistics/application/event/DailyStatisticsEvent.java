@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.notification.application.event;
+package shop.genieus.study.domains.statistics.application.event;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import shop.genieus.study.commons.notification.NotificationChannelType;
 import shop.genieus.study.commons.notification.NotificationMessageBuilder;
-import shop.genieus.study.domains.notification.domain.vo.UserStatistics;
-import shop.genieus.study.domains.notification.domain.vo.VerificationStatusChecker;
+import shop.genieus.study.domains.statistics.domain.vo.UserStatistics;
+import shop.genieus.study.domains.statistics.domain.vo.VerificationStatusChecker;
 
 @Getter
 @RequiredArgsConstructor
