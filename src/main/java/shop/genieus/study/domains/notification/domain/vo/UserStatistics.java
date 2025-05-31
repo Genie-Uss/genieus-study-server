@@ -1,5 +1,7 @@
 package shop.genieus.study.domains.notification.domain.vo;
 
+import static shop.genieus.study.domains.notification.domain.vo.VerificationStatusChecker.*;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,12 +46,12 @@ public class UserStatistics {
   private String processAttendance(AttendanceInfo attendance) {
     if (attendance == null) {
       fineReasons.add(FinePolicy.NO_ATTENDANCE);
-      return "`결석`";
+      return "`" + KO_ABSENT + "`";
     } else if (attendance.isLate()) {
       fineReasons.add(FinePolicy.LATE_ATTENDANCE);
-      return "`지각` (" + formatTime(attendance.checkInTime().toLocalTime()) + ")";
+      return "`" + KO_LATE + "` (" + formatTime(attendance.checkInTime().toLocalTime()) + ")";
     } else {
-      return "`출석` (" + formatTime(attendance.checkInTime().toLocalTime()) + ")";
+      return "`" + KO_PRESENT + "` (" + formatTime(attendance.checkInTime().toLocalTime()) + ")";
     }
   }
 
@@ -85,9 +87,9 @@ public class UserStatistics {
 
   private String formatStampStatus(boolean verified, int count) {
     if (count == 0 && !verified) {
-      return "`인증 없음`";
+      return "`" + KO_NO_VERIFIED + "`";
     }
-    String status = verified ? "`O`" : "`X`";
+    String status = verified ? "`" + O_MARK + "`" : "`" + X_MARK + "`";
     return String.format("%s (%d개)", status, count);
   }
 
