@@ -45,3 +45,4 @@ infrastructure/redis
 discord-config.yml
 
 .env
+/src/main/generated/*
