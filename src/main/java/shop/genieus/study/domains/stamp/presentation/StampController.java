@@ -123,4 +123,10 @@ public class StampController {
 
     return ResponseEntity.ok().body(StampListResponse.from(result));
   }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<StampDetailResponse> getStampDetail(@PathVariable Long id) {
+    StampDetailResponse response = StampDetailResponse.from(stampService.getStampDetail(id));
+    return ResponseEntity.ok().body(response);
+  }
 }

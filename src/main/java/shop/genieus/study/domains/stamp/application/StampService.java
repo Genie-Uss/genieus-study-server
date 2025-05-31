@@ -148,6 +148,11 @@ public class StampService {
     publisher.publishEvent(StampViewDeletedEvent.of(stampId));
   }
 
+  @Transactional(readOnly = true)
+  public Stamp getStampDetail(Long stampId) {
+    return stampRepository.findById(stampId);
+  }
+
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {
     if (attendanceProvider.existsByUserIdAndDate(userId, currentTime.toLocalDate())) {
       return;
