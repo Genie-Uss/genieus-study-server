@@ -12,6 +12,7 @@ public record CreateTilStampRequest(
     @NotBlank(message = "내용을 입력해주세요.") String content,
     String relatedUrl) {
   public CreateTilStampInfo toInfo(CustomPrincipal principal) {
-    return new CreateTilStampInfo(principal.id(), title, categoryType, content, relatedUrl);
+    return new CreateTilStampInfo(
+        principal.id(), principal.nickname(), title, categoryType, content, relatedUrl);
   }
 }

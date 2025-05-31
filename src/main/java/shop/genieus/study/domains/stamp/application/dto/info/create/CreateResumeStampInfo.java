@@ -5,6 +5,7 @@ import shop.genieus.study.domains.stamp.domain.vo.CareerType;
 
 public record CreateResumeStampInfo(
     Long userId,
+    String nickname,
     String title,
     CareerType careerType,
     ActivityType activityType,

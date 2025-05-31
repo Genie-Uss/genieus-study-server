@@ -14,6 +14,6 @@ public record CreateCtStampRequest(
     String problemUrl) {
   public CreateCtStampInfo toInfo(CustomPrincipal principal) {
     return new CreateCtStampInfo(
-        principal.id(), algorithmType, platformType, description, problemUrl);
+        principal.id(), principal.nickname(), algorithmType, platformType, description, problemUrl);
   }
 }

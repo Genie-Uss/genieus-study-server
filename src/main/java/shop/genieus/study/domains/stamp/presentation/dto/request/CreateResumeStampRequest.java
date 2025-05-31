@@ -15,6 +15,12 @@ public record CreateResumeStampRequest(
     String relatedUrl) {
   public CreateResumeStampInfo toInfo(CustomPrincipal principal) {
     return new CreateResumeStampInfo(
-        principal.id(), title, careerType, activityType, description, relatedUrl);
+        principal.id(),
+        principal.nickname(),
+        title,
+        careerType,
+        activityType,
+        description,
+        relatedUrl);
   }
 }

@@ -5,6 +5,7 @@ import shop.genieus.study.domains.stamp.domain.vo.PlatformType;
 
 public record CreateCtStampInfo(
     Long userId,
+    String nickname,
     AlgorithmType algorithmType,
     PlatformType platformType,
     String description,
