@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
@@ -11,30 +13,23 @@ import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.application.StampCategoryService;
 import shop.genieus.study.domains.stamp.application.StampHistoryService;
 import shop.genieus.study.domains.stamp.application.StampService;
+import shop.genieus.study.domains.stamp.application.StampViewService;
 import shop.genieus.study.domains.stamp.application.dto.info.DeleteStampInfo;
-import shop.genieus.study.domains.stamp.application.dto.info.get.GetCtStampInfo;
-import shop.genieus.study.domains.stamp.application.dto.info.get.GetResumeStampInfo;
-import shop.genieus.study.domains.stamp.application.dto.info.get.GetStampInfo;
-import shop.genieus.study.domains.stamp.application.dto.info.get.GetTilStampInfo;
+import shop.genieus.study.domains.stamp.application.dto.info.get.*;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateCtStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
-import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
-import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
-import shop.genieus.study.domains.stamp.domain.entity.StampHistory;
-import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
+import shop.genieus.study.domains.stamp.application.dto.result.GetStampSearchResult;
+import shop.genieus.study.domains.stamp.domain.entity.*;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCtStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateResumeStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateTilStampRequest;
+import shop.genieus.study.domains.stamp.presentation.dto.request.StampFilterParams;
 import shop.genieus.study.domains.stamp.presentation.dto.response.*;
 import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateCtStampResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateResumeStampResponse;
 import shop.genieus.study.domains.stamp.presentation.dto.response.create.CreateTilStampResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.read.CtStampResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.read.ResumeStampResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.read.StampCategoryResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.read.StampHistoryResponse;
-import shop.genieus.study.domains.stamp.presentation.dto.response.read.TilStampResponse;
+import shop.genieus.study.domains.stamp.presentation.dto.response.read.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +37,7 @@ import shop.genieus.study.domains.stamp.presentation.dto.response.read.TilStampR
 public class StampController {
   private final StampService stampService;
   private final StampHistoryService stampHistoryService;
+  private final StampViewService stampViewService;
   private final StampCategoryService stampCategoryService;
 
   @PostMapping("/ct")
@@ -116,5 +112,15 @@ public class StampController {
   public ResponseEntity<StampCategoryResponse> getCategories(@RequestParam String type) {
     StampCategoryResponse categories = stampCategoryService.getCategories(type);
     return ResponseEntity.ok(categories);
+  }
+
+  @GetMapping
+  public ResponseEntity<StampListResponse> getStampList(
+      @ModelAttribute StampFilterParams filterParams,
+      @PageableDefault(page = 0, size = 10) Pageable pageable) {
+    GetStampSearchResult result =
+        stampViewService.searchStampViews(GetStampSearchInfo.from(filterParams, pageable));
+
+    return ResponseEntity.ok().body(StampListResponse.from(result));
   }
 }

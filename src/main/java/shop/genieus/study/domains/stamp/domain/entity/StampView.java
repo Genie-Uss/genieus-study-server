@@ -1,7 +1,10 @@
 package shop.genieus.study.domains.stamp.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,18 +42,23 @@ public class StampView {
   @Column(nullable = false)
   protected LocalDateTime verifiedAt;
 
+  @JsonIgnore
   @Comment("resume 경력 유형")
   private String careerType;
 
+  @JsonIgnore
   @Comment("resume 활동 유형")
   private String activityType;
 
+  @JsonIgnore
   @Comment("ct 알고리즘 유형")
   private String algorithmType;
 
+  @JsonIgnore
   @Comment("ct 플랫폼 유형")
   private String platformType;
 
+  @JsonIgnore
   @Comment("til 카테고리 유형")
   private String categoryType;
 
@@ -149,5 +157,11 @@ public class StampView {
         algorithmType,
         platformType,
         categoryType);
+  }
+
+  public String[] getCategories() {
+    return Stream.of(careerType, activityType, algorithmType, platformType, categoryType)
+        .filter(Objects::nonNull)
+        .toArray(String[]::new);
   }
 }
