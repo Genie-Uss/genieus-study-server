@@ -14,7 +14,7 @@ import shop.genieus.study.domains.stamp.domain.event.StampDeletedEvent;
 @Component
 @RequiredArgsConstructor
 public class StampEventListener {
-  private final StampService stampService;
+  private final StampViewService stampViewService;
   private final StampHistoryService stampHistoryService;
 
   @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
@@ -24,7 +24,7 @@ public class StampEventListener {
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void onStampViewCreated(StampViewCreatedEvent event) {
-    stampService.onStampViewCreated(event);
+    stampViewService.onStampViewCreated(event);
   }
 
   @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
@@ -34,6 +34,6 @@ public class StampEventListener {
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void onStampViewDeleted(StampViewDeletedEvent event) {
-    stampService.onStampViewDeleted(event);
+    stampViewService.onStampViewDeleted(event);
   }
 }

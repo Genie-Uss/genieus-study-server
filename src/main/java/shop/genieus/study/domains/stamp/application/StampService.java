@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.commons.provider.DateTimeProvider;
@@ -24,11 +23,8 @@ import shop.genieus.study.domains.stamp.application.dto.result.*;
 import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
 import shop.genieus.study.domains.stamp.application.event.StampViewDeletedEvent;
 import shop.genieus.study.domains.stamp.application.repository.StampRepository;
-import shop.genieus.study.domains.stamp.application.repository.StampViewRepository;
 import shop.genieus.study.domains.stamp.domain.entity.*;
-import shop.genieus.study.domains.stamp.domain.entity.StampView;
 import shop.genieus.study.domains.stamp.domain.exception.StampBusinessException;
-import shop.genieus.study.domains.stamp.domain.mapper.StampViewMapper;
 import shop.genieus.study.domains.stamp.domain.policy.StampVerificationPolicy;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
@@ -37,11 +33,9 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 @RequiredArgsConstructor
 public class StampService {
   private final StampRepository stampRepository;
-  private final StampViewRepository stampViewRepository;
   private final DateTimeProvider dateTimeProvider;
   private final AttendanceProvider attendanceProvider;
   private final ApplicationEventPublisher publisher;
-  private final StampViewMapper mapper;
 
   @Transactional
   public CreateCtStampResult createCodingTestStamp(CreateCtStampInfo info) {
@@ -152,24 +146,6 @@ public class StampService {
     stamp.delete(userId);
     stampRepository.delete(stamp);
     publisher.publishEvent(StampViewDeletedEvent.of(stampId));
-  }
-
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void onStampViewCreated(StampViewCreatedEvent event) {
-    StampView view = mapper.from(event);
-    StampView saved = stampViewRepository.save(view);
-    log.info(
-        "Stamp View 생성: id={}, type={}, userId={}, nickname={}",
-        saved.getId(),
-        saved.getType(),
-        saved.getUserId(),
-        saved.getNickname());
-  }
-
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void onStampViewDeleted(StampViewDeletedEvent event) {
-    stampViewRepository.deleteById(event.id());
-    log.info("Stamp View 삭제: id={}", event.id());
   }
 
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {
