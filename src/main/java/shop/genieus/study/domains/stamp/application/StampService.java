@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.commons.provider.DateTimeProvider;
@@ -19,9 +21,13 @@ import shop.genieus.study.domains.stamp.application.dto.info.get.GetResumeStampI
 import shop.genieus.study.domains.stamp.application.dto.info.get.GetStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.get.GetTilStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.result.*;
+import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
 import shop.genieus.study.domains.stamp.application.repository.StampRepository;
+import shop.genieus.study.domains.stamp.application.repository.StampViewRepository;
 import shop.genieus.study.domains.stamp.domain.entity.*;
+import shop.genieus.study.domains.stamp.domain.entity.StampView;
 import shop.genieus.study.domains.stamp.domain.exception.StampBusinessException;
+import shop.genieus.study.domains.stamp.domain.mapper.StampViewMapper;
 import shop.genieus.study.domains.stamp.domain.policy.StampVerificationPolicy;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
@@ -30,8 +36,11 @@ import shop.genieus.study.domains.stamp.domain.vo.StampType;
 @RequiredArgsConstructor
 public class StampService {
   private final StampRepository stampRepository;
+  private final StampViewRepository stampViewRepository;
   private final DateTimeProvider dateTimeProvider;
   private final AttendanceProvider attendanceProvider;
+  private final ApplicationEventPublisher publisher;
+  private final StampViewMapper mapper;
 
   @Transactional
   public CreateCtStampResult createCodingTestStamp(CreateCtStampInfo info) {
@@ -48,6 +57,7 @@ public class StampService {
             info.description(),
             info.problemUrl());
     stampRepository.save(codingTestStamp);
+    publisher.publishEvent(StampViewCreatedEvent.of(codingTestStamp, info.nickname()));
     return CreateCtStampResult.of(codingTestStamp);
   }
 
@@ -66,6 +76,7 @@ public class StampService {
             info.content(),
             info.relatedUrl());
     stampRepository.save(tilStamp);
+    publisher.publishEvent(StampViewCreatedEvent.of(tilStamp, info.nickname()));
     return CreateTilStampResult.of(tilStamp);
   }
 
@@ -85,6 +96,7 @@ public class StampService {
             info.description(),
             info.relatedUrl());
     stampRepository.save(resumeStamp);
+    publisher.publishEvent(StampViewCreatedEvent.of(resumeStamp, info.nickname()));
     return CreateResumeStampResult.of(resumeStamp);
   }
 
@@ -138,6 +150,18 @@ public class StampService {
     Stamp stamp = stampRepository.findById(stampId);
     stamp.delete(userId);
     stampRepository.delete(stamp);
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void onStampViewCreated(StampViewCreatedEvent event) {
+    StampView view = mapper.from(event);
+    StampView saved = stampViewRepository.save(view);
+    log.info(
+        "Stamp View 생성: id={}, type={}, userId={}, nickname={}",
+        saved.getId(),
+        saved.getType(),
+        saved.getUserId(),
+        saved.getNickname());
   }
 
   private void existsByUserIdAndDate(Long userId, LocalDateTime currentTime) {
