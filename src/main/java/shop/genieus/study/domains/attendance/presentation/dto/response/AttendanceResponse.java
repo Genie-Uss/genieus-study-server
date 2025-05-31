@@ -2,7 +2,6 @@ package shop.genieus.study.domains.attendance.presentation.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import shop.genieus.study.domains.attendance.application.dto.result.AttendanceResult;
 
 public record AttendanceResponse(
@@ -18,8 +17,7 @@ public record AttendanceResponse(
     boolean isOwner,
     boolean hasAttendanceRecord) {
 
-  public static AttendanceResponse from(
-      AttendanceResult result, Long requestUserId, Long targetUserId) {
+  public static AttendanceResponse from(AttendanceResult result) {
     return new AttendanceResponse(
         result.id(),
         result.userId(),
@@ -30,11 +28,7 @@ public record AttendanceResponse(
         result.checkOutTime(),
         result.desiredCoreTime(),
         result.studyMinutes(),
-        isOwner(requestUserId, targetUserId),
+        result.isOwner(),
         result.hasAttendanceRecord());
-  }
-
-  private static boolean isOwner(Long requestUserId, Long targetUserId) {
-    return Objects.equals(targetUserId, requestUserId);
   }
 }

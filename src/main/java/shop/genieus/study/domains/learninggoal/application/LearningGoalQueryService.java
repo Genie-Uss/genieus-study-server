@@ -31,7 +31,7 @@ public class LearningGoalQueryService {
     log.debug("학습 목표 조회: userId={}, date={}, count={}", userId, date, goals.size());
 
     return new LearningGoalListResult(
-        goals, userId, date, !goals.isEmpty() && goals.get(0).isOwnedBy(info.loginUserId()));
+        goals, userId, date, !goals.isEmpty() && goals.get(0).isOwnedBy(info.requestUserId()));
   }
 
   private LocalDate getCurrentDate(LocalDate date) {

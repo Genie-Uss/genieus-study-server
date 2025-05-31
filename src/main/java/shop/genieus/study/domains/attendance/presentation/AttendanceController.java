@@ -5,7 +5,8 @@ import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.genieus.study.domains.attendance.application.AttendanceService;
+import shop.genieus.study.domains.attendance.application.AttendanceCommandService;
+import shop.genieus.study.domains.attendance.application.AttendanceQueryService;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckOutInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.GetAttendanceInfo;
@@ -21,14 +22,15 @@ import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 @RequiredArgsConstructor
 @RequestMapping("/attendances")
 public class AttendanceController {
-  private final AttendanceService attendanceService;
+  private final AttendanceQueryService queryService;
+  private final AttendanceCommandService commandService;
 
   @PostMapping("/check-in")
   public ResponseEntity<CheckInResponse> checkIn(
       @AuthPrincipal CustomPrincipal principal, @RequestBody @Valid CheckInRequest request) {
     CheckInResponse response =
         CheckInResponse.from(
-            attendanceService.checkIn(new CheckInInfo(principal.id(), request.checkInDateTime())));
+            commandService.checkIn(new CheckInInfo(principal.id(), request.checkInDateTime())));
 
     return ResponseEntity.ok().body(response);
   }
@@ -38,8 +40,7 @@ public class AttendanceController {
       @AuthPrincipal CustomPrincipal principal, @RequestBody @Valid CheckOutRequest request) {
     CheckOutResponse response =
         CheckOutResponse.from(
-            attendanceService.checkOut(
-                new CheckOutInfo(principal.id(), request.checkOutDateTime())));
+            commandService.checkOut(new CheckOutInfo(principal.id(), request.checkOutDateTime())));
 
     return ResponseEntity.ok().body(response);
   }
@@ -49,13 +50,9 @@ public class AttendanceController {
       @AuthPrincipal CustomPrincipal principal,
       @RequestParam(required = false) LocalDate date,
       @RequestParam Long userId) {
-    LocalDate targetDate = (date != null) ? date : LocalDate.now();
-
     AttendanceResponse response =
         AttendanceResponse.from(
-            attendanceService.getAttendance(new GetAttendanceInfo(userId, targetDate)),
-            principal.id(),
-            userId);
+            queryService.getAttendance(new GetAttendanceInfo(userId, principal.id(), date)));
 
     return ResponseEntity.ok().body(response);
   }

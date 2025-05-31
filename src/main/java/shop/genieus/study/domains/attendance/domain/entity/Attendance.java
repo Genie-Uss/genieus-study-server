@@ -108,4 +108,8 @@ public class Attendance extends AbstractAggregateRoot<Attendance> {
   public boolean isCheckedIn() {
     return this.attendanceTime.isCheckedIn();
   }
+
+  public boolean isOwnedBy(Long userId) {
+    return this.userId.equals(userId);
+  }
 }

@@ -3,6 +3,7 @@ package shop.genieus.study.domains.attendance.application.dto.result;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 import shop.genieus.study.domains.attendance.domain.entity.Attendance;
 import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
 import shop.genieus.study.domains.attendance.domain.vo.StudyResult;
@@ -18,11 +19,12 @@ public record AttendanceResult(
     LocalDateTime checkOutTime,
     LocalTime desiredCheckInTime,
     boolean isLate,
+    boolean isOwner,
     int studyMinutes,
     double achievementRate,
     boolean hasAttendanceRecord) {
 
-  public static AttendanceResult from(Attendance attendance) {
+  public static AttendanceResult from(Attendance attendance, Long requestUserId) {
     AttendanceTime attendanceTime = attendance.getAttendanceTime();
     StudyResult studyResult = attendance.getStudyResult();
     return new AttendanceResult(
@@ -36,13 +38,18 @@ public record AttendanceResult(
         attendanceTime.getCheckOutTime(),
         attendanceTime.getDesiredCheckInTime(),
         attendanceTime.isLate(),
+        attendance.isOwnedBy(requestUserId),
         studyResult.getStudyMinutes(),
         studyResult.getAchievementRate(),
         true);
   }
 
   public static AttendanceResult notFound(
-      Long targetUserId, int coreTime, LocalDate targetDate, LocalTime desiredCheckInTime) {
+      Long targetUserId,
+      Long requestUserId,
+      int coreTime,
+      LocalDate targetDate,
+      LocalTime desiredCheckInTime) {
     return new AttendanceResult(
         null,
         targetUserId,
@@ -54,6 +61,7 @@ public record AttendanceResult(
         null,
         desiredCheckInTime,
         false,
+        Objects.equals(targetUserId, requestUserId),
         0,
         0,
         false);
