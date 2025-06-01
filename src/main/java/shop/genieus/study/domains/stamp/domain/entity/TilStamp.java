@@ -1,8 +1,6 @@
 package shop.genieus.study.domains.stamp.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +23,7 @@ public class TilStamp extends Stamp {
 
   @Comment("카테고리 유형")
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private CategoryType categoryType;
 
   @Comment("상세 내용")

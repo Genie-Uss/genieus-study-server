@@ -18,6 +18,7 @@ import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
 public class StampActivityEvent implements NotificationMessageBuilder {
   private static final int MAX_DESCRIPTION_LENGTH = 150;
 
+  private final Long id;
   private final Long userId;
   private final String title;
   private final String category;
@@ -32,6 +33,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
       case CT -> {
         CodingTestStamp s = (CodingTestStamp) stamp;
         yield new StampActivityEvent(
+            s.getId(),
             s.getUserId(),
             null,
             inlineCodes(s.getAlgorithmType().getFieldName(), s.getPlatformType().getFieldName()),
@@ -43,6 +45,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
       case TIL -> {
         TilStamp s = (TilStamp) stamp;
         yield new StampActivityEvent(
+            s.getId(),
             s.getUserId(),
             s.getTitle(),
             inlineCode(s.getCategoryType().getFieldName()),
@@ -54,6 +57,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
       case RESUME -> {
         ResumeStamp s = (ResumeStamp) stamp;
         yield new StampActivityEvent(
+            s.getId(),
             s.getUserId(),
             s.getTitle(),
             inlineCodes(s.getCareerType().getFieldName(), s.getActivityType().getFieldName()),
@@ -93,16 +97,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
 
   @Override
   public String buildFrontendUrl(String baseUrl) {
-    String date = verifiedAt.toLocalDate().toString();
-
-    String path =
-        switch (stampType) {
-          case CT -> "/stamps/ct/user/" + userId + "?date=" + date;
-          case TIL -> "/stamps/til/user/" + userId + "?date=" + date;
-          case RESUME -> "/stamps/resume/user/" + userId + "?date=" + date;
-        };
-
-    return baseUrl + path;
+    return baseUrl + "/explore/stamps/" + id;
   }
 
   @Override

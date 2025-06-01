@@ -6,17 +6,22 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CategoryType {
-  DEVELOPMENT("개발"),
-  ALGORITHM("알고리즘"),
-  FRONTEND("프론트엔드"),
-  BACKEND("백엔드"),
-  DATABASE("데이터베이스"),
+  JAVA("Java"),
+  SPRING("Spring & Spring Boot"),
+  JPA("JPA & Hibernate"),
+  DATABASE("Database"),
+  TESTING("테스트 / TDD"),
+  INFRA("인프라 & 배포"),
   CLOUD("클라우드"),
-  INFRASTRUCTURE("인프라"),
   DEVOPS("DevOps"),
-  DATA_SCIENCE("데이터 사이언스"),
-  DESIGN("디자인"),
-  OTHER("기타");
+  DESIGN_PATTERN("디자인 패턴"),
+  ARCHITECTURE("시스템 아키텍처"),
+  DATA_STRUCTURE("자료구조"),
+  SECURITY("인증/인가 & 보안"),
+  ALGORITHM("알고리즘"),
+  CS("컴퓨터 과학 일반"),
+  OTHER("기타"),
+  ;
 
   private final String fieldName;
 }

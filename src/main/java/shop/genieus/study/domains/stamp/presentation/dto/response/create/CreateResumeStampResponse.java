@@ -9,6 +9,7 @@ public record CreateResumeStampResponse(
     StampType type,
     LocalDateTime verifiedAt,
     String title,
+    String description,
     String careerType,
     String activityType,
     String relatedUrl) {
@@ -18,6 +19,7 @@ public record CreateResumeStampResponse(
         result.type(),
         result.verifiedAt(),
         result.title(),
+        result.description(),
         result.careerType().getFieldName(),
         result.activityType().getFieldName(),
         result.relatedUrl());

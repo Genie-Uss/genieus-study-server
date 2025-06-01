@@ -11,6 +11,7 @@ public record CreateResumeStampResult(
     StampType type,
     LocalDateTime verifiedAt,
     String title,
+    String description,
     CareerType careerType,
     ActivityType activityType,
     String relatedUrl) {
@@ -20,6 +21,7 @@ public record CreateResumeStampResult(
         stamp.getType(),
         stamp.getVerifiedAt(),
         stamp.getTitle(),
+        stamp.getDescription(),
         stamp.getCareerType(),
         stamp.getActivityType(),
         stamp.getRelatedUrl());
