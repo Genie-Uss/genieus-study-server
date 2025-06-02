@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
-import shop.genieus.study.domains.stamp.domain.event.StampActivityEvent;
 import shop.genieus.study.domains.stamp.domain.vo.AlgorithmType;
 import shop.genieus.study.domains.stamp.domain.vo.PlatformType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
@@ -62,18 +61,13 @@ public class CodingTestStamp extends Stamp {
       PlatformType platformType,
       String description,
       String problemUrl) {
-    CodingTestStamp stamp =
-        new CodingTestStamp(
-            userId, type, verifiedAt, algorithmType, platformType, description, problemUrl);
-    stamp.registerEvent(StampActivityEvent.of(stamp));
-
-    return stamp;
+    return new CodingTestStamp(
+        userId, type, verifiedAt, algorithmType, platformType, description, problemUrl);
   }
 
   @Override
   public String[] getCategories() {
-    String[] categories = {algorithmType.getFieldName(), platformType.getFieldName()};
-    return categories;
+    return new String[] {algorithmType.getFieldName(), platformType.getFieldName()};
   }
 
   @Override
@@ -89,5 +83,15 @@ public class CodingTestStamp extends Stamp {
   @Override
   public String getUrl() {
     return problemUrl;
+  }
+
+  @Override
+  public AlgorithmType getAlgorithmType() {
+    return algorithmType;
+  }
+
+  @Override
+  public PlatformType getPlatformType() {
+    return platformType;
   }
 }
