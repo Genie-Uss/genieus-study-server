@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import shop.genieus.study.domains.auth.presentation.annotation.AuthPrincipal;
 import shop.genieus.study.domains.auth.presentation.dto.CustomPrincipal;
 import shop.genieus.study.domains.stamp.application.StampCategoryService;
+import shop.genieus.study.domains.stamp.application.StampCommandService;
 import shop.genieus.study.domains.stamp.application.StampHistoryService;
-import shop.genieus.study.domains.stamp.application.StampService;
+import shop.genieus.study.domains.stamp.application.StampQueryService;
 import shop.genieus.study.domains.stamp.application.StampViewService;
 import shop.genieus.study.domains.stamp.application.dto.info.DeleteStampInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.get.*;
@@ -35,7 +36,9 @@ import shop.genieus.study.domains.stamp.presentation.dto.response.read.*;
 @RequiredArgsConstructor
 @RequestMapping("/stamps")
 public class StampController {
-  private final StampService stampService;
+  private final StampCommandService commandService;
+
+  private final StampQueryService queryService;
   private final StampHistoryService stampHistoryService;
   private final StampViewService stampViewService;
   private final StampCategoryService stampCategoryService;
@@ -43,7 +46,7 @@ public class StampController {
   @PostMapping("/ct")
   public ResponseEntity<CreateCtStampResponse> createCtStamp(
       @AuthPrincipal CustomPrincipal principal, @RequestBody @Valid CreateCtStampRequest request) {
-    CreateCtStampResult result = stampService.createCodingTestStamp(request.toInfo(principal));
+    CreateCtStampResult result = commandService.createCodingTestStamp(request.toInfo(principal));
     CreateCtStampResponse response = CreateCtStampResponse.of(result);
     return ResponseEntity.ok(response);
   }
@@ -51,7 +54,7 @@ public class StampController {
   @PostMapping("/til")
   public ResponseEntity<CreateTilStampResponse> createTilStamp(
       @AuthPrincipal CustomPrincipal principal, @RequestBody @Valid CreateTilStampRequest request) {
-    CreateTilStampResult result = stampService.createTilStamp(request.toInfo(principal));
+    CreateTilStampResult result = commandService.createTilStamp(request.toInfo(principal));
     CreateTilStampResponse response = CreateTilStampResponse.of(result);
     return ResponseEntity.ok(response);
   }
@@ -60,9 +63,17 @@ public class StampController {
   public ResponseEntity<CreateResumeStampResponse> createResumeStamp(
       @AuthPrincipal CustomPrincipal principal,
       @RequestBody @Valid CreateResumeStampRequest request) {
-    CreateResumeStampResult result = stampService.createJobActivityStamp(request.toInfo(principal));
+    CreateResumeStampResult result =
+        commandService.createJobActivityStamp(request.toInfo(principal));
     CreateResumeStampResponse response = CreateResumeStampResponse.of(result);
     return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<DeleteStampResponse> deleteStamp(
+      @AuthPrincipal CustomPrincipal principal, @PathVariable(name = "id") Long stampId) {
+    commandService.deleteStamp(new DeleteStampInfo(principal.id(), stampId));
+    return ResponseEntity.ok(DeleteStampResponse.of());
   }
 
   @GetMapping("/user/{userId}")
@@ -78,7 +89,7 @@ public class StampController {
       @AuthPrincipal CustomPrincipal principal,
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
-    List<CodingTestStamp> result = stampService.getCtStampByDate(new GetCtStampInfo(userId, date));
+    List<CodingTestStamp> result = queryService.getCtStampByDate(new GetCtStampInfo(userId, date));
     return ResponseEntity.ok(CtStampResponse.of(date, principal, userId, result));
   }
 
@@ -87,7 +98,7 @@ public class StampController {
       @AuthPrincipal CustomPrincipal principal,
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
-    List<TilStamp> result = stampService.getTilStampByDate(new GetTilStampInfo(userId, date));
+    List<TilStamp> result = queryService.getTilStampByDate(new GetTilStampInfo(userId, date));
     return ResponseEntity.ok(TilStampResponse.of(date, principal, userId, result));
   }
 
@@ -97,15 +108,8 @@ public class StampController {
       @PathVariable Long userId,
       @RequestParam(required = false) LocalDate date) {
     List<ResumeStamp> result =
-        stampService.getResumeStampByDate(new GetResumeStampInfo(userId, date));
+        queryService.getResumeStampByDate(new GetResumeStampInfo(userId, date));
     return ResponseEntity.ok(ResumeStampResponse.of(date, principal, userId, result));
-  }
-
-  @DeleteMapping("/{id}")
-  public ResponseEntity<DeleteStampResponse> deleteStamp(
-      @AuthPrincipal CustomPrincipal principal, @PathVariable(name = "id") Long stampId) {
-    stampService.deleteStamp(new DeleteStampInfo(principal.id(), stampId));
-    return ResponseEntity.ok(DeleteStampResponse.of());
   }
 
   @GetMapping("/categories")
@@ -120,13 +124,12 @@ public class StampController {
       @PageableDefault(page = 0, size = 10) Pageable pageable) {
     GetStampSearchResult result =
         stampViewService.searchStampViews(GetStampSearchInfo.from(filterParams, pageable));
-
     return ResponseEntity.ok().body(StampListResponse.from(result));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<StampDetailResponse> getStampDetail(@PathVariable Long id) {
-    StampDetailResponse response = StampDetailResponse.from(stampService.getStampDetail(id));
+    StampDetailResponse response = StampDetailResponse.from(queryService.getStampDetail(id));
     return ResponseEntity.ok().body(response);
   }
 }
