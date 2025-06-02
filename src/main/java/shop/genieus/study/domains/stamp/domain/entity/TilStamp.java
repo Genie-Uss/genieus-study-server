@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
-import shop.genieus.study.domains.stamp.domain.event.StampActivityEvent;
 import shop.genieus.study.domains.stamp.domain.vo.CategoryType;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
@@ -56,21 +55,21 @@ public class TilStamp extends Stamp {
       CategoryType categoryType,
       String content,
       String relatedUrl) {
-    TilStamp stamp =
-        new TilStamp(userId, type, verifiedAt, title, categoryType, content, relatedUrl);
-    stamp.registerEvent(StampActivityEvent.of(stamp));
-
-    return stamp;
+    return new TilStamp(userId, type, verifiedAt, title, categoryType, content, relatedUrl);
   }
 
   @Override
   public String[] getCategories() {
-    String[] categories = {categoryType.getFieldName()};
-    return categories;
+    return new String[] {categoryType.getFieldName()};
   }
 
   @Override
   public String getUrl() {
     return relatedUrl;
+  }
+
+  @Override
+  public CategoryType getCategoryType() {
+    return categoryType;
   }
 }

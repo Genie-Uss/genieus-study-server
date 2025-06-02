@@ -18,48 +18,49 @@ public record StampViewCreatedEvent(
     CareerType careerType,
     ActivityType activityType,
     CategoryType categoryType) {
-  public static StampViewCreatedEvent of(CodingTestStamp ct, String nickname) {
+
+  public static StampViewCreatedEvent ofCodingTest(CodingTestStamp stamp, String nickname) {
     return new StampViewCreatedEvent(
-        ct.getId(),
-        ct.getType(),
-        null,
-        ct.getUserId(),
+        stamp.getId(),
+        stamp.getType(),
+        stamp.getTitle(),
+        stamp.getUserId(),
         nickname,
-        ct.getVerifiedAt(),
-        ct.getAlgorithmType(),
-        ct.getPlatformType(),
+        stamp.getVerifiedAt(),
+        stamp.getAlgorithmType(),
+        stamp.getPlatformType(),
         null,
         null,
         null);
   }
 
-  public static StampViewCreatedEvent of(TilStamp til, String nickname) {
+  public static StampViewCreatedEvent ofTil(TilStamp stamp, String nickname) {
     return new StampViewCreatedEvent(
-        til.getId(),
-        til.getType(),
-        til.getTitle(),
-        til.getUserId(),
+        stamp.getId(),
+        stamp.getType(),
+        stamp.getTitle(),
+        stamp.getUserId(),
         nickname,
-        til.getVerifiedAt(),
+        stamp.getVerifiedAt(),
         null,
         null,
         null,
         null,
-        til.getCategoryType());
+        stamp.getCategoryType());
   }
 
-  public static StampViewCreatedEvent of(ResumeStamp resume, String nickname) {
+  public static StampViewCreatedEvent ofResume(ResumeStamp stamp, String nickname) {
     return new StampViewCreatedEvent(
-        resume.getId(),
-        resume.getType(),
-        resume.getTitle(),
-        resume.getUserId(),
+        stamp.getId(),
+        stamp.getType(),
+        stamp.getTitle(),
+        stamp.getUserId(),
         nickname,
-        resume.getVerifiedAt(),
+        stamp.getVerifiedAt(),
         null,
         null,
-        resume.getCareerType(),
-        resume.getActivityType(),
+        stamp.getCareerType(),
+        stamp.getActivityType(),
         null);
   }
 }

@@ -29,6 +29,8 @@ public class StampActivityEvent implements NotificationMessageBuilder {
 
   public static StampActivityEvent of(Stamp stamp) {
     LocalDateTime verifiedAt = stamp.getVerifiedAt();
+    System.out.println("stamp: " + stamp.getId());
+    System.out.println("stamp: " + stamp.getType());
     return switch (stamp.getType()) {
       case CT -> {
         CodingTestStamp s = (CodingTestStamp) stamp;
