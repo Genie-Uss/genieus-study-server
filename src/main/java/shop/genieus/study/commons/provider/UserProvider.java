@@ -2,8 +2,8 @@ package shop.genieus.study.commons.provider;
 
 import java.time.LocalDate;
 import java.util.List;
-import shop.genieus.study.commons.provider.dto.UserInfo;
-import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
+import shop.genieus.study.commons.provider.model.UserInfo;
+import shop.genieus.study.commons.provider.model.UserSettingHistoryInfo;
 
 public interface UserProvider {
   UserInfo findByUserId(Long userId);

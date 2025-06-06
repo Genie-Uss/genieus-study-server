@@ -7,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import shop.genieus.study.commons.provider.dto.AttendanceInfo;
-import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
+import shop.genieus.study.commons.provider.model.AttendanceInfo;
+import shop.genieus.study.commons.provider.model.StampHistoryInfo;
 
 @Getter
 public class UserStatistics {

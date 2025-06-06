@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.commons.provider.StampHistoryProvider;
-import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
+import shop.genieus.study.commons.provider.model.StampHistoryInfo;
 import shop.genieus.study.domains.stamp.application.dto.info.get.GetStampInfo;
 import shop.genieus.study.domains.stamp.application.mapper.StampHistoryMapper;
 import shop.genieus.study.domains.stamp.application.repository.StampHistoryRepository;
