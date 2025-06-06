@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.stamp.application.event;
+package shop.genieus.study.domains.stamp.application.event.internal.model;
 
 import java.time.LocalDateTime;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
@@ -6,7 +6,7 @@ import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
 import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
 import shop.genieus.study.domains.stamp.domain.vo.*;
 
-public record StampViewCreatedEvent(
+public record StampCreatedDomainEvent(
     Long id,
     StampType type,
     String title,
@@ -19,8 +19,8 @@ public record StampViewCreatedEvent(
     ActivityType activityType,
     CategoryType categoryType) {
 
-  public static StampViewCreatedEvent ofCodingTest(CodingTestStamp stamp, String nickname) {
-    return new StampViewCreatedEvent(
+  public static StampCreatedDomainEvent ofCodingTest(CodingTestStamp stamp, String nickname) {
+    return new StampCreatedDomainEvent(
         stamp.getId(),
         stamp.getType(),
         stamp.getTitle(),
@@ -34,8 +34,8 @@ public record StampViewCreatedEvent(
         null);
   }
 
-  public static StampViewCreatedEvent ofTil(TilStamp stamp, String nickname) {
-    return new StampViewCreatedEvent(
+  public static StampCreatedDomainEvent ofTil(TilStamp stamp, String nickname) {
+    return new StampCreatedDomainEvent(
         stamp.getId(),
         stamp.getType(),
         stamp.getTitle(),
@@ -49,8 +49,8 @@ public record StampViewCreatedEvent(
         stamp.getCategoryType());
   }
 
-  public static StampViewCreatedEvent ofResume(ResumeStamp stamp, String nickname) {
-    return new StampViewCreatedEvent(
+  public static StampCreatedDomainEvent ofResume(ResumeStamp stamp, String nickname) {
+    return new StampCreatedDomainEvent(
         stamp.getId(),
         stamp.getType(),
         stamp.getTitle(),

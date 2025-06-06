@@ -18,14 +18,15 @@ import shop.genieus.study.domains.stamp.application.dto.info.create.CreateTilSta
 import shop.genieus.study.domains.stamp.application.dto.result.CreateCtStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
-import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
-import shop.genieus.study.domains.stamp.application.event.StampViewDeletedEvent;
+import shop.genieus.study.domains.stamp.application.event.external.model.StampCreatedIntegrationEvent;
+import shop.genieus.study.domains.stamp.application.event.external.model.StampDeletedIntegrationEvent;
+import shop.genieus.study.domains.stamp.application.event.internal.model.StampCreatedDomainEvent;
+import shop.genieus.study.domains.stamp.application.event.internal.model.StampDeletedDomainEvent;
 import shop.genieus.study.domains.stamp.application.repository.StampRepository;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
 import shop.genieus.study.domains.stamp.domain.entity.ResumeStamp;
 import shop.genieus.study.domains.stamp.domain.entity.Stamp;
 import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
-import shop.genieus.study.domains.stamp.domain.event.StampActivityEvent;
 import shop.genieus.study.domains.stamp.domain.exception.StampBusinessException;
 import shop.genieus.study.domains.stamp.domain.vo.StampType;
 
@@ -53,7 +54,7 @@ public class StampCommandService {
                 info.description(),
                 info.problemUrl()),
         CreateCtStampResult::of,
-        (stamp, nickname) -> StampViewCreatedEvent.ofCodingTest(stamp, nickname));
+        (stamp, nickname) -> StampCreatedDomainEvent.ofCodingTest(stamp, nickname));
   }
 
   public CreateTilStampResult createTilStamp(CreateTilStampInfo info) {
@@ -70,7 +71,7 @@ public class StampCommandService {
                 info.content(),
                 info.relatedUrl()),
         CreateTilStampResult::of,
-        (stamp, nickname) -> StampViewCreatedEvent.ofTil(stamp, nickname));
+        (stamp, nickname) -> StampCreatedDomainEvent.ofTil(stamp, nickname));
   }
 
   public CreateResumeStampResult createJobActivityStamp(CreateResumeStampInfo info) {
@@ -88,18 +89,22 @@ public class StampCommandService {
                 info.description(),
                 info.relatedUrl()),
         CreateResumeStampResult::of,
-        (stamp, nickname) -> StampViewCreatedEvent.ofResume(stamp, nickname));
+        (stamp, nickname) -> StampCreatedDomainEvent.ofResume(stamp, nickname));
   }
 
   public void deleteStamp(DeleteStampInfo info) {
     Long userId = info.userId();
     Long stampId = info.stampId();
+    LocalDateTime verifiedAt;
 
     Stamp stamp = stampRepository.findById(stampId);
+    verifiedAt = stamp.getVerifiedAt();
+
     stamp.delete(userId);
     stampRepository.delete(stamp);
 
-    publisher.publishEvent(StampViewDeletedEvent.of(stampId));
+    publisher.publishEvent(StampDeletedDomainEvent.of(stampId));
+    publisher.publishEvent(StampDeletedIntegrationEvent.of(userId, verifiedAt));
 
     log.info("도장 삭제 완료: userId={}, stampId={}", userId, stampId);
   }
@@ -109,7 +114,7 @@ public class StampCommandService {
       StampType stampType,
       BiFunction<Long, LocalDateTime, S> creator,
       Function<S, R> resultFactory,
-      BiFunction<S, String, StampViewCreatedEvent> eventFactory) {
+      BiFunction<S, String, StampCreatedDomainEvent> eventFactory) {
 
     Long userId = info.getUserId();
     String nickname = info.getNickname();
@@ -120,7 +125,7 @@ public class StampCommandService {
     S stamp = creator.apply(userId, verifiedAt);
     S savedStamp = (S) stampRepository.save(stamp);
 
-    publisher.publishEvent(StampActivityEvent.of(savedStamp));
+    publisher.publishEvent(StampCreatedIntegrationEvent.of(savedStamp));
     publisher.publishEvent(eventFactory.apply(savedStamp, nickname));
 
     log.info("도장 생성 완료: type={}, userId={}, stampId={}", stampType, userId, savedStamp.getId());
