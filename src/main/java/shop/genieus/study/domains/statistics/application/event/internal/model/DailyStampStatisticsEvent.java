@@ -1,10 +1,13 @@
-package shop.genieus.study.domains.statistics.application.event;
+package shop.genieus.study.domains.statistics.application.event.internal.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import shop.genieus.study.commons.event.DomainEvent;
+import shop.genieus.study.commons.event.DomainEventType;
+import shop.genieus.study.commons.event.DomainPayload;
 import shop.genieus.study.commons.notification.NotificationChannelType;
 import shop.genieus.study.commons.notification.NotificationMessageBuilder;
 import shop.genieus.study.domains.statistics.domain.vo.UserStatistics;
@@ -12,8 +15,7 @@ import shop.genieus.study.domains.statistics.domain.vo.VerificationStatusChecker
 
 @Getter
 @RequiredArgsConstructor
-public class DailyStatisticsEvent implements NotificationMessageBuilder {
-
+public class DailyStampStatisticsEvent implements NotificationMessageBuilder, DomainEvent {
   private final Long userId = -1L;
   private final LocalDate targetDate;
   private final List<UserStatistics> userStatistics;
@@ -116,5 +118,15 @@ public class DailyStatisticsEvent implements NotificationMessageBuilder {
   @Override
   public String getEmoji() {
     return "";
+  }
+
+  @Override
+  public DomainEventType getDomainEventType() {
+    return DomainEventType.DAILY_STATS_CALCULATED;
+  }
+
+  @Override
+  public DomainPayload getDomainPayload() {
+    return DomainPayload.builder().build();
   }
 }
