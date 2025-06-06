@@ -1,24 +1,31 @@
-package shop.genieus.study.domains.attendance.domain.event;
+package shop.genieus.study.domains.attendance.application.event.external;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import shop.genieus.study.commons.event.DomainEvent;
+import shop.genieus.study.commons.event.DomainEventType;
+import shop.genieus.study.commons.event.DomainPayload;
 import shop.genieus.study.commons.notification.NotificationChannelType;
 import shop.genieus.study.commons.notification.NotificationMessageBuilder;
+import shop.genieus.study.domains.attendance.domain.entity.Attendance;
 
 @Getter
 @RequiredArgsConstructor
-public class AttendanceEvent implements NotificationMessageBuilder {
+public class AttendanceCreatedIntegrationEvent implements NotificationMessageBuilder, DomainEvent {
 
   private final Long userId;
   private final EventType eventType;
+  private final DomainEventType domainEventType;
 
-  public static AttendanceEvent checkIn(Long userId) {
-    return new AttendanceEvent(userId, EventType.CHECK_IN);
+  public static AttendanceCreatedIntegrationEvent checkIn(Attendance attendance) {
+    return new AttendanceCreatedIntegrationEvent(
+        attendance.getId(), EventType.CHECK_IN, DomainEventType.CHECK_IN);
   }
 
-  public static AttendanceEvent checkOut(Long userId) {
-    return new AttendanceEvent(userId, EventType.CHECK_OUT);
+  public static AttendanceCreatedIntegrationEvent checkOut(Attendance attendance) {
+    return new AttendanceCreatedIntegrationEvent(
+        attendance.getId(), EventType.CHECK_OUT, DomainEventType.CHECK_OUT);
   }
 
   @Override
@@ -46,12 +53,17 @@ public class AttendanceEvent implements NotificationMessageBuilder {
     return eventType.getEmoji();
   }
 
+  @Override
+  public DomainPayload getDomainPayload() {
+    return DomainPayload.builder().userId(this.userId).build();
+  }
+
   @Getter(AccessLevel.PRIVATE)
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   public enum EventType {
     CHECK_IN("출석 알림", "%s님이 출석했습니다!", "5763719", "🟢"),
     CHECK_OUT("퇴실 알림", "%s님이 퇴실했습니다!", "16743168", "🟠"),
-    UNKNOWN("출석 관련 알림", "%s님의 출석 상태가 변경되었습니다.", "10197915", "⚪");
+    ;
 
     private final String title;
     private final String message;

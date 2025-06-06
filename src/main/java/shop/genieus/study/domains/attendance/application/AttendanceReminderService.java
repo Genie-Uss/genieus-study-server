@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import shop.genieus.study.domains.attendance.application.event.CheckInReminderEvent;
-import shop.genieus.study.domains.attendance.application.event.CheckOutReminderEvent;
+import shop.genieus.study.domains.attendance.application.event.external.CheckInReminderEvent;
+import shop.genieus.study.domains.attendance.application.event.external.CheckOutReminderEvent;
 
 @Slf4j
 @Service
@@ -21,17 +21,17 @@ public class AttendanceReminderService {
 
   @Scheduled(cron = "${scheduler.notification.check-in-cron}")
   public void sendCheckInReminder() {
-    log.info("출석 알림 이벤트 발행 시작");
+    log.info("출석 알림 발행 스케줄 시작");
     CheckInReminderEvent event = new CheckInReminderEvent(frontedUrl);
     eventPublisher.publishEvent(event);
-    log.info("출석 알림 이벤트 발행 완료");
+    log.info("출석 알림 발행 스케줄 완료");
   }
 
   @Scheduled(cron = "${scheduler.notification.check-out-cron}")
   public void sendCheckOutReminder() {
-    log.info("코어 시간 종료 알림 이벤트 발행 시작");
+    log.info("코어 시간 종료 알림 발행 스케줄 시작");
     CheckOutReminderEvent event = new CheckOutReminderEvent(frontedUrl);
     eventPublisher.publishEvent(event);
-    log.info("코어 시간 종료 알림 이벤트 발행 완료");
+    log.info("코어 시간 종료 알림 발행 스케줄 완료");
   }
 }
