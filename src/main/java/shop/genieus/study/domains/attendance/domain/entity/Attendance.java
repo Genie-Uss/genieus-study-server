@@ -10,7 +10,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import shop.genieus.study.domains.attendance.domain.event.AttendanceEvent;
 import shop.genieus.study.domains.attendance.domain.exception.AttendanceValidationException;
 import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
 import shop.genieus.study.domains.attendance.domain.vo.StudyResult;
@@ -75,8 +74,6 @@ public class Attendance extends AbstractAggregateRoot<Attendance> {
             .studyResult(studyResult)
             .build();
 
-    attendance.registerEvent(AttendanceEvent.checkIn(userId));
-
     return attendance;
   }
 
@@ -95,8 +92,6 @@ public class Attendance extends AbstractAggregateRoot<Attendance> {
 
     this.attendanceTime = updatedAttendanceTime;
     this.studyResult = updatedStudyResult;
-
-    this.registerEvent(AttendanceEvent.checkOut(userId));
 
     return this;
   }

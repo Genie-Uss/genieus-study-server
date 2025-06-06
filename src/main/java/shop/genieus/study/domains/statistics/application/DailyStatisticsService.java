@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.notification.application;
+package shop.genieus.study.domains.statistics.application;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -12,12 +12,12 @@ import shop.genieus.study.commons.provider.AttendanceProvider;
 import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.commons.provider.StampHistoryProvider;
 import shop.genieus.study.commons.provider.UserProvider;
-import shop.genieus.study.commons.provider.dto.AttendanceInfo;
-import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
-import shop.genieus.study.commons.provider.dto.UserInfo;
-import shop.genieus.study.domains.notification.application.assembler.DailyStatisticsAssembler;
-import shop.genieus.study.domains.notification.application.event.DailyStatisticsEvent;
-import shop.genieus.study.domains.notification.domain.vo.UserStatistics;
+import shop.genieus.study.commons.provider.model.AttendanceInfo;
+import shop.genieus.study.commons.provider.model.StampHistoryInfo;
+import shop.genieus.study.commons.provider.model.UserInfo;
+import shop.genieus.study.domains.statistics.application.assembler.DailyStatisticsAssembler;
+import shop.genieus.study.domains.statistics.application.event.internal.model.DailyStampStatisticsEvent;
+import shop.genieus.study.domains.statistics.domain.vo.UserStatistics;
 
 @Slf4j
 @Service
@@ -62,7 +62,7 @@ public class DailyStatisticsService {
           assembler.assembleUserStatistics(
               userIds, userNicknameMap, attendanceInfos, stampHistoryInfos);
 
-      DailyStatisticsEvent event = new DailyStatisticsEvent(yesterday, userStatistics);
+      DailyStampStatisticsEvent event = new DailyStampStatisticsEvent(yesterday, userStatistics);
       eventPublisher.publishEvent(event);
 
       log.info("일일 통계 알림 발송 완료: {} ({} users)", yesterday, userStatistics.size());

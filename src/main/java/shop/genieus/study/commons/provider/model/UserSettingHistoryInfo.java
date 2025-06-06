@@ -1,4 +1,4 @@
-package shop.genieus.study.commons.provider.dto;
+package shop.genieus.study.commons.provider.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

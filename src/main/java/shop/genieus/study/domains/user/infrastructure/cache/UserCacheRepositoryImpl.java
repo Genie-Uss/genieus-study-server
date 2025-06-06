@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import shop.genieus.study.commons.provider.dto.UserInfo;
+import shop.genieus.study.commons.provider.model.UserInfo;
 import shop.genieus.study.domains.user.application.repository.UserCacheRepository;
 
 @Slf4j

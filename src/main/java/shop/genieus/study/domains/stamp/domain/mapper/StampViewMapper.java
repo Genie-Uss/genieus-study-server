@@ -1,12 +1,12 @@
 package shop.genieus.study.domains.stamp.domain.mapper;
 
 import org.springframework.stereotype.Component;
-import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
+import shop.genieus.study.domains.stamp.application.event.internal.model.StampCreatedDomainEvent;
 import shop.genieus.study.domains.stamp.domain.entity.StampView;
 
 @Component
 public class StampViewMapper {
-  public StampView from(StampViewCreatedEvent event) {
+  public StampView from(StampCreatedDomainEvent event) {
     return switch (event.type()) {
       case CT ->
           StampView.ct(

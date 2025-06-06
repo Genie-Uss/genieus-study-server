@@ -1,7 +1,7 @@
 package shop.genieus.study.domains.attendance.application.mapper;
 
 import org.springframework.stereotype.Component;
-import shop.genieus.study.commons.provider.dto.AttendanceInfo;
+import shop.genieus.study.commons.provider.model.AttendanceInfo;
 import shop.genieus.study.domains.attendance.domain.entity.Attendance;
 import shop.genieus.study.domains.attendance.domain.vo.AttendanceTime;
 import shop.genieus.study.domains.attendance.domain.vo.StudyResult;

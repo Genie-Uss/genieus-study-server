@@ -1,7 +1,7 @@
 package shop.genieus.study.domains.stamp.application.mapper;
 
 import org.springframework.stereotype.Component;
-import shop.genieus.study.commons.provider.dto.StampHistoryInfo;
+import shop.genieus.study.commons.provider.model.StampHistoryInfo;
 import shop.genieus.study.domains.stamp.domain.entity.StampHistory;
 import shop.genieus.study.domains.stamp.domain.vo.VerificationStatus;
 

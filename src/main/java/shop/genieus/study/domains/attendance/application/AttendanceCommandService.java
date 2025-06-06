@@ -4,13 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.genieus.study.commons.provider.DateTimeProvider;
 import shop.genieus.study.commons.provider.UserProvider;
-import shop.genieus.study.commons.provider.dto.UserInfo;
+import shop.genieus.study.commons.provider.model.UserInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckInInfo;
 import shop.genieus.study.domains.attendance.application.dto.info.CheckOutInfo;
+import shop.genieus.study.domains.attendance.application.event.external.AttendanceCreatedIntegrationEvent;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceBusinessException;
 import shop.genieus.study.domains.attendance.application.exception.AttendanceNotFoundException;
 import shop.genieus.study.domains.attendance.application.repository.AttendanceRepository;
@@ -25,7 +26,7 @@ public class AttendanceCommandService {
   private final AttendanceRepository repository;
   private final UserProvider userProvider;
   private final DateTimePort dateTimePort;
-  private final DateTimeProvider dateTimeProvider;
+  private final ApplicationEventPublisher publisher;
 
   public Attendance checkIn(CheckInInfo info) {
     LocalDateTime currentDateTime = dateTimePort.getCurrentDateTime();
@@ -39,6 +40,7 @@ public class AttendanceCommandService {
 
     UserInfo userInfo = userProvider.findByUserId(info.userId());
 
+    Attendance saved;
     try {
       Attendance attendance =
           Attendance.checkIn(
@@ -48,11 +50,14 @@ public class AttendanceCommandService {
               currentDateTime.toLocalDate(),
               currentDateTime,
               userInfo.desiredCoreTime());
-      return repository.save(attendance);
+      saved = repository.save(attendance);
     } catch (Exception e) {
       log.warn("출석 처리 중 오류- check in info: {}, 현재 시각: {}", info, currentDateTime);
       throw e;
     }
+
+    publisher.publishEvent(AttendanceCreatedIntegrationEvent.checkIn(saved));
+    return saved;
   }
 
   public Attendance checkOut(CheckOutInfo info) {
@@ -74,6 +79,9 @@ public class AttendanceCommandService {
 
     attendance.checkOut(info.checkOutDateTime(), currentDate, currentDateTime);
 
-    return repository.save(attendance);
+    Attendance updated = repository.save(attendance);
+    publisher.publishEvent(AttendanceCreatedIntegrationEvent.checkOut(updated));
+
+    return updated;
   }
 }

@@ -1,6 +1,6 @@
 package shop.genieus.study.domains.user.presentation.dto.response;
 
-import shop.genieus.study.commons.provider.dto.UserSettingHistoryInfo;
+import shop.genieus.study.commons.provider.model.UserSettingHistoryInfo;
 
 public record UserSettingHistoryResponse(
     Long id,

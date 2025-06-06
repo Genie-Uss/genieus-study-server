@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.stamp.domain.event;
+package shop.genieus.study.domains.stamp.application.event.external.model;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import shop.genieus.study.commons.event.DomainEvent;
+import shop.genieus.study.commons.event.DomainEventType;
+import shop.genieus.study.commons.event.DomainPayload;
 import shop.genieus.study.commons.notification.NotificationChannelType;
 import shop.genieus.study.commons.notification.NotificationMessageBuilder;
 import shop.genieus.study.domains.stamp.domain.entity.CodingTestStamp;
@@ -15,7 +18,7 @@ import shop.genieus.study.domains.stamp.domain.entity.TilStamp;
 
 @Getter
 @RequiredArgsConstructor
-public class StampActivityEvent implements NotificationMessageBuilder {
+public class StampCreatedIntegrationEvent implements NotificationMessageBuilder, DomainEvent {
   private static final int MAX_DESCRIPTION_LENGTH = 150;
 
   private final Long id;
@@ -27,14 +30,13 @@ public class StampActivityEvent implements NotificationMessageBuilder {
   private final StampTypeWrapper stampType;
   private final LocalDateTime verifiedAt;
 
-  public static StampActivityEvent of(Stamp stamp) {
+  public static StampCreatedIntegrationEvent of(Stamp stamp) {
     LocalDateTime verifiedAt = stamp.getVerifiedAt();
-    System.out.println("stamp: " + stamp.getId());
-    System.out.println("stamp: " + stamp.getType());
+
     return switch (stamp.getType()) {
       case CT -> {
         CodingTestStamp s = (CodingTestStamp) stamp;
-        yield new StampActivityEvent(
+        yield new StampCreatedIntegrationEvent(
             s.getId(),
             s.getUserId(),
             null,
@@ -46,7 +48,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
       }
       case TIL -> {
         TilStamp s = (TilStamp) stamp;
-        yield new StampActivityEvent(
+        yield new StampCreatedIntegrationEvent(
             s.getId(),
             s.getUserId(),
             s.getTitle(),
@@ -58,7 +60,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
       }
       case RESUME -> {
         ResumeStamp s = (ResumeStamp) stamp;
-        yield new StampActivityEvent(
+        yield new StampCreatedIntegrationEvent(
             s.getId(),
             s.getUserId(),
             s.getTitle(),
@@ -81,7 +83,7 @@ public class StampActivityEvent implements NotificationMessageBuilder {
 
   private static String inlineCodes(String... texts) {
     return Arrays.stream(texts)
-        .map(StampActivityEvent::inlineCode)
+        .map(StampCreatedIntegrationEvent::inlineCode)
         .collect(Collectors.joining(" "));
   }
 
@@ -139,6 +141,19 @@ public class StampActivityEvent implements NotificationMessageBuilder {
   @Override
   public String getEmoji() {
     return "🟣 ";
+  }
+
+  @Override
+  public DomainEventType getDomainEventType() {
+    return DomainEventType.STAMP_CREATED;
+  }
+
+  @Override
+  public DomainPayload getDomainPayload() {
+    return DomainPayload.builder()
+        .userId(this.userId)
+        .attribute("verifiedAt", this.verifiedAt)
+        .build();
   }
 
   @Getter(AccessLevel.PRIVATE)

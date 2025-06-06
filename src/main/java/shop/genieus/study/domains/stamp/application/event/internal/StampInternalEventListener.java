@@ -1,19 +1,21 @@
-package shop.genieus.study.domains.stamp.application;
+package shop.genieus.study.domains.stamp.application.event.internal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-import shop.genieus.study.domains.stamp.application.event.StampViewCreatedEvent;
-import shop.genieus.study.domains.stamp.application.event.StampViewDeletedEvent;
+import shop.genieus.study.domains.stamp.application.StampHistoryService;
+import shop.genieus.study.domains.stamp.application.StampViewService;
+import shop.genieus.study.domains.stamp.application.event.internal.model.StampCreatedDomainEvent;
+import shop.genieus.study.domains.stamp.application.event.internal.model.StampDeletedDomainEvent;
 import shop.genieus.study.domains.stamp.domain.event.StampCreatedEvent;
 import shop.genieus.study.domains.stamp.domain.event.StampDeletedEvent;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class StampEventListener {
+public class StampInternalEventListener {
   private final StampViewService stampViewService;
   private final StampHistoryService stampHistoryService;
 
@@ -23,7 +25,7 @@ public class StampEventListener {
   }
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-  public void onStampViewCreated(StampViewCreatedEvent event) {
+  public void onStampViewCreated(StampCreatedDomainEvent event) {
     stampViewService.onStampViewCreated(event);
   }
 
@@ -33,7 +35,7 @@ public class StampEventListener {
   }
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-  public void onStampViewDeleted(StampViewDeletedEvent event) {
+  public void onStampViewDeleted(StampDeletedDomainEvent event) {
     stampViewService.onStampViewDeleted(event);
   }
 }

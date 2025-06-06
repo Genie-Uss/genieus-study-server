@@ -1,4 +1,4 @@
-package shop.genieus.study.domains.notification.domain.vo;
+package shop.genieus.study.domains.statistics.domain.vo;
 
 import java.util.Set;
 

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import shop.genieus.study.commons.provider.UserProvider;
-import shop.genieus.study.commons.provider.dto.UserInfo;
+import shop.genieus.study.commons.provider.model.UserInfo;
 import shop.genieus.study.domains.auth.application.cache.PrincipalCache;
 import shop.genieus.study.domains.auth.application.dto.info.CredentialInfo;
 import shop.genieus.study.domains.auth.application.dto.result.ReIssueTokenResult;

@@ -10,8 +10,8 @@ import shop.genieus.study.domains.notification.application.support.NotificationP
 public class NotificationService {
   private final NotificationProcessor processor;
 
-  public void processAndSend(NotificationMessageBuilder messageBuilder) {
-    processor.process(messageBuilder);
+  public void processAndSend(NotificationMessageBuilder builder) {
+    processor.process(builder);
   }
 
   public void shutdown() {
