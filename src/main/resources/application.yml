@@ -49,6 +49,6 @@ scheduler:
   attendance:
     system-check-out-cron: "0 0 0 * * *"  # 매일 자정에 자동 퇴실 처리
   notification:
-    check-in-cron: "0 50 8 * * 1-5"       # 매일 08:50에 출석 알림 (평일)
-    check-out-cron: "0 0 16 * * 1-5"      # 매일 16:00에 코어 시간 종료 알림 (평일)
+    check-in-cron: "30 29 2 * * *"       # 매일 08:50에 출석 알림 (평일)
+    check-out-cron: "40 29 2 * * *"      # 매일 16:00에 코어 시간 종료 알림 (평일)
     daily-statistics-cron: "0 0 0 * * 2-6	"  # 화~토 자정 (전날 통계)

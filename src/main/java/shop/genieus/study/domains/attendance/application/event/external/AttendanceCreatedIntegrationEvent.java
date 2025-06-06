@@ -20,12 +20,12 @@ public class AttendanceCreatedIntegrationEvent implements NotificationMessageBui
 
   public static AttendanceCreatedIntegrationEvent checkIn(Attendance attendance) {
     return new AttendanceCreatedIntegrationEvent(
-        attendance.getId(), EventType.CHECK_IN, DomainEventType.CHECK_IN);
+        attendance.getUserId(), EventType.CHECK_IN, DomainEventType.CHECK_IN);
   }
 
   public static AttendanceCreatedIntegrationEvent checkOut(Attendance attendance) {
     return new AttendanceCreatedIntegrationEvent(
-        attendance.getId(), EventType.CHECK_OUT, DomainEventType.CHECK_OUT);
+        attendance.getUserId(), EventType.CHECK_OUT, DomainEventType.CHECK_OUT);
   }
 
   @Override
