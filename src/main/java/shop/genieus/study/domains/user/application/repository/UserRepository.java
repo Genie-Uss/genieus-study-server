@@ -1,6 +1,9 @@
 package shop.genieus.study.domains.user.application.repository;
 
 import java.util.List;
+import org.springframework.data.domain.Pageable;
+import shop.genieus.study.domains.user.application.dto.info.GetAdminUserSearchInfo;
+import shop.genieus.study.domains.user.application.dto.result.GetAdminUserSearchResult;
 import shop.genieus.study.domains.user.domain.entity.User;
 
 public interface UserRepository {
@@ -17,4 +20,7 @@ public interface UserRepository {
   List<User> findAllActiveUsers();
 
   List<User> findAllParticipatingUsers();
+
+  GetAdminUserSearchResult findUsers(
+      GetAdminUserSearchInfo.AdminUserFilterInfo filterInfo, Pageable pageable);
 }

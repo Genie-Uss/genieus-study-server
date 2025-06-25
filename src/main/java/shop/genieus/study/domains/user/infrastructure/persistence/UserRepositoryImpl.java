@@ -2,7 +2,13 @@ package shop.genieus.study.domains.user.infrastructure.persistence;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import shop.genieus.study.domains.user.application.dto.info.AdminUserInfo;
+import shop.genieus.study.domains.user.application.dto.info.GetAdminUserSearchInfo;
+import shop.genieus.study.domains.user.application.dto.result.GetAdminUserSearchResult;
+import shop.genieus.study.domains.user.application.dto.result.PageInfo;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
@@ -10,11 +16,13 @@ import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.Email;
 import shop.genieus.study.domains.user.domain.vo.Nickname;
 import shop.genieus.study.domains.user.infrastructure.persistence.repository.UserJpaRepository;
+import shop.genieus.study.domains.user.infrastructure.persistence.repository.UserSearchRepository;
 
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
   private final UserJpaRepository jpaRepository;
+  private final UserSearchRepository searchRepository;
 
   @Override
   public User save(User user) {
@@ -51,5 +59,20 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public List<User> findAllParticipatingUsers() {
     return jpaRepository.findAllParticipatingUsers();
+  }
+
+  @Override
+  public GetAdminUserSearchResult findUsers(
+      GetAdminUserSearchInfo.AdminUserFilterInfo filterInfo, Pageable pageable) {
+    Page<AdminUserInfo> userPage = searchRepository.findUsers(filterInfo, pageable);
+    PageInfo pageInfo =
+        new PageInfo(
+            userPage.getNumber(),
+            userPage.getSize(),
+            userPage.getTotalElements(),
+            userPage.getTotalPages(),
+            userPage.isLast());
+
+    return new GetAdminUserSearchResult(userPage.getContent(), pageInfo);
   }
 }
