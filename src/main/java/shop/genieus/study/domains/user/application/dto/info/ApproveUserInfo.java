@@ -1,4 +1,4 @@
 package shop.genieus.study.domains.user.application.dto.info;
 
-
-public record ApproveUserInfo(Long adminUserId, Long targetUserId, Boolean isParticipating) {}
+public record ApproveUserInfo(
+    Long adminUserId, Long targetUserId, Boolean isApproved, Boolean isParticipating) {}
