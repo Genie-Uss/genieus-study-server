@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 import shop.genieus.study.commons.jpa.BaseEntity;
 import shop.genieus.study.domains.user.application.PasswordEncryptionService;
+import shop.genieus.study.domains.user.domain.exception.UserSameSettingException;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.*;
 
@@ -79,23 +80,35 @@ public class User extends BaseEntity {
   public void updateSettings(
       LocalTime newCheckInTime, int newCoreTime, ParticipationStatus newParticipationStatus) {
     if (currentSettings.isSameAs(newCheckInTime, newCoreTime, newParticipationStatus)) {
-      throw UserValidationException.sameSetting();
+      throw new UserSameSettingException();
     }
 
     UserSettings newSettings = UserSettings.of(newCheckInTime, newCoreTime, newParticipationStatus);
     this.currentSettings = newSettings;
   }
 
-  public void approveWithParticipation(boolean isParticipating) {
-    approve();
+  public void approveWithParticipation(boolean isApproved, boolean isParticipating) {
+    approve(isApproved);
     updateParticipation(isParticipating);
   }
 
-  public void approve() {
+  public void approve(boolean isApproved) {
     if (!this.status.isPending()) {
       throw UserValidationException.userNotPending();
     }
-    this.status = AccountStatus.APPROVED;
+    this.status = isApproved ? AccountStatus.APPROVED : AccountStatus.REJECTED;
+  }
+
+  public void updateParticipationStatus(ParticipationStatus newStatus) {
+    UserSettings currentSettings = getCurrentSettings();
+    ParticipationStatus currentStatus = currentSettings.getParticipationStatus();
+
+    if (currentStatus == newStatus) {
+      throw UserValidationException.sameParticipationStatus();
+    }
+
+    updateSettings(
+        currentSettings.getDesiredCheckInTime(), currentSettings.getDesiredCoreTime(), newStatus);
   }
 
   public void updateParticipation(boolean isParticipating) {
@@ -139,5 +152,9 @@ public class User extends BaseEntity {
 
   public boolean isParticipating() {
     return this.currentSettings.isParticipating();
+  }
+
+  public ParticipationStatus getParticipationStatus() {
+    return currentSettings.getParticipationStatus();
   }
 }

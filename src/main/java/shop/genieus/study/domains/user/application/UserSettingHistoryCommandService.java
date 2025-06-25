@@ -26,12 +26,13 @@ public class UserSettingHistoryCommandService {
         today,
         settings.getDesiredCheckInTime(),
         settings.getDesiredCoreTime(),
-        settings.getParticipationStatus());
+        settings.getParticipationStatus(),
+        "신규 회원 가입");
 
     log.info("초기 설정 이력 생성: userId={}", user.getId());
   }
 
-  public void updateSettingHistory(User user, LocalDate effectiveDate) {
+  public void updateSettingHistory(User user, LocalDate effectiveDate, String reason) {
     Long userId = user.getId();
     deactivateCurrentHistory(userId, effectiveDate);
 
@@ -41,7 +42,8 @@ public class UserSettingHistoryCommandService {
         effectiveDate,
         settings.getDesiredCheckInTime(),
         settings.getDesiredCoreTime(),
-        settings.getParticipationStatus());
+        settings.getParticipationStatus(),
+        reason);
   }
 
   private void deactivateCurrentHistory(Long userId, LocalDate effectiveDate) {
@@ -57,11 +59,12 @@ public class UserSettingHistoryCommandService {
       LocalDate effectiveDate,
       LocalTime checkInTime,
       int coreTime,
-      ParticipationStatus participationStatus) {
+      ParticipationStatus participationStatus,
+      String reason) {
 
     UserSettingHistory newHistory =
         UserSettingHistory.create(
-            userId, effectiveDate, checkInTime, coreTime, participationStatus);
+            userId, effectiveDate, checkInTime, coreTime, participationStatus, reason);
     settingHistoryRepository.save(newHistory);
 
     log.info("새 설정 이력 생성: userId={}, effectiveFromDate={}", userId, effectiveDate);

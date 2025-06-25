@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.genieus.study.commons.provider.UserProvider;
 import shop.genieus.study.commons.provider.model.UserInfo;
 import shop.genieus.study.commons.provider.model.UserSettingHistoryInfo;
+import shop.genieus.study.domains.user.application.dto.info.GetAdminUserSearchInfo;
+import shop.genieus.study.domains.user.application.dto.result.GetAdminUserSearchResult;
 import shop.genieus.study.domains.user.application.dto.result.UserInfoResult;
 import shop.genieus.study.domains.user.application.exception.UserNotFoundException;
 import shop.genieus.study.domains.user.application.mapper.UserMapper;
@@ -94,6 +96,10 @@ public class UserQueryService implements UserProvider {
 
     userCacheRepository.saveParticipatingUsers(users);
     return users;
+  }
+
+  public GetAdminUserSearchResult getAdminUserList(GetAdminUserSearchInfo searchInfo) {
+    return repository.findUsers(searchInfo.filterParams(), searchInfo.pageable());
   }
 
   private User findById(Long userId) {

@@ -14,9 +14,9 @@ import shop.genieus.study.domains.user.application.dto.info.UpdateUserSettingInf
 import shop.genieus.study.domains.user.application.repository.UserCacheRepository;
 import shop.genieus.study.domains.user.application.repository.UserRepository;
 import shop.genieus.study.domains.user.domain.entity.User;
+import shop.genieus.study.domains.user.domain.exception.UserSameSettingException;
 import shop.genieus.study.domains.user.domain.exception.UserValidationException;
 import shop.genieus.study.domains.user.domain.vo.ParticipationStatus;
-import shop.genieus.study.domains.user.domain.vo.UserSettings;
 
 @Slf4j
 @Service
@@ -55,11 +55,16 @@ public class UserCommandService {
       throw UserValidationException.userNotPending();
     }
 
-    targetUser.approveWithParticipation(info.isParticipating());
+    try {
+      targetUser.approveWithParticipation(info.isApproved(), info.isParticipating());
+    } catch (UserSameSettingException e) {
+      log.info(e.getMessage());
+    }
     User updated = repository.save(targetUser);
 
     LocalDate today = dateTimeProvider.getCurrentDate();
-    historyCommandService.updateSettingHistory(updated, today);
+    historyCommandService.updateSettingHistory(
+        updated, today, targetUser.isRejected() ? "회원 승인거부" : "회원 승인");
 
     if (updated.isParticipating()) {
       userCacheRepository.invalidateParticipatingUsers();
@@ -84,7 +89,7 @@ public class UserCommandService {
 
     User updated = repository.save(user);
     LocalDate today = dateTimeProvider.getCurrentDate();
-    historyCommandService.updateSettingHistory(updated, today);
+    historyCommandService.updateSettingHistory(updated, today, "희망 코어시각 수정");
 
     log.info(
         "사용자 설정 변경: userId={}, checkInTime={}, coreTime={}", userId, newCheckInTime, newCoreTime);
@@ -94,30 +99,24 @@ public class UserCommandService {
     Long adminUserId = info.adminUserId();
     Long targetUserId = info.targetUserId();
     ParticipationStatus newStatus = info.participationStatus();
+    String reason = info.reason();
 
     User targetUser = findById(targetUserId);
-    UserSettings currentSettings = targetUser.getCurrentSettings();
-    ParticipationStatus currentStatus = currentSettings.getParticipationStatus();
-
-    if (currentStatus == newStatus) {
-      throw UserValidationException.sameParticipationStatus();
-    }
-
-    targetUser.updateSettings(
-        currentSettings.getDesiredCheckInTime(), currentSettings.getDesiredCoreTime(), newStatus);
-
+    targetUser.updateParticipationStatus(newStatus);
     User updated = repository.save(targetUser);
+
     LocalDate today = dateTimeProvider.getCurrentDate();
-    historyCommandService.updateSettingHistory(updated, today);
+    historyCommandService.updateSettingHistory(updated, today, reason);
 
     userCacheRepository.invalidateParticipatingUsers();
 
     log.info(
-        "참여 상태 변경: adminUserId={}, targetUserId={}, {} -> {}",
+        "참여 상태 변경: adminUserId={}, targetUserId={}, {} -> {}, 이유={}",
         adminUserId,
         targetUserId,
-        currentStatus,
-        newStatus);
+        targetUser.getParticipationStatus(),
+        newStatus,
+        reason);
   }
 
   private User findById(Long userId) {

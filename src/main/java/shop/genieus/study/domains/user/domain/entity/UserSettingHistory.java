@@ -1,5 +1,7 @@
 package shop.genieus.study.domains.user.domain.entity;
 
+import static org.springframework.util.StringUtils.hasText;
+
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,7 +23,6 @@ import shop.genieus.study.domains.user.domain.vo.ParticipationStatus;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserSettingHistory extends BaseEntity {
-
   @Id
   @Comment("유저 설정 이력 아이디")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,12 +56,17 @@ public class UserSettingHistory extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ParticipationStatus participationStatus;
 
+  @Comment("변경 이유")
+  @Column(name = "reason", length = 100)
+  private String reason;
+
   public static UserSettingHistory create(
       Long userId,
       LocalDate effectiveFromDate,
       LocalTime desiredCheckInTime,
       int desiredCoreTime,
-      ParticipationStatus participationStatus) {
+      ParticipationStatus participationStatus,
+      String reason) {
 
     return UserSettingHistory.builder()
         .userId(userId)
@@ -69,6 +75,7 @@ public class UserSettingHistory extends BaseEntity {
         .desiredCoreTime(desiredCoreTime)
         .participationStatus(participationStatus)
         .isActive(true)
+        .reason(hasText(reason) ? reason : null)
         .build();
   }
 
