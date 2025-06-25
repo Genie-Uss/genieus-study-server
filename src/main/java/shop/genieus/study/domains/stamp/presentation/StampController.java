@@ -22,6 +22,7 @@ import shop.genieus.study.domains.stamp.application.dto.result.CreateResumeStamp
 import shop.genieus.study.domains.stamp.application.dto.result.CreateTilStampResult;
 import shop.genieus.study.domains.stamp.application.dto.result.GetStampSearchResult;
 import shop.genieus.study.domains.stamp.domain.entity.*;
+import shop.genieus.study.domains.stamp.presentation.dto.StampMapper;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateCtStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateResumeStampRequest;
 import shop.genieus.study.domains.stamp.presentation.dto.request.CreateTilStampRequest;
@@ -42,6 +43,8 @@ public class StampController {
   private final StampHistoryService stampHistoryService;
   private final StampViewService stampViewService;
   private final StampCategoryService stampCategoryService;
+
+  private final StampMapper mapper;
 
   @PostMapping("/ct")
   public ResponseEntity<CreateCtStampResponse> createCtStamp(
@@ -123,7 +126,7 @@ public class StampController {
       @ModelAttribute StampFilterParams filterParams,
       @PageableDefault(page = 0, size = 10) Pageable pageable) {
     GetStampSearchResult result =
-        stampViewService.searchStampViews(GetStampSearchInfo.from(filterParams, pageable));
+        stampViewService.searchStampViews(mapper.toInfo(filterParams, pageable));
     return ResponseEntity.ok().body(StampListResponse.from(result));
   }
 
