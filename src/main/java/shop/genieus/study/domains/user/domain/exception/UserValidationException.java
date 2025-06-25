@@ -88,10 +88,6 @@ public class UserValidationException extends ValidationException {
     return new UserValidationException(String.format("코어 시간은 %d분-%d분 사이여야 합니다.", min, max));
   }
 
-  public static UserValidationException sameSetting() {
-    return new UserValidationException("기존 설정과 동일합니다.");
-  }
-
   public static UserValidationException requiredParticipationStatus() {
     return new UserValidationException("참여 상태는 필수입니다.");
   }
