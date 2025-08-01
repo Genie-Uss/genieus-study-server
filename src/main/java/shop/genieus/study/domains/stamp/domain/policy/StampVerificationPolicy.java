@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum StampVerificationPolicy {
-    CT(2),
+    CT(1),
     TIL(1),
     RESUME(1);
 
