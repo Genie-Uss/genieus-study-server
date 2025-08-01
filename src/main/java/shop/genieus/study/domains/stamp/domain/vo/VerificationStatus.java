@@ -9,7 +9,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @Embeddable
 public class VerificationStatus {
-  private static final int CT_MIN_COUNT = 2;
+  private static final int CT_MIN_COUNT = 1;
   private static final int TIL_MIN_COUNT = 1;
   private static final int RESUME_MIN_COUNT = 1;
 

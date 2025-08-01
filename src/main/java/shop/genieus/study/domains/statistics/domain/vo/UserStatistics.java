@@ -56,15 +56,20 @@ public class UserStatistics {
   }
 
   private void calculateStampFines(StampHistoryInfo stampHistory) {
-    if (!stampHistory.ctVerified()) {
-      fineReasons.add(FinePolicy.MISSING_CT);
+    int successCount = 0;
+    if (stampHistory.ctVerified()) successCount++;
+    if (stampHistory.tilVerified()) successCount++;
+    if (stampHistory.resumeVerified()) successCount++;
+    
+    // 성공 개수에 따른 벌금 적용
+    if (successCount == 0) {
+      // 0개 성공: 1000원 벌금
+      fineReasons.add(FinePolicy.STAMP_GROUP_0_SUCCESS);
+    } else if (successCount == 1) {
+      // 1개 성공: 500원 벌금
+      fineReasons.add(FinePolicy.STAMP_GROUP_1_SUCCESS);
     }
-    if (!stampHistory.tilVerified()) {
-      fineReasons.add(FinePolicy.MISSING_TIL);
-    }
-    if (!stampHistory.resumeVerified()) {
-      fineReasons.add(FinePolicy.MISSING_RESUME);
-    }
+    // 2개 이상 성공 시 벌금 없음
   }
 
   private int calculateTotalVerifiedCount(String attendanceStatus, StampHistoryInfo stampHistory) {
